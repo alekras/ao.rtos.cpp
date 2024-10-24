@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (C) 2007-2014 by krasnop@bellsouth.net (Alexei Krasnopolski)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project name="Keyboard_Example" default="application" basedir="." >
+  <property name="project.dir" location="${basedir}"/>
+  
+	<property name="root.dir" location="${project.dir}/../../../"/>
+  <echo>${ant.project.name}: ROOT dir is ${root.dir}</echo>
+
+	<property file="build.properties"/>
+  <echo>${ant.project.name}: Project dir is ${project.dir}</echo>
+
+  <import file="./../common-port-gcc.xml"/>
+  
+	<echo>${ant.project.name}: Base dir is ${basedir}</echo>
+  <echo>${ant.project.name}: Root dir is ${root.dir}</echo>
+  <echo>${ant.project.name}: App dir is ${app.dir}</echo>
+
+  <property name="sources">application.cpp</property>
+
+  <target name="application" depends="compile-app, link-app" >
+    <echo>GCC comlete build application ${ant.project.name}...</echo>
+  </target>
+
+</project>

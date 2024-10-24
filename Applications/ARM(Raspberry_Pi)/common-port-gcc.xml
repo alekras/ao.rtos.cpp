@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (C) 2007-2014 by krasnop@bellsouth.net (Alexei Krasnopolski)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project name="Application ARM(Raspberry_Pi) port (GCC)" default="make-binary-app">
+
+  <import file="./../common-gcc.xml"/>
+	
+  <property file="./../build-gcc.properties" relative="true"/>
+
+  <echo>compiler.exec = ${compiler.exec} </echo>
+  <echo>includePaths = ${includePaths} </echo>
+  <echo>port.dir = ${port.dir} </echo>
+
+  <target name="compile-app" depends="prepare, compile-kernel, compile-library, compile-porting">
+    <echo>GCC compiles application ${ant.project.name}...</echo>
+    <exec dir="${project.dir}" executable="${compiler.exec}">
+      <arg line="${compile.flags} -D${rpi.version} ${includePaths} -o ${targetDir}/application.o ${sources}"/>
+    </exec>
+  </target>
+
+  <target name="compile-kernel">
+    <ant dir="${root.dir}/Kernel" antfile="build-gcc.xml">
+      <property name="properties.dir" value="${root.dir}/Applications"/>
+    </ant>
+  </target>
+
+  <target name="compile-library">
+    <ant dir="${root.dir}/Library" antfile="build-gcc.xml">
+      <property name="properties.dir" value="${root.dir}/Applications"/>
+    </ant>
+  </target>
+
+  <target name="compile-porting">
+    <ant dir="${port.dir}" antfile="build-gcc.xml">
+      <property name="properties.dir" value="${root.dir}/Applications"/>
+    </ant>
+    
+  </target>
+
+  <target name="link-app">
+    <echo>LD builds executable file...</echo>
+    <exec dir="${targetDir}" executable="${linker.exec}">
+      <arg line=" arm_cpu.o application.o display.o kernel.o aortos_library.o ${linker.flags.ld} -o ${targetDir}/application.elf"/>
+    </exec>
+  </target>
+
+  <target name="dump">
+    <echo>GCC-ARM dump elf file</echo>
+    <exec dir="${basedir}" executable="${exec}-objdump" output="${targetDir}/application.lst">
+      <arg line="-D ${targetDir}/application.elf"/>
+    </exec>
+  </target>
+
+  <target name="hex" depends="">
+    <echo>GCC-ARM create HEX file from elf file</echo>
+    <exec dir="${basedir}" executable="${exec}-objcopy">
+      <arg line=" ${targetDir}/application.elf -O ihex ${targetDir}/application.hex"/>
+    </exec>
+  </target>
+
+  <target name="make-binary-app">
+    <echo>Make binary of application ${ant.project.name}...</echo>
+    <exec dir="${basedir}" executable="${exec}-objcopy">
+      <arg line=" ${targetDir}/application.elf -O binary ${targetDir}/application.img"/>
+    </exec>
+  </target>
+
+  <target name="load-to-target-app">
+    <echo>Load to target device ${ant.project.name}...</echo>
+  </target>
+
+</project>

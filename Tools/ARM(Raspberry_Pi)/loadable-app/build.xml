@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+  Build executable modules for Raspberry Pi.
+     ====================================================================== -->
+<project name="Initial Interactive Loader" default="default">
+  <description>
+    Initial Interactive Loader for Raspberry Pi.
+  </description>
+  
+  <property name="arm-tools-path">/opt/gcc-arm/latest</property>
+  <property name="gcc-bin">${arm-tools-path}/bin</property>
+  <property name="exec">${gcc-bin}/arm-none-eabi</property>
+  <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/4.8.3</property>
+  <!--property name="copts"> -Wno-write-strings -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s 
+    -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property-->
+  <property name="copts"> -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property>
+
+  <target name="default" depends="clean, gcc, as, ld, dump, hex, img" description="description">
+
+  </target>
+
+  <target name="gcc" depends="clean">
+    <echo>GCC-ARM compiles source files</echo>
+    <exec dir="${basedir}" executable="${exec}-gcc">
+      <arg line="${copts} -DRPI2 -c " />
+      <arg value="main.cpp"/>
+      <arg value="periph.cpp"/>
+      <arg line="../../../Library/Display/formatter.cpp"/>
+      <!--arg value="display.cpp"/>
+      <arg value="../../../Porting/ARM(Raspberry_Pi)/rpi-mailbox.c"/>
+      <arg value="../../../Porting/ARM(Raspberry_Pi)/rpi-mailbox-interface.c"/-->
+    </exec>
+  </target>
+
+  <target name="as" depends="gcc">
+    <echo>GCC-ARM compiles asm files</echo>
+    <exec dir="${basedir}" executable="${exec}-as">
+      <arg line=" -o arm_cpu.o ../../../Porting/ARM(Raspberry_Pi)/arm_cpu.s"/>
+    </exec>
+  </target>
+
+  <target name="ld" depends="gcc, as">
+    <echo>GCC-ARM link object files</echo>
+    <exec dir="${basedir}" executable="${exec}-ld">
+      <arg line=" -L${cpp-libs}"/>
+      <arg line=" arm_cpu.o"/>
+      <arg line=" main.o periph.o"/>
+      <arg line=" formatter.o"/>
+      <!--arg line=" rpi-mailbox.o rpi-mailbox-interface.o display.o"/-->
+      <arg line=" -lgcc -Map map.lst -T loader -o LoadableApp.elf"/>
+    </exec>
+  </target>
+
+  <target name="dump" depends="ld">
+    <echo>GCC-ARM dump elf file</echo>
+    <exec dir="${basedir}" executable="${exec}-objdump" output="LoadableApp.lst">
+      <arg line="-D LoadableApp.elf"/>
+    </exec>
+  </target>
+
+  <target name="hex" depends="dump">
+    <echo>GCC-ARM create HEX file from elf file</echo>
+    <exec dir="${basedir}" executable="${exec}-objcopy">
+      <arg line=" LoadableApp.elf -O ihex LoadableApp.hex"/>
+    </exec>
+  </target>
+
+  <target name="img" depends="dump">
+    <echo>GCC-ARM create binary (image) file from elf file</echo>
+    <exec dir="${basedir}" executable="${exec}-objcopy">
+      <arg line=" LoadableApp.elf -O binary kernel.img"/>
+    </exec>
+  </target>
+
+  <target name="clean">
+    <echo>Clean project</echo>
+    <delete>
+      <fileset dir="${basedir}">
+        <include name="*.o"/>
+        <include name="*.bin"/>
+        <include name="*.elf"/>
+        <include name="*.lst"/>
+        <include name="*.hex"/>
+        <include name="*.img"/>
+      </fileset>
+    </delete>
+  </target>
+</project>
