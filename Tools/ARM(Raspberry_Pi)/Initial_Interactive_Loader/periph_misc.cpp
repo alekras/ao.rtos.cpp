@@ -86,3 +86,20 @@ AO_STACK * isr(AO_STACK *sp) {
 
   return ret_sp;
 }
+
+extern "C"
+void unexpected_exeption(int exception_mode) {
+  switch (exception_mode) {
+    case 0:
+      dump_debug_message("undefined instruction exception\r\n");
+      break;
+    case 1:
+      dump_debug_message("prefetch abort exception\r\n");
+      break;
+    case 2:
+      dump_debug_message("data abort exception\r\n");
+      break;
+    default:
+      break;
+  }
+}

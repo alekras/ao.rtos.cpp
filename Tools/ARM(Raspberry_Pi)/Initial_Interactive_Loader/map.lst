@@ -21,9 +21,9 @@ LOAD InitialInteractiveLoaderSM.o
 LOAD formatter.o
 LOAD /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a
 
-.text           0x0000000000008000     0x2924
+.text           0x0000000000008000     0x2a08
  *(.text*)
- .text          0x0000000000008000       0xd4 arm_cpu.o
+ .text          0x0000000000008000      0x14c arm_cpu.o
                 0x0000000000008000                _start
                 0x000000000000802c                GOTO
                 0x0000000000008034                exception_vectors
@@ -31,196 +31,200 @@ LOAD /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a
                 0x0000000000008074                enable_irq
                 0x000000000000807c                disable_irq
                 0x0000000000008084                get_sp
- .text          0x00000000000080d4        0x0 main.o
- .text.startup  0x00000000000080d4      0x1b4 main.o
-                0x00000000000080d4                main
- .text          0x0000000000008288      0x6f4 periph.o
-                0x0000000000008288                sys_timer_setup
-                0x00000000000082c8                arm_timer_setup
-                0x0000000000008314                led_setup
-                0x00000000000083b8                irq_handler_sys_timer
-                0x0000000000008418                irq_handler_arm_timer
-                0x0000000000008488                uart_recv
-                0x00000000000084c4                uart_send
-                0x000000000000854c                sendString
-                0x00000000000085f4                read_rx_buffer
-                0x0000000000008634                uart_init
-                0x0000000000008738                irq_handler_mini_uart
-                0x0000000000008800                irq_vectors_setup
-                0x0000000000008828                dump_memory
-                0x000000000000888c                dump_debug_init
-                0x00000000000088b4                dump_debug_message
-                0x0000000000008918                processInterrupt
-                0x000000000000892c                isr
- .text          0x000000000000897c      0x870 Hex2BinEFSMachine.o
-                0x000000000000897c                Hex2BinEFSMachine::initial(Phase, char*)
-                0x0000000000008a28                Hex2BinEFSMachine::address(Phase, char*)
-                0x0000000000008b3c                Hex2BinEFSMachine::dataSize(Phase, char*)
-                0x0000000000008c24                Hex2BinEFSMachine::recordType(Phase, char*)
-                0x0000000000008d70                Hex2BinEFSMachine::data(Phase, char*)
-                0x0000000000008ed4                Hex2BinEFSMachine::Hex2BinEFSMachine()
-                0x0000000000008ed4                Hex2BinEFSMachine::Hex2BinEFSMachine()
-                0x0000000000008f04                convert
-                0x0000000000008f3c                Hex2BinEFSMachine::debug(char*, Phase, char*)
-                0x0000000000008f40                Hex2BinEFSMachine::processRecord()
-                0x0000000000009108                Hex2BinEFSMachine::checkSum(Phase, char*)
- .text          0x00000000000091ec      0xd8c InitialInteractiveLoaderSM.o
-                0x00000000000091ec                InitialInteractiveLoaderSM::help(Phase, char*)
-                0x0000000000009338                InitialInteractiveLoaderSM::format(Phase, char*)
-                0x000000000000940c                InitialInteractiveLoaderSM::go(Phase, char*)
-                0x0000000000009960                InitialInteractiveLoaderSM::initial(Phase, char*)
-                0x00000000000099a4                InitialInteractiveLoaderSM::InitialInteractiveLoaderSM()
-                0x00000000000099a4                InitialInteractiveLoaderSM::InitialInteractiveLoaderSM()
-                0x00000000000099e4                int2hexString(unsigned int, char*, int)
-                0x0000000000009a24                InitialInteractiveLoaderSM::debug()
-                0x0000000000009a28                InitialInteractiveLoaderSM::runOutputDump()
-                0x0000000000009a80                InitialInteractiveLoaderSM::outputDump(Phase, char*)
-                0x0000000000009b48                InitialInteractiveLoaderSM::runCommand(int, int)
-                0x0000000000009c94                InitialInteractiveLoaderSM::display(Phase, char*)
-                0x0000000000009e18                InitialInteractiveLoaderSM::runHex2Bin()
-                0x0000000000009eac                InitialInteractiveLoaderSM::load(Phase, char*)
- .text          0x0000000000009f78      0x894 formatter.o
-                0x0000000000009f78                FormatParser::initial(char const*)
-                0x0000000000009fb0                FormatParser::finish(char const*)
-                0x0000000000009fb8                FormatParser::error(char const*)
-                0x0000000000009fc0                FormatParser::text(char const*)
-                0x000000000000a030                FormatParser::controlCmd(char const*)
-                0x000000000000a0c0                FormatParser::format(char*, char const*, ...)
-                0x000000000000a168                stringToString(char*, char*, int)
-                0x000000000000a260                intToString(char*, int, int, char)
-                0x000000000000a3e8                FormatParser::processParam(char const*)
-                0x000000000000a4a8                FormatParser::control(char const*)
-                0x000000000000a694                FormatParser::controlDig(char const*)
- .text          0x000000000000a80c      0x114 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_udivsi3.o)
-                0x000000000000a80c                __udivsi3
-                0x000000000000a80c                __aeabi_uidiv
-                0x000000000000a900                __aeabi_uidivmod
- .text          0x000000000000a920        0x4 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_dvmd_tls.o)
-                0x000000000000a920                __aeabi_ldiv0
-                0x000000000000a920                __aeabi_idiv0
+                0x000000000000808c                set_sp
+                0x0000000000008094                get_cpsr
+                0x000000000000809c                get_spsr
+ .text          0x000000000000814c        0x0 main.o
+ .text.startup  0x000000000000814c      0x1b4 main.o
+                0x000000000000814c                main
+ .text          0x0000000000008300      0x760 periph.o
+                0x0000000000008340                sys_timer_setup
+                0x0000000000008380                arm_timer_setup
+                0x00000000000083cc                led_setup
+                0x0000000000008470                irq_handler_sys_timer
+                0x00000000000084d0                irq_handler_arm_timer
+                0x0000000000008540                uart_recv
+                0x000000000000857c                uart_send
+                0x00000000000085fc                sendString
+                0x000000000000869c                read_rx_buffer
+                0x00000000000086dc                uart_init
+                0x00000000000087d8                irq_handler_mini_uart
+                0x0000000000008898                irq_vectors_setup
+                0x00000000000088c0                dump_memory
+                0x0000000000008924                dump_debug_init
+                0x000000000000894c                dump_debug_message
+                0x000000000000896c                processInterrupt
+                0x0000000000008980                isr
+                0x00000000000089d0                unexpected_exeption
+ .text          0x0000000000008a60      0x870 Hex2BinEFSMachine.o
+                0x0000000000008a60                Hex2BinEFSMachine::initial(Phase, char*)
+                0x0000000000008b0c                Hex2BinEFSMachine::address(Phase, char*)
+                0x0000000000008c20                Hex2BinEFSMachine::dataSize(Phase, char*)
+                0x0000000000008d08                Hex2BinEFSMachine::recordType(Phase, char*)
+                0x0000000000008e54                Hex2BinEFSMachine::data(Phase, char*)
+                0x0000000000008fb8                Hex2BinEFSMachine::Hex2BinEFSMachine()
+                0x0000000000008fb8                Hex2BinEFSMachine::Hex2BinEFSMachine()
+                0x0000000000008fe8                convert
+                0x0000000000009020                Hex2BinEFSMachine::debug(char*, Phase, char*)
+                0x0000000000009024                Hex2BinEFSMachine::processRecord()
+                0x00000000000091ec                Hex2BinEFSMachine::checkSum(Phase, char*)
+ .text          0x00000000000092d0      0xd8c InitialInteractiveLoaderSM.o
+                0x00000000000092d0                InitialInteractiveLoaderSM::help(Phase, char*)
+                0x000000000000941c                InitialInteractiveLoaderSM::format(Phase, char*)
+                0x00000000000094f0                InitialInteractiveLoaderSM::go(Phase, char*)
+                0x0000000000009a44                InitialInteractiveLoaderSM::initial(Phase, char*)
+                0x0000000000009a88                InitialInteractiveLoaderSM::InitialInteractiveLoaderSM()
+                0x0000000000009a88                InitialInteractiveLoaderSM::InitialInteractiveLoaderSM()
+                0x0000000000009ac8                int2hexString(unsigned int, char*, int)
+                0x0000000000009b08                InitialInteractiveLoaderSM::debug()
+                0x0000000000009b0c                InitialInteractiveLoaderSM::runOutputDump()
+                0x0000000000009b64                InitialInteractiveLoaderSM::outputDump(Phase, char*)
+                0x0000000000009c2c                InitialInteractiveLoaderSM::runCommand(int, int)
+                0x0000000000009d78                InitialInteractiveLoaderSM::display(Phase, char*)
+                0x0000000000009efc                InitialInteractiveLoaderSM::runHex2Bin()
+                0x0000000000009f90                InitialInteractiveLoaderSM::load(Phase, char*)
+ .text          0x000000000000a05c      0x894 formatter.o
+                0x000000000000a05c                FormatParser::initial(char const*)
+                0x000000000000a094                FormatParser::finish(char const*)
+                0x000000000000a09c                FormatParser::error(char const*)
+                0x000000000000a0a4                FormatParser::text(char const*)
+                0x000000000000a114                FormatParser::controlCmd(char const*)
+                0x000000000000a1a4                FormatParser::format(char*, char const*, ...)
+                0x000000000000a24c                stringToString(char*, char*, int)
+                0x000000000000a344                intToString(char*, int, int, char)
+                0x000000000000a4cc                FormatParser::processParam(char const*)
+                0x000000000000a58c                FormatParser::control(char const*)
+                0x000000000000a778                FormatParser::controlDig(char const*)
+ .text          0x000000000000a8f0      0x114 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_udivsi3.o)
+                0x000000000000a8f0                __udivsi3
+                0x000000000000a8f0                __aeabi_uidiv
+                0x000000000000a9e4                __aeabi_uidivmod
+ .text          0x000000000000aa04        0x4 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_dvmd_tls.o)
+                0x000000000000aa04                __aeabi_ldiv0
+                0x000000000000aa04                __aeabi_idiv0
 
-.rodata.str1.4  0x000000000000a924      0x324
+.rodata.str1.4  0x000000000000aa08      0x37c
  .rodata.str1.4
-                0x000000000000a924      0x268 main.o
+                0x000000000000aa08      0x268 main.o
  .rodata.str1.4
-                0x000000000000ab8c        0x9 periph.o
-                                          0xc (size before relaxing)
- *fill*         0x000000000000ab95        0x3 
+                0x000000000000ac70       0x63 periph.o
+                                         0x64 (size before relaxing)
+ *fill*         0x000000000000acd3        0x1 
  .rodata.str1.4
-                0x000000000000ab98       0x79 Hex2BinEFSMachine.o
+                0x000000000000acd4       0x79 Hex2BinEFSMachine.o
                                          0x7c (size before relaxing)
- *fill*         0x000000000000ac11        0x3 
+ *fill*         0x000000000000ad4d        0x3 
  .rodata.str1.4
-                0x000000000000ac14       0x34 InitialInteractiveLoaderSM.o
+                0x000000000000ad50       0x34 InitialInteractiveLoaderSM.o
                                         0x248 (size before relaxing)
 
-.rodata         0x000000000000ac48       0x20
- .rodata        0x000000000000ac48       0x10 InitialInteractiveLoaderSM.o
- .rodata        0x000000000000ac58       0x10 formatter.o
+.rodata         0x000000000000ad84       0x20
+ .rodata        0x000000000000ad84       0x10 InitialInteractiveLoaderSM.o
+ .rodata        0x000000000000ad94       0x10 formatter.o
 
-.data           0x000000000000ac68       0xb4
- .data          0x000000000000ac68        0x0 arm_cpu.o
- .data          0x000000000000ac68        0x0 main.o
- .data          0x000000000000ac68       0xb4 periph.o
-                0x000000000000ac68                pSYS_TIMER_CMP_1
-                0x000000000000ac6c                pSYS_TIMER_COUNT_LO
-                0x000000000000ac70                pSYS_TIMER_CNTRL_STAT
-                0x000000000000ac74                pENABLE_IRQ_1
-                0x000000000000ac78                pARM_TIMER_LD
-                0x000000000000ac7c                pARM_TIMER_CTL
-                0x000000000000ac80                pARM_TIMER_PDIV
-                0x000000000000ac84                pENABLE_IRQ_B
-                0x000000000000ac88                Gpio::pGPFSEL
-                0x000000000000ac8c                Gpio::pGPCLR
-                0x000000000000ac90                Gpio::pGPSET
-                0x000000000000ac94                pAUX_MU_STAT_REG
-                0x000000000000ac98                pAUX_MU_IO_REG
-                0x000000000000ac9c                pAUX_MU_IER_REG
-                0x000000000000aca0                pDISABLE_IRQ_1
-                0x000000000000aca4                pAUX_ENABLES
-                0x000000000000aca8                pAUX_MU_CNTL_REG
-                0x000000000000acac                pAUX_MU_LCR_REG
-                0x000000000000acb0                pAUX_MU_MCR_REG
-                0x000000000000acb4                pAUX_MU_IIR_REG
-                0x000000000000acb8                pAUX_MU_BAUD_REG
-                0x000000000000acbc                Gpio::pGPPUD
-                0x000000000000acc0                Gpio::pGPPUDCLK
-                0x000000000000acc4                pPENDING_IRQ_B
-                0x000000000000acc8                pARM_TIMER_IRQ
-                0x000000000000accc                pPENDING_IRQ_1
-                0x000000000000acd0                mailbox
-                0x000000000000acd4                pSYS_TIMER_CMP_3
-                0x000000000000acd8                pSYS_TIMER_CMP_2
-                0x000000000000acdc                pSYS_TIMER_CMP_0
-                0x000000000000ace0                pSYS_TIMER_COUNT_HI
-                0x000000000000ace4                pAUX_MU_SCRATCH
-                0x000000000000ace8                pAUX_MU_MSR_REG
-                0x000000000000acec                pAUX_MU_LSR_REG
-                0x000000000000acf0                pAUX_IRQ
-                0x000000000000acf4                pARM_TIMER_CNT
-                0x000000000000acf8                pARM_TIMER_RLD
-                0x000000000000acfc                pARM_TIMER_MSK_IRQ
-                0x000000000000ad00                pARM_TIMER_RAW_IRQ
-                0x000000000000ad04                pARM_TIMER_VAL
-                0x000000000000ad08                pDISABLE_IRQ_B
-                0x000000000000ad0c                pDISABLE_IRQ_2
-                0x000000000000ad10                pENABLE_IRQ_2
-                0x000000000000ad14                pPENDING_IRQ_2
-                0x000000000000ad18                Gpio::pGPLEV
- .data          0x000000000000ad1c        0x0 Hex2BinEFSMachine.o
- .data          0x000000000000ad1c        0x0 InitialInteractiveLoaderSM.o
- .data          0x000000000000ad1c        0x0 formatter.o
- .data          0x000000000000ad1c        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_udivsi3.o)
- .data          0x000000000000ad1c        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_dvmd_tls.o)
+.data           0x000000000000ada4       0xb4
+ .data          0x000000000000ada4        0x0 arm_cpu.o
+ .data          0x000000000000ada4        0x0 main.o
+ .data          0x000000000000ada4       0xb4 periph.o
+                0x000000000000ada4                pSYS_TIMER_CMP_1
+                0x000000000000ada8                pSYS_TIMER_COUNT_LO
+                0x000000000000adac                pSYS_TIMER_CNTRL_STAT
+                0x000000000000adb0                pENABLE_IRQ_1
+                0x000000000000adb4                pARM_TIMER_LD
+                0x000000000000adb8                pARM_TIMER_CTL
+                0x000000000000adbc                pARM_TIMER_PDIV
+                0x000000000000adc0                pENABLE_IRQ_B
+                0x000000000000adc4                Gpio::pGPFSEL
+                0x000000000000adc8                Gpio::pGPCLR
+                0x000000000000adcc                Gpio::pGPSET
+                0x000000000000add0                pAUX_MU_STAT_REG
+                0x000000000000add4                pAUX_MU_IO_REG
+                0x000000000000add8                pAUX_MU_IER_REG
+                0x000000000000addc                pDISABLE_IRQ_1
+                0x000000000000ade0                pAUX_ENABLES
+                0x000000000000ade4                pAUX_MU_CNTL_REG
+                0x000000000000ade8                pAUX_MU_LCR_REG
+                0x000000000000adec                pAUX_MU_MCR_REG
+                0x000000000000adf0                pAUX_MU_IIR_REG
+                0x000000000000adf4                pAUX_MU_BAUD_REG
+                0x000000000000adf8                Gpio::pGPPUD
+                0x000000000000adfc                Gpio::pGPPUDCLK
+                0x000000000000ae00                pPENDING_IRQ_B
+                0x000000000000ae04                pARM_TIMER_IRQ
+                0x000000000000ae08                pPENDING_IRQ_1
+                0x000000000000ae0c                mailbox
+                0x000000000000ae10                pSYS_TIMER_CMP_3
+                0x000000000000ae14                pSYS_TIMER_CMP_2
+                0x000000000000ae18                pSYS_TIMER_CMP_0
+                0x000000000000ae1c                pSYS_TIMER_COUNT_HI
+                0x000000000000ae20                pAUX_MU_SCRATCH
+                0x000000000000ae24                pAUX_MU_MSR_REG
+                0x000000000000ae28                pAUX_MU_LSR_REG
+                0x000000000000ae2c                pAUX_IRQ
+                0x000000000000ae30                pARM_TIMER_CNT
+                0x000000000000ae34                pARM_TIMER_RLD
+                0x000000000000ae38                pARM_TIMER_MSK_IRQ
+                0x000000000000ae3c                pARM_TIMER_RAW_IRQ
+                0x000000000000ae40                pARM_TIMER_VAL
+                0x000000000000ae44                pDISABLE_IRQ_B
+                0x000000000000ae48                pDISABLE_IRQ_2
+                0x000000000000ae4c                pENABLE_IRQ_2
+                0x000000000000ae50                pPENDING_IRQ_2
+                0x000000000000ae54                Gpio::pGPLEV
+ .data          0x000000000000ae58        0x0 Hex2BinEFSMachine.o
+ .data          0x000000000000ae58        0x0 InitialInteractiveLoaderSM.o
+ .data          0x000000000000ae58        0x0 formatter.o
+ .data          0x000000000000ae58        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_udivsi3.o)
+ .data          0x000000000000ae58        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_dvmd_tls.o)
 
-.igot.plt       0x000000000000ad1c        0x0
+.igot.plt       0x000000000000ae58        0x0
  .igot.plt      0x0000000000000000        0x0 arm_cpu.o
 
-.init_array     0x000000000000ad1c        0x4
- .init_array    0x000000000000ad1c        0x4 main.o
+.init_array     0x000000000000ae58        0x4
+ .init_array    0x000000000000ae58        0x4 main.o
 
-.glue_7         0x000000000000ad20        0x0
+.glue_7         0x000000000000ae5c        0x0
  .glue_7        0x0000000000000000        0x0 linker stubs
 
-.glue_7t        0x000000000000ad20        0x0
+.glue_7t        0x000000000000ae5c        0x0
  .glue_7t       0x0000000000000000        0x0 linker stubs
 
-.vfp11_veneer   0x000000000000ad20        0x0
+.vfp11_veneer   0x000000000000ae5c        0x0
  .vfp11_veneer  0x0000000000000000        0x0 linker stubs
 
-.v4_bx          0x000000000000ad20        0x0
+.v4_bx          0x000000000000ae5c        0x0
  .v4_bx         0x0000000000000000        0x0 linker stubs
 
-.iplt           0x000000000000ad20        0x0
+.iplt           0x000000000000ae5c        0x0
  .iplt          0x0000000000000000        0x0 arm_cpu.o
 
-.rel.dyn        0x000000000000ad20        0x0
+.rel.dyn        0x000000000000ae5c        0x0
  .rel.iplt      0x0000000000000000        0x0 arm_cpu.o
 
-.bss            0x000000000000ad20    0x1019c
+.bss            0x000000000000ae5c      0x29c
  *(.bss*)
- .bss           0x000000000000ad20        0x0 arm_cpu.o
- .bss           0x000000000000ad20       0x6c main.o
-                0x000000000000ad20                fp
-                0x000000000000ad3c                out
- .bss           0x000000000000ad8c    0x10130 periph.o
-                0x000000000000ad8c                gpio47
-                0x000000000000ad90                gpio10
-                0x000000000000ad94                gpio22
-                0x000000000000ada0                txhead
-                0x000000000000ada4                txbuffer
-                0x000000000001ada4                flag
-                0x000000000001ada8                txtail
-                0x000000000001adac                rxtail
-                0x000000000001adb0                rxhead
-                0x000000000001adb4                rxbuffer
-                0x000000000001aeb4                dump_pointer_storage
-                0x000000000001aeb8                dump_pointer
- .bss           0x000000000001aebc        0x0 Hex2BinEFSMachine.o
- .bss           0x000000000001aebc        0x0 InitialInteractiveLoaderSM.o
- .bss           0x000000000001aebc        0x0 formatter.o
- .bss           0x000000000001aebc        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_udivsi3.o)
- .bss           0x000000000001aebc        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_dvmd_tls.o)
+ .bss           0x000000000000ae5c        0x0 arm_cpu.o
+ .bss           0x000000000000ae5c       0x6c main.o
+                0x000000000000ae5c                fp
+                0x000000000000ae78                out
+ .bss           0x000000000000aec8      0x230 periph.o
+                0x000000000000aec8                dump_pointer
+                0x000000000000aecc                dump_pointer_storage
+                0x000000000000aed0                gpio47
+                0x000000000000aed4                gpio10
+                0x000000000000aed8                gpio22
+                0x000000000000aee4                txhead
+                0x000000000000aee8                txbuffer
+                0x000000000000afe8                flag
+                0x000000000000afec                txtail
+                0x000000000000aff0                rxtail
+                0x000000000000aff4                rxhead
+                0x000000000000aff8                rxbuffer
+ .bss           0x000000000000b0f8        0x0 Hex2BinEFSMachine.o
+ .bss           0x000000000000b0f8        0x0 InitialInteractiveLoaderSM.o
+ .bss           0x000000000000b0f8        0x0 formatter.o
+ .bss           0x000000000000b0f8        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_udivsi3.o)
+ .bss           0x000000000000b0f8        0x0 /opt/gcc-arm/latest/lib/gcc/arm-none-eabi/4.8.3/libgcc.a(_dvmd_tls.o)
 OUTPUT(InitialInteractiveLoaderSM.elf elf32-littlearm)
 
 .ARM.attributes
