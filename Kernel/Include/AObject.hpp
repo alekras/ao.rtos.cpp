@@ -40,15 +40,21 @@ class AObject : public Process {
 /***************** Methods ***************/
  protected:
 /**
- * Method run executes infinite loop, retrieves events from buffer and passes its to process
+ * Method run executes custom code that implements given AO behavior.
  */
    virtual void run();
 
  private:
 /**
+ * Method start executes infinite loop that includes method run(),
+ * retrieves events from buffer and passes its to processMessage()
+ */
+  void start();
+
+/**
  * Helper static method to initiate run()
  */
-   static void cdecl staticRun( AObject * ao );
+   static void cdecl staticStart( AObject * ao );
 
 /** Other AO or scheduler invoke this method to deliver message to this AO for processing.
  *  @param e - incoming message.
@@ -57,9 +63,10 @@ class AObject : public Process {
 
  protected:
 /**
- * Method that processes the coming event. As the method is virtual
- *  the subclasses can override it. The method for this class just passes
- *  event to state machine.
+ *  Method processes the coming event. As the method is virtual
+ *  the subclasses can override it. The method for this subclass implements AO
+ *  behavior itself (together with run()) or just passes
+ *  event to state machine that can implement more compose functionality.
  */
    virtual DWORD processMessage( Message * );
 

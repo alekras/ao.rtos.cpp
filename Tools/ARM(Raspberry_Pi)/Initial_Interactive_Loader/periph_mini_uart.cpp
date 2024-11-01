@@ -37,7 +37,7 @@ unsigned char uart_recv() {
 volatile bool flag;
 volatile unsigned int txhead;
 volatile unsigned int txtail;
-#define TXBUFMASK 0xFF
+#define TXBUFMASK 0xFFF
 volatile unsigned char txbuffer[TXBUFMASK+1];
 
 //------------------------------------------------------------------------

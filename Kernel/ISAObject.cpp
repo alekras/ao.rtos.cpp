@@ -66,16 +66,4 @@ processInterrupt( DWORD iN, AO_STACK * stp ) {
 
 void
 ISAObject::run() {
-  Message msg;
-  while( stop == 0 ) {    // this is infinite loop while stop = 0;
-    ready = (BYTE) getIncomingMessage( &msg );
-    fp1.format(out, ">>> ISAObject::run() obj=%8h, stack=%8h realSP=%8h prio=%d ready=%d\r\n",
-        this, getSP(), get_sp(), getPriority(),ready);  // @debug
-    dump_debug_message(out);  // @debug
-    if (ready == 0) {
-      AO_CONTEXT_SW();     // pass CPU control to others AO by invoking of scheduler
-    } else {
-      processMessage( &msg );
-    }
-  }
 }

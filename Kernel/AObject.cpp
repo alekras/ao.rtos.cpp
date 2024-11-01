@@ -21,8 +21,8 @@ extern "C" void dump_debug_message(char *); //@debug
 typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function run()
 
 void cdecl
-AObject::staticRun( AObject * ao ) {
-  ao->run();
+AObject::staticStart( AObject * ao ) {
+  ao->start();
 }
 
 AObject::AObject( DWORD prio )
@@ -30,7 +30,7 @@ AObject::AObject( DWORD prio )
   list = new ListenerList(AO_LISTENERS_LIST_LENGTH);
   incomingRingBuffer = new RingBuffer<Message>(AO_RINGBUFFER_LENGTH);
   outgoingRingBuffer = new RingBuffer<Message>(AO_RINGBUFFER_LENGTH);
-  Process::init( this, &staticRun );
+  Process::init( this, &staticStart );
 }
 
 AObject::~AObject() {
@@ -40,15 +40,20 @@ AObject::~AObject() {
 }
 
 void
-AObject::run() {
+AObject::start() {
   Message msg;
   int failedProcess = 0;   // count of failed try to process incoming events from buffer.
   while ( stop == 0 ) {    // this is infinite loop while stop = 0;
-    fp1.format(out, "> AObject::run() prio=%d\r\n", getPriority());
+    run();
+    fp1.format(out, "> AObject::start() prio=%d\r\n", getPriority());
     dump_debug_message(out);  // @debug
     if ( incomingRingBuffer->get( &msg ) == 0 ) { // try to read event from buffer
-      ready = 0;          // have no any events to process
-      AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
+      if (priority == AO_SCHEDULED_LIST_LENGTH - 1) { // is it scheduler
+        ready = 1;          // scheduler is always ready to run
+      } else {
+        ready = 0;          // have no any events to process
+        AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
+      }
     } else {
       Message rev( msg );                   // create a clone of msg; TODO: because msg can be changed during processing by HSM ==not good==
       if( processMessage( &msg ) == 0 ) {  // processMessage() can not complete a proceeding of the event
@@ -65,6 +70,10 @@ AObject::run() {
       }
     }
   }
+}
+
+void
+AObject::run() {
 }
 
 /**

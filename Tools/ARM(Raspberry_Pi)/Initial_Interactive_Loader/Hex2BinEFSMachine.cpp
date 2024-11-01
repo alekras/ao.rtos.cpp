@@ -19,7 +19,6 @@
  */
 
 #include "Include/hex2bin.hpp"
-extern "C" unsigned int uart_recv();
 extern "C" void sendString(char*);
 extern "C" int convert(int, char);
 
@@ -253,7 +252,7 @@ Hex2BinEFSMachine::processRecord() {
       if (addressType == 1) {
         phMemoryAddress = (unsigned char*) (linearAddress + recordAddress);
       } else if (addressType == 2) {
-        phMemoryAddress = (unsigned char*) ((segmentAddress << 4) + recordAddress);
+        phMemoryAddress = (unsigned char*) (segmentAddress + recordAddress);
       } else {
         phMemoryAddress = (unsigned char*) (recordAddress);
       }
@@ -272,8 +271,8 @@ Hex2BinEFSMachine::processRecord() {
       return 1;
     case SEGMENT_ADDRESS:
       addressType = 2;
-      segmentAddress = 256 * dataArray[0] + dataArray[1];
-      fp.format(out, "extended segment address: %8h\n\r", segmentAddress);
+      segmentAddress = (256 * dataArray[0] + dataArray[1]) << 4;
+      fp.format(out, "extended segment address: %8h (or start address)\n\r", segmentAddress);
       sendString(out);
       break;
     case LINEAR_ADDRESS:
@@ -287,8 +286,8 @@ Hex2BinEFSMachine::processRecord() {
       a = 256 * dataArray[0] + dataArray[1];
       a <<= 16;
       a = a + 256 * dataArray[2] + dataArray[3];
-      fp.format(out, "starting address: %8h\n\r", a);
-      sendString(out);
+//      fp.format(out, "starting address: %8h\n\r", a);
+//      sendString(out);
       break;
     default:
       break;
@@ -296,7 +295,7 @@ Hex2BinEFSMachine::processRecord() {
 //  fp.format(out, "--- calculated sum: %2h\n\r    read sum: %2h\n\r", (1 + (~sum) & 0xFF), cSum);
 //  sendString(out);
   if(( 1 + (~sum) & 0xFF ) != cSum) {
-    sendString(" --- Wrong cs!\n\r");
+    sendString(" --- Wrong check sum!\n\r");
   }
   return 0;
 }

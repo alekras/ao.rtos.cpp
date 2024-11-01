@@ -52,7 +52,7 @@ int main() {
   sendString(" B              - set output memory format in bytes.\n\r");
   sendString(" W              - set output memory format in words (2 bytes).\n\r");
   sendString(" WW             - set output memory format in double words (4 bytes).\n\r");
-  sendString(" L              - load hex file.\n\r");
+  sendString(" L              - upload hex file.\n\r");
   sendString(" H              - output help message.\n\r");
   sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
 

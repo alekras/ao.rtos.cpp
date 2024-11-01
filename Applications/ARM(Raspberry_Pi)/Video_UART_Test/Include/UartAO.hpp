@@ -33,6 +33,9 @@ class UartAO : public ISAObject {
   FormatParser fp;
   volatile int sec;
 
+  BYTE receivedSymbol[2];
+  Message msg, *out;
+
  protected:
   virtual void run();
   virtual DWORD processMessage(Message*);

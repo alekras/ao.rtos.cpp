@@ -90,14 +90,6 @@ AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
     }
   }
 
-//  for( int i = 0; i < N; i++ ) {                // navigate thru the table from highest priority to lowest one
-//    obj = scheduledAOTable[i];
-//    if( (obj != (AObject *)0) && (obj->isReady() == 1) ) { // element has to be not null and AO has to be ready to run
-//      currentPrio = obj->getPriority();        // set new current AO priority
-//      return obj->getSP();                     // return stack pointer of new current AO to switch on CPU context.
-//    }
-//  }
-
   if (j < N) {
     obj = scheduledAOTable[j];
     fp1.format(out, "< srvIntrr(1): obj=%8h stack=%h curPrio=%d\r\n", obj, stkp, currentPrio);  // @debug
@@ -126,15 +118,15 @@ AOScheduler::startOS() {
 
 void
 AOScheduler::run() {
-  Message msg;
-  while ( stop == 0 ) {    // this is infinite loop while stop = 0;
-    ready = (BYTE)getIncomingMessage(&msg);
-    if (ready == 1) {
-      processMessage(&msg);
-    }
-    ready = 1;          // scheduler is always ready to run
-//    AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
-  }
+//  Message msg;
+//  while ( stop == 0 ) {    // this is infinite loop while stop = 0;
+//    ready = (BYTE)getIncomingMessage(&msg);
+//    if (ready == 1) {
+//      processMessage(&msg);
+//    }
+//    ready = 1;          // scheduler is always ready to run
+////    AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
+//  }
 }
 
 DWORD

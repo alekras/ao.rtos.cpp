@@ -19,6 +19,9 @@
 UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();
   logMsg = new Message(0, 0, (BYTE *)outputString, logging);
+  receivedSymbol[0] = 0;
+  receivedSymbol[1] = 0;
+  out = new Message(0, 0, (BYTE *)receivedSymbol, command);
 }
 
 void
@@ -74,21 +77,11 @@ UartAO::serviceInterrupt(AO_STACK * stkp) {
 
 void
 UartAO::run() {
-  BYTE receivedSymbol[] = {0, 0};
-  Message msg, out(0, 0, receivedSymbol, command);
-  while( stop == 0 ) {    // this is infinite loop while stop = 0;
-    while (rxtail != rxhead) {
-      receivedSymbol[0] = rxbuffer[rxtail];
-      rxtail = (rxtail + 1) & RXBUFMASK;
-      putOutgoingMessage(&out);
-      processMessage( &out ); // make echo
-    }
-    ready = (BYTE) getIncomingMessage( &msg );
-    if (ready == 0) {
-      AO_CONTEXT_SW();     // pass CPU control to others AO by invoking of scheduler
-    } else {
-      processMessage( &msg );
-    }
+  while (rxtail != rxhead) {
+    receivedSymbol[0] = rxbuffer[rxtail];
+    rxtail = (rxtail + 1) & RXBUFMASK;
+    putOutgoingMessage(out);
+    processMessage( out ); // make echo
   }
 }
 

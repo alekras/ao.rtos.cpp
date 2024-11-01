@@ -12,7 +12,9 @@ class MemoryManager {
     WORD size;
   };
   private:
-    BYTE *start, *new_alloc, *end;
+    BYTE *start,     // pointer to beginning of dynamic memory area.
+         *new_alloc, // pointer to memory ready for allocation.
+         *end;       // pointer to end of available memory.
     static BYTE memory[HEAP_MEMORY_SIZE];
   public:
            MemoryManager() { start = new_alloc = memory; end = start + HEAP_MEMORY_SIZE; };

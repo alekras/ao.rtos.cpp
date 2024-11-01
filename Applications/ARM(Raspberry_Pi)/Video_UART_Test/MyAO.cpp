@@ -35,12 +35,22 @@ MyAO::processMessage(Message * e) {
             getPriority(), counter, incomingBufferLoad());
         putOutgoingMessage(logMsg);
       }
-      switch (second % 2) {
+      switch (second % 4) {
         case 0:
           gpio22->clearLevel();
+          gpio10->clearLevel();
           break;
         case 1:
+          gpio22->clearLevel();
+          gpio10->setLevel();
+          break;
+        case 2:
           gpio22->setLevel();
+          gpio10->clearLevel();
+          break;
+        case 3:
+          gpio22->setLevel();
+          gpio10->setLevel();
           break;
         default:
           break;
@@ -66,5 +76,4 @@ MyAO::processMessage(Message * e) {
 }
 
 void MyAO::log(BYTE level, char* text) {
-
 }

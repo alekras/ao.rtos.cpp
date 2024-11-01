@@ -21,7 +21,6 @@
 #include "Include/iil.hpp"
 #include "Include/hex2bin.hpp"
 
-extern "C" unsigned int uart_recv();
 extern "C" unsigned char read_rx_buffer();
 extern "C" unsigned int uart_send(char);
 extern "C" void sendString(char*);
@@ -345,7 +344,6 @@ InitialInteractiveLoaderSM::load(Phase phase, char *s) {
           break;
       }
       if (count >= 3) {
-        sendString("\n\r");
         TRANSITION(&InitialInteractiveLoaderSM::initial);
       }
       break;
@@ -392,7 +390,7 @@ InitialInteractiveLoaderSM::help(Phase phase, char *s) {
       sendString(" B              - set output memory format in bytes.\n\r");
       sendString(" W              - set output memory format in words (2 bytes).\n\r");
       sendString(" WW             - set output memory format in double words (4 bytes).\n\r");
-      sendString(" L              - load hex file.\n\r");
+      sendString(" L              - upload hex file.\n\r");
       sendString(" H              - output help message.\n\r");
       sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
       break;
@@ -402,17 +400,14 @@ InitialInteractiveLoaderSM::help(Phase phase, char *s) {
 
 void
 InitialInteractiveLoaderSM::runHex2Bin() {
-  char out[80];
-//  FormatParser fp;
-
-//  sendString("->runHex2Bin\n\r");
+  sendString("Send hex file to target.\n\r");
   unsigned char c;
   unsigned char* memPtr = (unsigned char*) INPUT_HEX_BUFFER;
   int i = 0;
   unsigned char* pattern = (unsigned char*) ":00000001FF\r\n";
 
   do {
-    c = read_rx_buffer(); //uart_recv();
+    c = read_rx_buffer();
     *(memPtr++) = c;
     if (c == *(pattern + i)) {
       i++;
@@ -424,25 +419,8 @@ InitialInteractiveLoaderSM::runHex2Bin() {
     }
   } while (1);
 
-//  memPtr = (unsigned char*) 0x100000;
-//  i = 0;
-//  do {
-//    c = *(memPtr++);
-//    uart_send(c);
-//    fp.format(out, "=%c i:%d patt:%c\n\r", c, i, *(pattern + i));
-//    sendString(out);
-//    if (c == *(pattern + i)) {
-//      i++;
-//    } else {
-//      i = 0;
-//    }
-//    if (0 == *(pattern + i)) {
-//      break;
-//    }
-//  } while (1);
-
   Hex2BinEFSMachine fsm;
-  memPtr = (unsigned char*) 0x100000;
+  memPtr = (unsigned char*) INPUT_HEX_BUFFER;
   do {
     if (fsm.dispatch((char*) (memPtr++)) > 0 ) {
       break;
