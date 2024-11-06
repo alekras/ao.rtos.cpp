@@ -70,7 +70,7 @@ AOScheduler::remove( AObject * obj ) {
 
 AO_STACK *
 AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
-  fp1.format(out, "> srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
+  fp1.format(out, " >> AOScheduler::srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
   dump_debug_message(out);  // @debug
   AObject * obj;
   scheduledAOTable[currentPrio]->setSP( stkp ); // save a pointer to stack of a current Active object
@@ -92,14 +92,14 @@ AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
 
   if (j < N) {
     obj = scheduledAOTable[j];
-    fp1.format(out, "< srvIntrr(1): obj=%8h stack=%h curPrio=%d\r\n", obj, stkp, currentPrio);  // @debug
+    fp1.format(out, " << AOScheduler::srvIntrr(1): obj=%8h stack=%h curPrio=%d\r\n", obj, stkp, currentPrio);  // @debug
     dump_debug_message(out);  // @debug
-    dump_stack(stkp, get_sp(), get_cpsr(), get_spsr());  // @debug
+//    dump_stack(stkp, get_sp(), get_cpsr(), get_spsr());  // @debug
     return stkp;
   }
                                  // if scheduler does not find any ready to run AO:
   currentPrio = this->priority;  // go to idle state of RTOS : scheduler.run();
-  fp1.format(out, "< srvIntrr(2): stack=%h curPrio=%d\r\n", this->sp, currentPrio);  // @debug
+  fp1.format(out, " << AOScheduler::srvIntrr(2): stack=%h curPrio=%d\r\n", this->sp, currentPrio);  // @debug
   dump_debug_message(out);  // @debug
   return this->sp;
 }
@@ -116,17 +116,29 @@ AOScheduler::startOS() {
 // never come in here
 }
 
+void *
+cdecl
+processSysCommand( DWORD size, DWORD type) {
+  fp1.format(out, "> processSysCommand: size=%d type=%d\r\n", size, type);  // @debug
+  dump_debug_message(out);  // @debug
+  switch (type) {
+    case 1:
+      return mm->malloc(size);
+    case 2:
+      mm->free((void *)size);
+      return 0;
+    default:
+      return 0;
+  }
+}
+
 void
 AOScheduler::run() {
-//  Message msg;
-//  while ( stop == 0 ) {    // this is infinite loop while stop = 0;
-//    ready = (BYTE)getIncomingMessage(&msg);
-//    if (ready == 1) {
-//      processMessage(&msg);
-//    }
-//    ready = 1;          // scheduler is always ready to run
-////    AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
-//  }
+  dump_debug_message("> run: scheduler\r\n");  // @debug
+  int * p = new int[5];
+  fp1.format(out, "> run: p=%d\r\n", p);  // @debug
+  dump_debug_message(out);  // @debug
+  delete[] p;
 }
 
 DWORD

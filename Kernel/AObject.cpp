@@ -45,8 +45,7 @@ AObject::start() {
   int failedProcess = 0;   // count of failed try to process incoming events from buffer.
   while ( stop == 0 ) {    // this is infinite loop while stop = 0;
     run();
-    fp1.format(out, "> AObject::start() prio=%d\r\n", getPriority());
-    dump_debug_message(out);  // @debug
+
     if ( incomingRingBuffer->get( &msg ) == 0 ) { // try to read event from buffer
       if (priority == AO_SCHEDULED_LIST_LENGTH - 1) { // is it scheduler
         ready = 1;          // scheduler is always ready to run

@@ -15,13 +15,16 @@
 */
 
 #include "./Include/UartAO.hpp"
+extern char out[200]; // @debug
+extern FormatParser fp1; // @debug
+extern "C" void dump_debug_message(char *); //@debug
 
 UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();
   logMsg = new Message(0, 0, (BYTE *)outputString, logging);
   receivedSymbol[0] = 0;
   receivedSymbol[1] = 0;
-  out = new Message(0, 0, (BYTE *)receivedSymbol, command);
+  outMsg = new Message(0, 0, (BYTE *)receivedSymbol, command);
 }
 
 void
@@ -52,7 +55,7 @@ UartAO::initUart() {
 
 AO_STACK *
 UartAO::serviceInterrupt(AO_STACK * stkp) {
-  unsigned int status;
+  DWORD status;
   do {
     status = *pAUX_MU_IIR_REG;
     if (status & 0x1) break;
@@ -80,9 +83,15 @@ UartAO::run() {
   while (rxtail != rxhead) {
     receivedSymbol[0] = rxbuffer[rxtail];
     rxtail = (rxtail + 1) & RXBUFMASK;
-    putOutgoingMessage(out);
-    processMessage( out ); // make echo
+    putOutgoingMessage(outMsg);
+    processMessage( outMsg ); // make echo
   }
+}
+
+DWORD stringLength(BYTE * string) {
+  DWORD i = 0;
+  while (string[i++] != 0) {}
+  return --i;
 }
 
 DWORD
@@ -92,6 +101,15 @@ UartAO::processMessage(Message * msg) {
     case logging :
       {
         BYTE *string = msg->getString();
+        DWORD l = stringLength(string);
+        DWORD available = (txhead >= txtail) ?
+          (TXBUFMASK + 1 - (txhead - txtail)) :
+          (txtail - txhead);
+        fp1.format(out, "> UartAO::processMessage l=%d avail=%d\n\r", l, available); //@debug
+        dump_debug_message(out); //@debug
+        if (available < l) {
+          return 0;
+        }
         while (*string != 0) {
           txbuffer[txhead] = *(string++);
           txhead = (txhead + 1) & TXBUFMASK;

@@ -58,7 +58,6 @@ extern "C" void disable_irq();
 * Context switching by using program swi interrupt
 *********************************************************************************************************
 */
-#define  AO_CONTEXT_SW()               \
-    asm("svc #0");
+#define  AO_CONTEXT_SW() asm("svc #0");
 
 #endif /* _OS_CPU_HPP */

@@ -208,10 +208,6 @@ InitialInteractiveLoaderSM::runOutputDump() {
     do {
       buff[i++] = *dump_pointer;
     } while (*(dump_pointer++) != 0);
-//    while (*dump_pointer != 0) {
-//      buff[i++] = *(dump_pointer++);
-//    }
-//    buff[i] = *(dump_pointer++);
     sendString(buff);
   }
 }

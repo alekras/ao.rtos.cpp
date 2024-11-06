@@ -18,9 +18,11 @@
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
 #include "formatter.hpp"
 
-//extern "C" void irq_handler_mini_uart();
 extern "C" AO_STACK * processInterrupt( DWORD iN, AO_STACK * stp );
-//extern "C" void sendString(char* buff); // @debug
+extern "C" unsigned int * get_sp(void);
+extern "C" unsigned int get_cpsr(void);
+extern "C" unsigned int get_spsr(void);
+
 extern char out[200]; // @debug
 extern FormatParser fp1; // @debug
 
@@ -76,6 +78,16 @@ void dump_stack(unsigned int * ssp, unsigned int * csp, unsigned int cpsr, unsig
 }
 
 extern "C"
+void dump_stack_(unsigned int * sp) {
+  fp1.format(out, "-- current SP=%8h CPSR=%8h SPSR=%8h --\r\n", get_sp(), get_cpsr(), get_spsr());
+  dump_debug_message(out);
+  for(int i = 0; i < 16; i++) {
+    fp1.format(out, "%8h) %8h (%s)\r\n", (sp + i), *(sp + i), reg_names[i]);
+    dump_debug_message(out);
+  }
+}
+
+extern "C"
 void arm_timer_setup(int p_msec) {
 // ARM timer freq = 250MHz divider = 0x7C = 124, so timer freq = 250/(124 + 1) = 2MHz
 
@@ -115,18 +127,19 @@ AO_STACK * isr(AO_STACK *sp) {
 }
 
 extern "C"
-void unexpected_exeption(int exception_mode) {
-  switch (exception_mode) {
-    case 0:
-      dump_debug_message("undefined instruction exception\r\n");
-      break;
-    case 1:
-      dump_debug_message("prefetch abort exception\r\n");
-      break;
-    case 2:
-      dump_debug_message("data abort exception\r\n");
-      break;
-    default:
-      break;
-  }
+void undefined_instruction_exeption(unsigned int * sp) {
+  dump_debug_message("undefined instruction exception\r\n");
+  dump_stack_(sp);
+}
+
+extern "C"
+void prefetch_abort_exeption(unsigned int * sp) {
+  dump_debug_message("prefetch abort exception\r\n");
+  dump_stack_(sp);
+}
+
+extern "C"
+void data_abort_exeption(unsigned int * sp) {
+  dump_debug_message("data abort exception\r\n");
+  dump_stack_(sp);
 }

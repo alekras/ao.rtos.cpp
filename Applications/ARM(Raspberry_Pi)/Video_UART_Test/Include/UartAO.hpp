@@ -34,7 +34,7 @@ class UartAO : public ISAObject {
   volatile int sec;
 
   BYTE receivedSymbol[2];
-  Message msg, *out;
+  Message msg, *outMsg;
 
  protected:
   virtual void run();

@@ -244,7 +244,6 @@ Hex2BinEFSMachine::checkSum(Phase phase, char *s) {
 int
 Hex2BinEFSMachine::processRecord() {
   char out[80];
-  FormatParser fp;
 
   int a, a1, ma;
   switch(rType) {

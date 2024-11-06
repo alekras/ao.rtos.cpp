@@ -56,7 +56,17 @@ void uart_send(char c) {
 extern "C"
 void sendString(char* buff) {
   char * i = buff;
+  int r;
   while (*i != 0) {
+    r = txtail - txhead;
+    if (r > 0 && r < 3) {
+      for (int j = 0; j < 1000; j++) {
+        r = txtail - txhead;
+        if (r > 0 && r > 20) {
+          break;
+        }
+      }
+    }
     txbuffer[txhead] = *(i++);
     txhead = (txhead + 1) & TXBUFMASK;
   }

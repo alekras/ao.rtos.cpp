@@ -19,13 +19,13 @@
 
 #include "commonDef.hpp"
 #include "ISAObject.hpp"
+#include "memory.hpp"
 
+extern MemoryManager* mm;
 /**
  * static external functions invoked directly after interrupt.
- * Pointers to those function are kept in IDT ( see porting information )
  */
-//extern "C" void timerISR( void );
-//extern "C" void schedulerISR( void );
+extern "C" void * cdecl processSysCommand( DWORD, DWORD );
 
 /**
  * Class AOScheduler is responsible for looking for Active Object in RTOS

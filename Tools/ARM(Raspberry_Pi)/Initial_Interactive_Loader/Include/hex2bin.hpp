@@ -51,6 +51,7 @@ class Hex2BinEFSMachine : public Efsm<char> {
     unsigned char* phMemoryAddress;
     int rType;
     int cSum;
+    FormatParser fp;
 // States implementation:
     int initial(Phase, char *);
 //    int record(Phase, char *);
