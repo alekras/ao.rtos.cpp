@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2014 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -119,8 +119,8 @@ AOScheduler::startOS() {
 void *
 cdecl
 processSysCommand( DWORD size, DWORD type) {
-  fp1.format(out, "> processSysCommand: size=%d type=%d\r\n", size, type);  // @debug
-  dump_debug_message(out);  // @debug
+//  fp1.format(out, "> processSysCommand: size=%d type=%d\r\n", size, type);  // @debug
+//  dump_debug_message(out);  // @debug
   switch (type) {
     case 1:
       return mm->malloc(size);
@@ -134,11 +134,11 @@ processSysCommand( DWORD size, DWORD type) {
 
 void
 AOScheduler::run() {
-  dump_debug_message("> run: scheduler\r\n");  // @debug
-  int * p = new int[5];
-  fp1.format(out, "> run: p=%d\r\n", p);  // @debug
-  dump_debug_message(out);  // @debug
-  delete[] p;
+//  dump_debug_message("> run: scheduler\r\n");  // @debug
+//  int * p = new int[5];
+//  fp1.format(out, "> run: p=%d\r\n", p);  // @debug
+//  dump_debug_message(out);  // @debug
+//  delete[] p;
 }
 
 DWORD
