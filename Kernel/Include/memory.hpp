@@ -20,6 +20,14 @@ class MemoryManager {
            MemoryManager() { start = new_alloc = memory; end = start + HEAP_MEMORY_SIZE; };
     void * malloc(size_t sz);
     void   free(void*);
+    struct MemoryStatistics {
+      BYTE *start;
+      BYTE *end;
+      BYTE *available;
+      WORD blocks;
+      WORD allocatedBlocks;
+    };
+    void getStatistics(MemoryStatistics *);
 };
 
 #endif /* _MEMORY_HPP_ */

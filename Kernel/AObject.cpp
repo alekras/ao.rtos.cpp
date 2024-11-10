@@ -25,8 +25,7 @@ AObject::staticStart( AObject * ao ) {
   ao->start();
 }
 
-AObject::AObject( DWORD prio )
-  : Process( prio ) {
+AObject::AObject( DWORD prio ) : Process( prio ) {
   list = new ListenerList(AO_LISTENERS_LIST_LENGTH);
   incomingRingBuffer = new RingBuffer<Message>(AO_RINGBUFFER_LENGTH);
   outgoingRingBuffer = new RingBuffer<Message>(AO_RINGBUFFER_LENGTH);
@@ -84,14 +83,19 @@ AObject::processMessage(Message *) {
 }
 
 void
-AObject::publishMessages() {
+AObject::publishMessages(AObject **scheduledAOTable) {
     Message msg;
     while (outgoingRingBuffer->get( &msg ) != 0) {
-      if (msg.getDestination() != (AObject *)0) {      // if a message has explicitly defined destination
-        msg.getDestination()->putIncomingMessage(&msg);  // put the message to income buffer of defined AO,
+      if (msg.getDestination() > 0) {   // if a message has explicitly defined destination
+        AObject *destObj = scheduledAOTable[msg.getDestination()];
+        if (destObj != 0) {      // if a destination AO exist
+          destObj->putIncomingMessage(&msg);  // put the message to income buffer of defined AO,
+        }
       } else {                              // otherwise shot all listeners
-        for (int i = 0; i < list->length(); i++) {  // send message to the all AOs theirs are listening to this Active object
-          list->elementAt(i)->putIncomingMessage(&msg);
+        if (msg.getType() != MessageType::string) {   // for string type of a message only explicit destination allowed
+          for (int i = 0; i < list->length(); i++) {  // send message to the all AOs theirs are listening to this Active object
+            list->elementAt(i)->putIncomingMessage(&msg);
+          }
         }
       }
 // TODO: return the Message to outgoingRingBuffer if an insertion is failed (ONLY for failed destination) !!!
@@ -125,7 +129,7 @@ void AObject::log(BYTE level, char* text){
       *s++ = *text++;
     }
     *s = 0;
-    Message msg(this, 0, (BYTE*) logText, logging);
+    Message msg(priority, 0, (BYTE*) logText, logging);
     putOutgoingMessage(&msg);
   }
 }

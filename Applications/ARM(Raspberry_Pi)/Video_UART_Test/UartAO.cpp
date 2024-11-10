@@ -14,17 +14,17 @@
    limitations under the License.
 */
 
-#include "./Include/UartAO.hpp"
+#include "UartAO.hpp"
 extern char out[200]; // @debug
 extern FormatParser fp1; // @debug
 extern "C" void dump_debug_message(char *); //@debug
 
 UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();
-  logMsg = new Message(0, 0, (BYTE *)outputString, logging);
+//  logMsg = new Message(0, 0, (BYTE *)outputString, logging);
   receivedSymbol[0] = 0;
   receivedSymbol[1] = 0;
-  outMsg = new Message(0, 0, (BYTE *)receivedSymbol, command);
+  outMsg = new Message(prio, 2, (BYTE *)receivedSymbol, command);
 }
 
 void

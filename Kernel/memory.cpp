@@ -39,21 +39,23 @@ void operator delete[](void* m) {
 
 void *
 MemoryManager::malloc(size_t sz) {
-  WORD nbytes = (WORD) (sz + sizeof(MemoryControlBlock));
+  WORD nbytes = (WORD) (sz + sizeof(MemoryControlBlock)); // size of allocating memory block
   MemoryControlBlock* mcb_location;
   BYTE *alloc = 0;
   BYTE *mem_location = start;
   while (mem_location < new_alloc) {
     mcb_location = (MemoryControlBlock*) mem_location;
+// looking for existed and not allocated block
     if (mcb_location->is_allocated == 0 && mcb_location->size >= nbytes) {
       mcb_location->is_allocated = 1;
       alloc = mem_location;
-      break;
+      break; // stop if found it
     }
     mem_location += mcb_location->size;
   }
 
   if (alloc == 0) {
+// if not found existed then create new block
     if (new_alloc + nbytes <= end) {
       alloc = new_alloc;
       new_alloc += nbytes;
@@ -76,3 +78,24 @@ MemoryManager::free(void *ptr) {
     msb->is_allocated = 0;
   }
 };
+
+void
+MemoryManager::getStatistics(MemoryStatistics * ms) {
+  ms->start = start;
+  ms->end = end;
+  ms->available = new_alloc;
+
+  ms->blocks = 0;
+  ms->allocatedBlocks = 0;
+  MemoryControlBlock* mcb_location;
+  BYTE *mem_location = start;
+  while (mem_location < new_alloc) {
+    mcb_location = (MemoryControlBlock*) mem_location;
+    ms->blocks++;
+    if (mcb_location->is_allocated == 1) {
+      ms->allocatedBlocks++;
+    }
+    mem_location += mcb_location->size;
+  }
+
+}

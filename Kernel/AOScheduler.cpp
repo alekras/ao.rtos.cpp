@@ -79,7 +79,7 @@ AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
   for( int i = 0; i < N; i++ ) {   // navigate thru the table and transfer messages from given AO to listeners
     obj = scheduledAOTable[i];
     if( (obj != (AObject *)0) ) {   // element has to be not null
-      obj->publishMessages();
+      obj->publishMessages(scheduledAOTable);
       if ((i < j) && (obj->isReady() == 1)) {  // ready AO with highest priority
         currentPrio = obj->getPriority();        // set new current AO priority
         stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.

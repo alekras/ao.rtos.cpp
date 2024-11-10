@@ -15,12 +15,14 @@
 */
 
 #include "MyAO.hpp"
+extern MemoryManager* mm;
 
 MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   counter = 0;
-  second = 10;
+  second = 5;
   lineIdx = 0;
-  logMsg = new Message(0, 0, (BYTE *)outputString, logging);
+  logMsg = new Message(0, 1, (BYTE *)outputString, logging);
+  logMsg1 = new Message(0, 1, (BYTE *)outputString1, logging);
 }
 
 DWORD
@@ -28,12 +30,19 @@ MyAO::processMessage(Message * e) {
   switch (e->getMessageID()) {
     case tick :              // Message from Timer
       if (--second == 0) {     // filter ticks to seconds
-        second = 10;
+        second = 50;
         counter++;
         fp.format(outputString,
             "<1> Active object #%d count=%7d buffer=%3d\r\n",
             getPriority(), counter, incomingBufferLoad());
         putOutgoingMessage(logMsg);
+
+        MemoryManager::MemoryStatistics stat;
+        mm->getStatistics(&stat);
+        fp.format(outputString1,
+            "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
+            stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
+        putOutgoingMessage(logMsg1);
       }
       switch (second % 4) {
         case 0:

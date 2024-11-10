@@ -21,7 +21,7 @@ int main() {
   arm_timer_setup(1000);
   led_setup();
   dump_debug_init();
-  fp1.format(out, "Start OS! Version= %d\r\n", 14);  // @debug
+  fp1.format(out, "Start OS! Version= %d\r\n", 15);  // @debug
   dump_debug_message(out);  // @debug
 
   ISAObject::nestedLevel = 0;

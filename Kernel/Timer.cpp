@@ -21,7 +21,7 @@ DWORD Timer::timeStamp;
 Timer::Timer( DWORD p ) : ISAObject( p, 0 ) {
   second = 0;
   period = 0;
-  Message e(this, 0, (DWORD) 0, tick);
+  Message e(priority, -1, (DWORD) 0, tick);
   tickMsg = e;
   e.setMessageID(sec);
   secMsg = e;

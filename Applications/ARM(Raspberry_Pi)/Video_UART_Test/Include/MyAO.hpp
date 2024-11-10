@@ -26,9 +26,9 @@ extern Gpio *gpio47;
 class MyAO : public AObject
 {
  private:
-  char outputString[80];
+  char outputString[80], outputString1[80];
   char receivedLine[80];
-  Message *logMsg;
+  Message *logMsg, *logMsg1;
   int second, counter, lineIdx;
   FormatParser fp;
 

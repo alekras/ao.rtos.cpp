@@ -19,7 +19,8 @@
 
 #include "commonDef.hpp"
 
-enum MessageType {
+enum class MessageType : BYTE {
+  signal,
   binary,
   string
 };
@@ -34,31 +35,38 @@ enum MessageType {
  */
 class Message {
  private:
-  AObject *src, *dest;
+  DWORD_S src, dest;
   BYTE* data;
-  WORD_S type;
-  WORD_S messageId;
+  MessageType type;
+  BYTE messageId;
 
  public:
-  Message() : src((AObject*)0), dest((AObject*)0), data(0), type(binary), messageId(no) {}
-  Message(AObject *src, AObject *dest, BYTE *data, MessageType type, MessageID mid) :
+  Message() : src(-1), dest(-1), data(0), type(MessageType::signal), messageId(no) {}
+
+  Message(DWORD_S src, DWORD_S dest, BYTE *data, MessageType type, MessageID mid) :
     src(src), dest(dest), data(data), type(type), messageId(mid) {}
-  Message(AObject *src, AObject *dest, DWORD data, MessageID mid) :
-    src(src), dest(dest), data((BYTE*)data), type(binary), messageId(mid) {}
-  Message(AObject *src, AObject *dest, BYTE *data, MessageID mid) :
-    src(src), dest(dest), data(data), type(string), messageId(mid) {}
+
+  Message(DWORD_S src, DWORD_S dest,  DWORD data, MessageType type, MessageID mid) :
+    src(src), dest(dest), data((BYTE*)data), type(type), messageId(mid) {}
+
+  Message(DWORD_S src, DWORD_S dest, DWORD data, MessageID mid) :
+    src(src), dest(dest), data((BYTE*)data), type(MessageType::binary), messageId(mid) {}
+
+  Message(DWORD_S src, DWORD_S dest, BYTE *data, MessageID mid) :
+    src(src), dest(dest), data(data), type(MessageType::string), messageId(mid) {}
 
   Message(const Message &msg) {src = msg.src; dest = msg.dest; data = msg.data; type = msg.type; messageId = msg.messageId;}
+
   void operator = (const Message &msg){src = msg.src; dest = msg.dest; data = msg.data; type = msg.type; messageId = msg.messageId;}
 
   inline MessageID getMessageID() {return (MessageID) messageId;}
   inline void setMessageID(MessageID mid) {messageId = (MessageID) mid;}
-  inline MessageType getType() {return (MessageType) type;}
+  inline MessageType getType() {return type;}
   DWORD getBinaryData() {
     switch (type) {
-      case binary :
+      case MessageType::binary :
         return (DWORD) data;
-      case string :
+      case MessageType::string :
         return (DWORD) -1;
     }
     return (DWORD) -1;
@@ -66,16 +74,16 @@ class Message {
   inline void setBinaryData(DWORD d) {data = (BYTE*) d;}
   BYTE* getString() {
     switch (type) {
-      case binary :
+      case MessageType::binary :
         return (BYTE*) -1;
-      case string :
+      case MessageType::string :
         return data;
     }
     return (BYTE*) -1;
   }
   inline void setString(BYTE *d) {data = d;}
-  inline AObject* getSource() {return src;}
-  inline AObject* getDestination() {return dest;}
+  inline DWORD_S getSource() {return src;}
+  inline DWORD_S getDestination() {return dest;}
 };
 
 #endif /* _MESSAGE_HPP */
