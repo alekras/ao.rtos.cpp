@@ -37,8 +37,8 @@ cdecl
 processInterrupt( DWORD iN, AO_STACK * stp ) {
   ISAObject::nestedLevel++;    // count nested entering to the interrupt processing
 //  EXIT_CRITICAL()              // unmask interrupts
-  fp1.format(out, "> procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);
-  dump_debug_message(out);
+//  fp1.format(out, "> procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);
+//  dump_debug_message(out);
 
   ISAObject * obj;
   if( iN != SCHEDULER_INTERRUPT_NUMBER ) { // this is not scheduler.
@@ -58,8 +58,8 @@ processInterrupt( DWORD iN, AO_STACK * stp ) {
 
   ENTER_CRITICAL()                     // mask interrupts
   ISAObject::nestedLevel--;
-  fp1.format(out, "< procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
-  dump_debug_message(out);  // @debug
+//  fp1.format(out, "< procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
+//  dump_debug_message(out);  // @debug
   return stp;                          // cause context switch
 }
 

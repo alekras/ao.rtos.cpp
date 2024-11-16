@@ -17,6 +17,11 @@
 #ifndef _MESSAGE_HPP
 #define _MESSAGE_HPP
 
+#include "../../../Library/Display/Include/formatter.hpp"
+extern char out[200]; // @debug
+extern FormatParser fp1; // @debug
+extern "C" void dump_debug_message(char *); //@debug
+
 #include "commonDef.hpp"
 
 enum class MessageType : BYTE {
@@ -25,6 +30,7 @@ enum class MessageType : BYTE {
   string
 };
 
+//extern DWORD stringLength(BYTE *);
 /**
  *  class Message encapsulates fields:
  *  src -
@@ -55,9 +61,33 @@ class Message {
   Message(DWORD_S src, DWORD_S dest, BYTE *data, MessageID mid) :
     src(src), dest(dest), data(data), type(MessageType::string), messageId(mid) {}
 
+  ~Message() {
+    if (type == MessageType::string) {
+      delete[] data;
+    }
+  }
+
   Message(const Message &msg) {src = msg.src; dest = msg.dest; data = msg.data; type = msg.type; messageId = msg.messageId;}
 
-  void operator = (const Message &msg){src = msg.src; dest = msg.dest; data = msg.data; type = msg.type; messageId = msg.messageId;}
+  void operator = (const Message &msg) {
+    src = msg.src;
+    dest = msg.dest;
+//    if (msg.type == MessageType::string) {
+//      DWORD_S length = stringLength(msg.data) + 1;
+//      BYTE * charBuffer = new BYTE[length];
+//      fp1.format(out, "Message = : len=%d charBuffer=%8h string='%s'\r\n", length, charBuffer, msg.data);  // @debug
+//      dump_debug_message(out);  // @debug
+//      while(--length >= 0) {
+//        charBuffer[length] = msg.data[length];
+//      }
+//      data = charBuffer;
+//    } else {
+//      data = msg.data;
+//    }
+    data = msg.data;
+    type = msg.type;
+    messageId = msg.messageId;
+  }
 
   inline MessageID getMessageID() {return (MessageID) messageId;}
   inline void setMessageID(MessageID mid) {messageId = (MessageID) mid;}

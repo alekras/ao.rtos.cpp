@@ -66,12 +66,12 @@ void dump_memory(unsigned int * a, int w) {
   }
 }
 
-char* reg_names[] = {"r0","r1","r2","r3","r4","r5","r6", "r7","r8","r9","r10","r11","r12","lr_svc","lr_irq","spsr"};
+char* reg_names[] = {"r0","r1","r2","r3","r4","r5","r6", "r7","r8","r9","r10","r11","r12","lr_svc","lr_irq","spsr", "ukn", "ukn"};
 extern "C"
 void dump_stack(unsigned int * ssp, unsigned int * csp, unsigned int cpsr, unsigned int spsr) {
   fp1.format(out, "-- current SP=%8h CPSR=%8h SPSR=%8h --\r\n", csp, cpsr, spsr);
   dump_debug_message(out);
-  for(int i = 0; i < 16; i++) {
+  for(int i = 0; i < 18; i++) {
     fp1.format(out, "%8h) %8h (%s)\r\n", (ssp + i), *(ssp + i), reg_names[i]);
     dump_debug_message(out);
   }
@@ -81,7 +81,7 @@ extern "C"
 void dump_stack_(unsigned int * sp) {
   fp1.format(out, "-- current SP=%8h CPSR=%8h SPSR=%8h --\r\n", get_sp(), get_cpsr(), get_spsr());
   dump_debug_message(out);
-  for(int i = 0; i < 16; i++) {
+  for(int i = 0; i < 18; i++) {
     fp1.format(out, "%8h) %8h (%s)\r\n", (sp + i), *(sp + i), reg_names[i]);
     dump_debug_message(out);
   }
@@ -128,18 +128,18 @@ AO_STACK * isr(AO_STACK *sp) {
 
 extern "C"
 void undefined_instruction_exeption(unsigned int * sp) {
-  dump_debug_message("undefined instruction exception\r\n");
+  dump_debug_message(" *** undefined instruction exception ***\r\n");
   dump_stack_(sp);
 }
 
 extern "C"
 void prefetch_abort_exeption(unsigned int * sp) {
-  dump_debug_message("prefetch abort exception\r\n");
+  dump_debug_message(" *** prefetch abort exception ***\r\n");
   dump_stack_(sp);
 }
 
 extern "C"
 void data_abort_exeption(unsigned int * sp) {
-  dump_debug_message("data abort exception\r\n");
+  dump_debug_message(" *** data abort exception ***\r\n");
   dump_stack_(sp);
 }

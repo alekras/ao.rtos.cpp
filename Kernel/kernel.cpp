@@ -19,6 +19,7 @@
 //#include "RingBuffer.cpp"
 #include "memory.cpp"
 #include "ListenerList.cpp"
+#include "RingBuffer.cpp"
 #include "Process.cpp"
 #include "AObject.cpp"
 #include "ISAObject.cpp"

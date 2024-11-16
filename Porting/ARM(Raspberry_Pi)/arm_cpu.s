@@ -151,10 +151,14 @@ _new_req:
 ;@ r0 - parameter from routine with exception swi
 ;@ r1 - parameter of swi
 ;@  mov r2, sp
+
+;@  push {r0}        ;@ debug
+;@  add r0, sp, #4   ;@ debug
+;@  bl dump_stack_   ;@ debug
+;@  pop {r0}         ;@ debug
+
   bl processSysCommand
   add sp, sp, #4      ;@ do not restore r0 with pop - keep updated value that processSysCommand() returns
-;@  mov r0, sp    ;@ debug
-;@  bl dump_stack_   ;@ debug
   pop  {r1 - r12, lr}
   rfeia sp!
 

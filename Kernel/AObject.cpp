@@ -16,6 +16,7 @@
 extern char out[200]; // @debug
 extern FormatParser fp1; // @debug
 extern "C" void dump_debug_message(char *); //@debug
+extern DWORD stringLength(BYTE *);
 #include "AObject.hpp"
 
 typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function run()
@@ -40,12 +41,12 @@ AObject::~AObject() {
 
 void
 AObject::start() {
-  Message msg;
+  Message *msg;
   int failedProcess = 0;   // count of failed try to process incoming events from buffer.
   while ( stop == 0 ) {    // this is infinite loop while stop = 0;
     run();
 
-    if ( incomingRingBuffer->get( &msg ) == 0 ) { // try to read event from buffer
+    if ( (msg = incomingRingBuffer->get()) == 0 ) { // try to read event from buffer
       if (priority == AO_SCHEDULED_LIST_LENGTH - 1) { // is it scheduler
         ready = 1;          // scheduler is always ready to run
       } else {
@@ -53,9 +54,11 @@ AObject::start() {
         AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
       }
     } else {
-      Message rev( msg );                   // create a clone of msg; TODO: because msg can be changed during processing by HSM ==not good==
-      if( processMessage( &msg ) == 0 ) {  // processMessage() can not complete a proceeding of the event
-        putIncomingMessage( &rev );         // return the event back to the buffer ( to tail)
+//      Message rev( *msg );                   // create a clone of msg; TODO: because msg can be changed during processing by HSM ==not good==
+      if( processMessage( msg ) != 0 ) {
+        incomingRingBuffer->remove();
+        delete msg;
+      } else {  // processMessage() can not complete a proceeding of the event
         failedProcess++;
 // In this point AO can continue to process other events. But if size of incoming buffer equals
 // to failedProcess it means that buffer contains only failed events so it is time to allow
@@ -84,19 +87,26 @@ AObject::processMessage(Message *) {
 
 void
 AObject::publishMessages(AObject **scheduledAOTable) {
-    Message msg;
-    while (outgoingRingBuffer->get( &msg ) != 0) {
-      if (msg.getDestination() > 0) {   // if a message has explicitly defined destination
-        AObject *destObj = scheduledAOTable[msg.getDestination()];
+    Message *msg;
+    while ((msg = outgoingRingBuffer->get()) != 0) {
+      fp1.format(out, " ** Message publish : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), msg->getString());  // @debug
+      dump_debug_message(out);  // @debug
+      DWORD_S destPrio = msg->getDestination();
+      if (destPrio > 0) {   // if a message has explicitly defined destination
+        AObject *destObj = scheduledAOTable[destPrio];
         if (destObj != 0) {      // if a destination AO exist
-          destObj->putIncomingMessage(&msg);  // put the message to income buffer of defined AO,
+          outgoingRingBuffer->move(destObj);
+//          destObj->putIncomingMessage(msg);  // put the message to income buffer of defined AO,
         }
+        outgoingRingBuffer->remove();
       } else {                              // otherwise shot all listeners
-        if (msg.getType() != MessageType::string) {   // for string type of a message only explicit destination allowed
-          for (int i = 0; i < list->length(); i++) {  // send message to the all AOs theirs are listening to this Active object
-            list->elementAt(i)->putIncomingMessage(&msg);
+        if (msg->getType() != MessageType::string) {   // for string type of a message only explicit destination allowed
+          for (int i = 0; i < list->length(); i++) {  // send message to the all listeners of the AO
+//            list->elementAt(i)->putIncomingMessage(msg);
+            outgoingRingBuffer->move(list->elementAt(i));
           }
         }
+        outgoingRingBuffer->remove();
       }
 // TODO: return the Message to outgoingRingBuffer if an insertion is failed (ONLY for failed destination) !!!
     }
@@ -117,7 +127,25 @@ AObject::putIncomingMessage(Message * msg) {
   ready = 1; // this AO is ready to run. Scheduler will give it control during next schedule time
              // when this priority will be highest in the system.
 // put incoming message to the buffer for further processing
+  fp1.format(out, " ** Message in : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), msg->getString());  // @debug
+  dump_debug_message(out);  // @debug
   return incomingRingBuffer->write(msg);
+}
+
+DWORD
+AObject::putOutgoingMessage( Message * msg ) {
+  if (msg->getType() == MessageType::string) {
+    BYTE * originString = msg->getString();
+    DWORD_S length = stringLength(originString) + 1;
+    BYTE * charBuffer = new BYTE[length];
+    fp1.format(out, " ** Message out : msg=%h prio=%d type=%d len=%d charBuffer=%8h string='%s'\r\n", msg, priority, msg->getType(), length, charBuffer, originString);  // @debug
+    dump_debug_message(out);  // @debug
+    while(--length >= 0) {
+      charBuffer[length] = originString[length];
+    }
+    msg->setString(charBuffer);
+  }
+  return outgoingRingBuffer->write( msg );
 }
 
 void AObject::log(BYTE level, char* text){

@@ -70,8 +70,8 @@ AOScheduler::remove( AObject * obj ) {
 
 AO_STACK *
 AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
-  fp1.format(out, " >> AOScheduler::srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
-  dump_debug_message(out);  // @debug
+//  fp1.format(out, " >> AOScheduler::srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
+//  dump_debug_message(out);  // @debug
   AObject * obj;
   scheduledAOTable[currentPrio]->setSP( stkp ); // save a pointer to stack of a current Active object
 
@@ -85,22 +85,22 @@ AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
         stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.
         j = i;  // mark ready AO with max priority
       }
-      fp1.format(out, " -- publish msg's for ao[%d] obj=%8h stack=%8h ready=%d\r\n", i, obj, obj->getSP(), obj->isReady());  // @debug
-      dump_debug_message(out);  // @debug
+//      fp1.format(out, " -- publish msg's for ao[%d] obj=%8h stack=%8h ready=%d\r\n", i, obj, obj->getSP(), obj->isReady());  // @debug
+//      dump_debug_message(out);  // @debug
     }
   }
 
   if (j < N) {
     obj = scheduledAOTable[j];
-    fp1.format(out, " << AOScheduler::srvIntrr(1): obj=%8h stack=%h curPrio=%d\r\n", obj, stkp, currentPrio);  // @debug
-    dump_debug_message(out);  // @debug
+//    fp1.format(out, " << AOScheduler::srvIntrr(1): obj=%8h stack=%h curPrio=%d\r\n", obj, stkp, currentPrio);  // @debug
+//    dump_debug_message(out);  // @debug
 //    dump_stack(stkp, get_sp(), get_cpsr(), get_spsr());  // @debug
     return stkp;
   }
                                  // if scheduler does not find any ready to run AO:
   currentPrio = this->priority;  // go to idle state of RTOS : scheduler.run();
-  fp1.format(out, " << AOScheduler::srvIntrr(2): stack=%h curPrio=%d\r\n", this->sp, currentPrio);  // @debug
-  dump_debug_message(out);  // @debug
+//  fp1.format(out, " << AOScheduler::srvIntrr(2): stack=%h curPrio=%d\r\n", this->sp, currentPrio);  // @debug
+//  dump_debug_message(out);  // @debug
   return this->sp;
 }
 

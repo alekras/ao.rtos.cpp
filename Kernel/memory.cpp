@@ -40,6 +40,7 @@ void operator delete[](void* m) {
 void *
 MemoryManager::malloc(size_t sz) {
   WORD nbytes = (WORD) (sz + sizeof(MemoryControlBlock)); // size of allocating memory block
+  nbytes += 4 - (nbytes % 4); // allignment to 4 bytes
   MemoryControlBlock* mcb_location;
   BYTE *alloc = 0;
   BYTE *mem_location = start;
@@ -89,6 +90,7 @@ MemoryManager::getStatistics(MemoryStatistics * ms) {
   ms->allocatedBlocks = 0;
   MemoryControlBlock* mcb_location;
   BYTE *mem_location = start;
+  int i = 0;
   while (mem_location < new_alloc) {
     mcb_location = (MemoryControlBlock*) mem_location;
     ms->blocks++;

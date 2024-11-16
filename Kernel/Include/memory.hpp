@@ -7,10 +7,6 @@
 #include "os_cpu.hpp"
 
 class MemoryManager {
-  struct MemoryControlBlock {
-    WORD is_allocated;
-    WORD size;
-  };
   private:
     BYTE *start,     // pointer to beginning of dynamic memory area.
          *new_alloc, // pointer to memory ready for allocation.
@@ -20,6 +16,10 @@ class MemoryManager {
            MemoryManager() { start = new_alloc = memory; end = start + HEAP_MEMORY_SIZE; };
     void * malloc(size_t sz);
     void   free(void*);
+    struct MemoryControlBlock {
+      WORD is_allocated;
+      WORD size;
+    };
     struct MemoryStatistics {
       BYTE *start;
       BYTE *end;

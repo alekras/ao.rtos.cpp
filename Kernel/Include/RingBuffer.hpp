@@ -48,60 +48,40 @@ class RingBuffer {
 /** Default constructor.*/
     RingBuffer();
     ~RingBuffer();
+
 /** The method writes message msg to buffer.
  *  @param MessageType * msg - reference to incoming message
  *  @return int - 1 if success, 0 if buffer is full.
  */
     DWORD write( MessageType * msg );
+
 /** The method reads first available element of buffer, saves it in (*msg) and moves a read pointer.
  *  @param MessageType * msg - reference to destination Message object
  *  @return int - 1 if success, 0 if buffer is empty.
  */
-    DWORD get( MessageType * msg );
+    DWORD read( MessageType * msg );
+
+/** The method returns pointer to first available element of buffer.
+ *  @return pointer MessageType * , 0 if buffer is empty.
+ */
+    MessageType * get();
+
+/** The method removes first available element of buffer and moves a read pointer.
+ *  @return int - 1 if success, 0 if buffer is empty.
+ */
+    DWORD remove();
+
+/** The method reads first available element of the buffer, and writes it
+ *  to other RingBufferand.
+ *  @param RingBuffer * msg - reference to other Ring Buffer
+ *  @return int - 1 if success, 0 if buffers is empty or full.
+ */
+    DWORD move( AObject * other );
+
 /** The method returns amount of elements that are available for reading.
  *  ( for debugging use )
  */
     inline DWORD bufferLoad(){return load;};
 };
-
-template <class MessageType>
-RingBuffer<MessageType>::RingBuffer(DWORD n) : wrPo(0), rdPo(0), load(0) {
-  N = ( n > AO_RINGBUFFER_LENGTH ) ? AO_RINGBUFFER_LENGTH : n;
-  queue = new MessageType[N];
-}
-
-template <class MessageType>
-RingBuffer<MessageType>::RingBuffer() : N(AO_RINGBUFFER_LENGTH), wrPo(0), rdPo(0), load(0) {
-  queue = new MessageType[N];
-}
-
-template <class MessageType>
-RingBuffer<MessageType>::~RingBuffer() {
-  delete [] queue;
-}
-
-template <class MessageType>
-DWORD
-RingBuffer<MessageType>::write( MessageType * message ) {
-  if( load < N ) {            // is buffer full ?
-    queue[wrPo++] = *message;
-    if (wrPo >= N) wrPo = 0;  // set pointer to next element and revert to 0 if wrPo >= N (implements a ring)
-    load++;
-    return 1;
-  }
-  return 0;
-}
-
-template <class MessageType>
-DWORD
-RingBuffer<MessageType>::get( MessageType * message ) {
-  if( load > 0 ) {             // is a buffer empty ?
-    *message = queue[rdPo++];
-    if (rdPo >= N) rdPo = 0;   // go to next element and revert to 0 if rdPo >= N (implements a ring)
-    load--;
-    return 1;
-  }
-  return 0;
-}
 
 #endif

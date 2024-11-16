@@ -83,12 +83,15 @@ UartAO::run() {
   while (rxtail != rxhead) {
     receivedSymbol[0] = rxbuffer[rxtail];
     rxtail = (rxtail + 1) & RXBUFMASK;
+    outMsg->setString(receivedSymbol);
     putOutgoingMessage(outMsg);
+    outMsg->setString(receivedSymbol);
     processMessage( outMsg ); // make echo
   }
 }
 
-DWORD stringLength(BYTE * string) {
+extern
+DWORD stringLength(BYTE * string) { // @todo move to util class
   DWORD i = 0;
   while (string[i++] != 0) {}
   return --i;
@@ -101,6 +104,7 @@ UartAO::processMessage(Message * msg) {
     case logging :
       {
         BYTE *string = msg->getString();
+        BYTE *stringPointer = string;
         DWORD l = stringLength(string);
         DWORD available = (txhead >= txtail) ?
           (TXBUFMASK + 1 - (txhead - txtail)) :
@@ -110,10 +114,11 @@ UartAO::processMessage(Message * msg) {
         if (available < l) {
           return 0;
         }
-        while (*string != 0) {
-          txbuffer[txhead] = *(string++);
+        while (*stringPointer != 0) {
+          txbuffer[txhead] = *(stringPointer++);
           txhead = (txhead + 1) & TXBUFMASK;
         }
+//        delete[] string;
         if(!flag) { // transmit is not active
           (*pAUX_MU_IO_REG) = (unsigned int) txbuffer[txtail];
           txtail = (txtail + 1) & TXBUFMASK;

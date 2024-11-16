@@ -16,6 +16,7 @@
 
 #include "MyAO.hpp"
 extern MemoryManager* mm;
+extern DWORD stringLength(BYTE *);
 
 MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   counter = 0;
@@ -23,6 +24,7 @@ MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   lineIdx = 0;
   logMsg = new Message(0, 1, (BYTE *)outputString, logging);
   logMsg1 = new Message(0, 1, (BYTE *)outputString1, logging);
+  logMsg2 = new Message(0, 1, (BYTE *)outputString2, logging);
 }
 
 DWORD
@@ -35,13 +37,21 @@ MyAO::processMessage(Message * e) {
         fp.format(outputString,
             "<1> Active object #%d count=%7d buffer=%3d\r\n",
             getPriority(), counter, incomingBufferLoad());
+        DWORD_S length = stringLength((BYTE*)outputString) + 1;
+        BYTE *os = new BYTE[length];
+        while(--length >= 0) {
+          os[length] = outputString[length];
+        }
+        logMsg->setString(os);
         putOutgoingMessage(logMsg);
+        delete[] os;
 
         MemoryManager::MemoryStatistics stat;
         mm->getStatistics(&stat);
         fp.format(outputString1,
             "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
             stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
+        logMsg1->setString((BYTE*)outputString1);
         putOutgoingMessage(logMsg1);
       }
       switch (second % 4) {
@@ -73,6 +83,7 @@ MyAO::processMessage(Message * e) {
           lineIdx = 0;
           fp.format(outputString,
               "Command line %s\r\n", receivedLine);
+          logMsg->setString((BYTE*)outputString);
           putOutgoingMessage(logMsg);
         } else {
           receivedLine[lineIdx++] = s;

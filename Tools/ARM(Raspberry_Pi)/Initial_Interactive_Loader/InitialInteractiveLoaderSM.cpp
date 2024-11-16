@@ -207,7 +207,7 @@ InitialInteractiveLoaderSM::runOutputDump() {
     i = 0;
     do {
       buff[i++] = *dump_pointer;
-    } while (*(dump_pointer++) != 0);
+    } while (*(dump_pointer++) != 0 && i < 120);
     sendString(buff);
   }
 }
