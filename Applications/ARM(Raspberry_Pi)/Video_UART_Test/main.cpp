@@ -18,7 +18,7 @@ int main() {
   mm = &memMng;
 
   irq_vectors_setup();
-  arm_timer_setup(1000);
+  arm_timer_setup(250);
   led_setup();
   dump_debug_init();
   fp1.format(out, "Start OS! Version= %d\r\n", 15);  // @debug

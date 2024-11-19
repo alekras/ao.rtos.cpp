@@ -49,7 +49,7 @@ processInterrupt( DWORD iN, AO_STACK * stp ) {
     }
   }
 
-//  EXIT_CRITICAL()              // unmask interrupts
+//  EXIT_CRITICAL()              // ??? unmask interrupts
   if( ISAObject::nestedLevel == 1 )      // need epilog code ?
   {
     obj = ISAObject::interruptTable[SCHEDULER_INTERRUPT_NUMBER];  // if it is not nested interrupt

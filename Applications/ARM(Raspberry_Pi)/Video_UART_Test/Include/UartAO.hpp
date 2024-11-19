@@ -20,24 +20,16 @@
 class UartAO : public ISAObject {
  private:
   volatile bool flag;
-  volatile DWORD txhead;
-  volatile DWORD txtail;
-  volatile unsigned char txbuffer[TXBUFMASK+1];
+  RingBuffer<BYTE> *txRingBuffer;
+  RingBuffer<BYTE> *rxRingBuffer;
 
-  volatile DWORD rxhead;
-  volatile DWORD rxtail;
-  volatile unsigned char rxbuffer[RXBUFMASK+1];
-
-  char outputString[80];
-  Message *logMsg;
+  Message *logMsg, *comMsg;
   FormatParser fp;
   volatile int sec;
 
-  BYTE receivedSymbol[2];
-  Message msg, *outMsg;
+  Message *inMsg, *outMsg;
 
  protected:
-  virtual void run();
   virtual DWORD processMessage(Message*);
   virtual AO_STACK * serviceInterrupt(AO_STACK *stp);
   void initUart();

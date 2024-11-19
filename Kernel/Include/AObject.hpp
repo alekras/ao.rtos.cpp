@@ -73,7 +73,7 @@ class AObject : public Process {
 /**
  * Read next available message from incoming buffer.
  */
-   inline DWORD getIncomingMessage( Message * msg ) {return incomingRingBuffer->read( msg );};
+//   inline DWORD getIncomingMessage( Message * msg ) {return incomingRingBuffer->read( msg );};
 
  public:
 /**

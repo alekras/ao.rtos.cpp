@@ -21,13 +21,13 @@
 #include <application.hpp>
 
 /* Data structure configuration constants */
-const DWORD AO_RINGBUFFER_LENGTH       = 128;  //* set ring buffer maximum length (in Messages) */
-const DWORD AO_STACK_LENGTH            = 256;  //* set stack length of Active Object (in DWORDs)*/
+const DWORD AO_RINGBUFFER_LENGTH       = 256;  //* set ring buffer maximum length (in Messages) */
+const DWORD AO_STACK_LENGTH            = 256;   //* set stack length of Active Object (in DWORDs)*/
 const DWORD AO_LISTENERS_LIST_LENGTH   = 16;    //* set length of listeners list */
 const DWORD AO_SCHEDULED_LIST_LENGTH   = 32;    //* set length of AO list for scheduler */
 const DWORD AO_INTERRUPT_TABLE_LENGTH  = 17;    //* set length of interrupt service AO table */
 const DWORD SCHEDULER_INTERRUPT_NUMBER = 16;    //* set number of scheduler programming interrupt */
-const DWORD HEAP_MEMORY_SIZE           = 128000;    //* set size of heap memory for memory manager */
+const DWORD HEAP_MEMORY_SIZE           = 512000;    //* set size of heap memory for memory manager */
 const BYTE LOGGING_LEVEL = 2;
 
 /** Enumeration of all event id are using in RTOS applications */

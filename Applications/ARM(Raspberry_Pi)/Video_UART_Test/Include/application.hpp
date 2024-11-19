@@ -22,6 +22,6 @@ show -
 command -
 */
 
-#define APP_MESSAGE_IDS show, command
+#define APP_MESSAGE_IDS show, command, io_in, io_out
 
 #endif /* APPLICATION_HPP_ */

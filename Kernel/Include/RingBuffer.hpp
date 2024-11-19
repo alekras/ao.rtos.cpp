@@ -30,10 +30,11 @@ class RingBuffer {
 /***************** Fields ***************/
  private:
 /** wrPo keeps index of element of queue that empty and ready to accept new message.*/
-	DWORD wrPo;
+	volatile DWORD wrPo;
 /** rdPo keeps index of element of queue that ready to be read.*/
-	DWORD rdPo;
-  DWORD load;
+	volatile DWORD rdPo;
+/** number of messages in queue */
+//  volatile DWORD load;
 /** Size of queue.*/
   DWORD N;
 /** Array of Messages */
@@ -53,13 +54,13 @@ class RingBuffer {
  *  @param MessageType * msg - reference to incoming message
  *  @return int - 1 if success, 0 if buffer is full.
  */
-    DWORD write( MessageType * msg );
+    void write( MessageType * msg );
 
 /** The method reads first available element of buffer, saves it in (*msg) and moves a read pointer.
  *  @param MessageType * msg - reference to destination Message object
  *  @return int - 1 if success, 0 if buffer is empty.
  */
-    DWORD read( MessageType * msg );
+    void read( MessageType * msg );
 
 /** The method returns pointer to first available element of buffer.
  *  @return pointer MessageType * , 0 if buffer is empty.
@@ -69,19 +70,24 @@ class RingBuffer {
 /** The method removes first available element of buffer and moves a read pointer.
  *  @return int - 1 if success, 0 if buffer is empty.
  */
-    DWORD remove();
+    void remove();
 
 /** The method reads first available element of the buffer, and writes it
  *  to other RingBufferand.
  *  @param RingBuffer * msg - reference to other Ring Buffer
  *  @return int - 1 if success, 0 if buffers is empty or full.
  */
-    DWORD move( AObject * other );
+//    DWORD move( AObject * other );
 
 /** The method returns amount of elements that are available for reading.
- *  ( for debugging use )
  */
-    inline DWORD bufferLoad(){return load;};
+    inline DWORD bufferLoad() { return (((wrPo - rdPo) >= 0) ? 0 : N) + wrPo - rdPo; };
+/** The method returns buffer space available for writing.
+ */
+    inline DWORD bufferVacancy() { return (N - bufferLoad() -1);};
+
+    inline bool isEmpty() { return (bufferLoad() == 0); };
+    inline bool isFull() { return (bufferLoad() == (N-1)); };
 };
 
 #endif

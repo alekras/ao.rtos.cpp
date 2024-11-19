@@ -35,7 +35,7 @@ MyAO::processMessage(Message * e) {
         second = 50;
         counter++;
         fp.format(outputString,
-            "<1> Active object #%d count=%7d buffer=%3d\r\n",
+            "<1> Active object #%d count=%d buffer=%d\r\n",
             getPriority(), counter, incomingBufferLoad());
         DWORD_S length = stringLength((BYTE*)outputString) + 1;
         BYTE *os = new BYTE[length];
@@ -77,7 +77,7 @@ MyAO::processMessage(Message * e) {
       return 1;
       case command :
       {
-        BYTE s = *(e->getString());
+        BYTE s = e->getBinaryData();
         if (s == '\n' || s == '\r') {
           receivedLine[lineIdx] = 0;
           lineIdx = 0;

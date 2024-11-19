@@ -72,18 +72,6 @@ class Message {
   void operator = (const Message &msg) {
     src = msg.src;
     dest = msg.dest;
-//    if (msg.type == MessageType::string) {
-//      DWORD_S length = stringLength(msg.data) + 1;
-//      BYTE * charBuffer = new BYTE[length];
-//      fp1.format(out, "Message = : len=%d charBuffer=%8h string='%s'\r\n", length, charBuffer, msg.data);  // @debug
-//      dump_debug_message(out);  // @debug
-//      while(--length >= 0) {
-//        charBuffer[length] = msg.data[length];
-//      }
-//      data = charBuffer;
-//    } else {
-//      data = msg.data;
-//    }
     data = msg.data;
     type = msg.type;
     messageId = msg.messageId;
