@@ -197,7 +197,7 @@ InitialInteractiveLoaderSM::outputDump(Phase phase, char *s) {
 
 void
 InitialInteractiveLoaderSM::runOutputDump() {
-  char buff[120], *dump_pointer;
+  char buff[160], *dump_pointer;
   unsigned int * dump_pointer_storage;
   int i;
 
@@ -207,9 +207,10 @@ InitialInteractiveLoaderSM::runOutputDump() {
     i = 0;
     do {
       buff[i++] = *dump_pointer;
-    } while (*(dump_pointer++) != 0 && i < 120);
+    } while (*(dump_pointer++) != 0 && i < 160);
     sendString(buff);
   }
+  sendString("End of debug dump...\n\r");
 }
 
 /****************************************

@@ -26,7 +26,7 @@ extern Gpio *gpio47;
 class MyAO : public AObject
 {
  private:
-  char outputString[160], outputString1[160], outputString2[160];
+  BYTE outputString[160], outputString1[160], outputString2[160];
   char receivedLine[80];
   Message *logMsg, *logMsg1, *logMsg2;
   int second, counter, lineIdx;
@@ -37,7 +37,6 @@ class MyAO : public AObject
 
  public:
          MyAO( DWORD, DWORD );
-  char * getString(){ return outputString; };
   virtual void log(BYTE level, char* text);
 };
 

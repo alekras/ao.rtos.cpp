@@ -23,6 +23,7 @@ extern FormatParser fp1; // @debug
 extern "C" void dump_debug_message(char *); //@debug
 
 #include "commonDef.hpp"
+#include "String.hpp"
 
 enum class MessageType : BYTE {
   signal,
@@ -35,44 +36,41 @@ enum class MessageType : BYTE {
  *  class Message encapsulates fields:
  *  src -
  *  dest -
- *  data -
+ *  payload -
  *  type -
  *  messageId -
  */
 class Message {
  private:
   DWORD_S src, dest;
-  BYTE* data;
+  DWORD payload;
   MessageType type;
   BYTE messageId;
 
  public:
-  Message() : src(-1), dest(-1), data(0), type(MessageType::signal), messageId(no) {}
+  Message() : src(-1), dest(-1), payload(0), type(MessageType::signal), messageId(no) {}
 
-  Message(DWORD_S src, DWORD_S dest, BYTE *data, MessageType type, MessageID mid) :
-    src(src), dest(dest), data(data), type(type), messageId(mid) {}
-
-  Message(DWORD_S src, DWORD_S dest,  DWORD data, MessageType type, MessageID mid) :
-    src(src), dest(dest), data((BYTE*)data), type(type), messageId(mid) {}
+  Message(DWORD_S src, DWORD_S dest, DWORD data, MessageType type, MessageID mid) :
+    src(src), dest(dest), payload(data), type(type), messageId(mid) {}
 
   Message(DWORD_S src, DWORD_S dest, DWORD data, MessageID mid) :
-    src(src), dest(dest), data((BYTE*)data), type(MessageType::binary), messageId(mid) {}
+    src(src), dest(dest), payload(data), type(MessageType::binary), messageId(mid) {}
 
-  Message(DWORD_S src, DWORD_S dest, BYTE *data, MessageID mid) :
-    src(src), dest(dest), data(data), type(MessageType::string), messageId(mid) {}
+  Message(DWORD_S src, DWORD_S dest, String *string, MessageID mid) :
+    src(src), dest(dest), payload((DWORD)string), type(MessageType::string), messageId(mid) {}
 
   ~Message() {
     if (type == MessageType::string) {
-      delete[] data;
+      delete (String*)payload;
     }
   }
 
-  Message(const Message &msg) {src = msg.src; dest = msg.dest; data = msg.data; type = msg.type; messageId = msg.messageId;}
+  Message(const Message &msg) {src = msg.src; dest = msg.dest; payload = msg.payload; type = msg.type; messageId = msg.messageId;}
 
   void operator = (const Message &msg) {
     src = msg.src;
     dest = msg.dest;
-    data = msg.data;
+    payload = msg.payload;
     type = msg.type;
     messageId = msg.messageId;
   }
@@ -83,23 +81,23 @@ class Message {
   DWORD getBinaryData() {
     switch (type) {
       case MessageType::binary :
-        return (DWORD) data;
+        return (DWORD) payload;
       case MessageType::string :
         return (DWORD) -1;
     }
     return (DWORD) -1;
   }
-  inline void setBinaryData(DWORD d) {data = (BYTE*) d;}
-  BYTE* getString() {
+  inline void setBinaryData(DWORD d) {payload = d;}
+  String * getString() {
     switch (type) {
       case MessageType::binary :
-        return (BYTE*) -1;
+        return (String*) -1;
       case MessageType::string :
-        return data;
+        return (String*) payload;
     }
-    return (BYTE*) -1;
+    return (String*) -1;
   }
-  inline void setString(BYTE *d) {data = d;}
+  inline void setString(String *d) {payload = (DWORD)d;}
   inline DWORD_S getSource() {return src;}
   inline DWORD_S getDestination() {return dest;}
 };

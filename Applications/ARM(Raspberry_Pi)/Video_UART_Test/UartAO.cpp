@@ -120,15 +120,15 @@ UartAO::processMessage(Message * msg) {
     case logging :
       {
         char c;
-        BYTE *string = (BYTE*) msg->getString();
-        BYTE *stringPointer = string;
-        DWORD l = stringLength((BYTE*)string);
+        String *string = msg->getString();
+        DWORD l = string->length();
         DWORD available = txRingBuffer->bufferVacancy();
         fp1.format(out, "> UartAO::processMessage l=%d avail=%d load=%d\n\r", l, available, txRingBuffer->bufferLoad()); //@debug
         dump_debug_message(out); //@debug
         if (available < l) {
           return 0;
         }
+        BYTE *stringPointer = string->getChars();
 //        ENTER_CRITICAL()                     // mask interrupts
         while (*stringPointer != 0) {
           txRingBuffer->write(stringPointer++);

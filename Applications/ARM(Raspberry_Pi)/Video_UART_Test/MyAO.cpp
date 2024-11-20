@@ -22,9 +22,9 @@ MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   counter = 0;
   second = 5;
   lineIdx = 0;
-  logMsg = new Message(0, 1, (BYTE *)outputString, logging);
-  logMsg1 = new Message(0, 1, (BYTE *)outputString1, logging);
-  logMsg2 = new Message(0, 1, (BYTE *)outputString2, logging);
+  logMsg = new Message(0, 1, 0, MessageType::string, logging);
+  logMsg1 = new Message(0, 1, 0, MessageType::string, logging);
+  logMsg2 = new Message(0, 1, 0, MessageType::string, logging);
 }
 
 DWORD
@@ -34,25 +34,23 @@ MyAO::processMessage(Message * e) {
       if (--second == 0) {     // filter ticks to seconds
         second = 50;
         counter++;
-        fp.format(outputString,
+        fp.format((char *)outputString,
             "<1> Active object #%d count=%d buffer=%d\r\n",
             getPriority(), counter, incomingBufferLoad());
-        DWORD_S length = stringLength((BYTE*)outputString) + 1;
-        BYTE *os = new BYTE[length];
-        while(--length >= 0) {
-          os[length] = outputString[length];
-        }
+        String *os = new String(outputString);
         logMsg->setString(os);
         putOutgoingMessage(logMsg);
-        delete[] os;
+        delete os;
 
         MemoryManager::MemoryStatistics stat;
         mm->getStatistics(&stat);
-        fp.format(outputString1,
+        fp.format((char *)outputString1,
             "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
             stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
-        logMsg1->setString((BYTE*)outputString1);
+        os = new String(outputString1);
+        logMsg1->setString(os);
         putOutgoingMessage(logMsg1);
+        delete os;
       }
       switch (second % 4) {
         case 0:
@@ -81,10 +79,12 @@ MyAO::processMessage(Message * e) {
         if (s == '\n' || s == '\r') {
           receivedLine[lineIdx] = 0;
           lineIdx = 0;
-          fp.format(outputString,
+          fp.format((char *)outputString,
               "Command line %s\r\n", receivedLine);
-          logMsg->setString((BYTE*)outputString);
+          String *os = new String(outputString);
+          logMsg->setString(os);
           putOutgoingMessage(logMsg);
+          delete os;
         } else {
           receivedLine[lineIdx++] = s;
         }

@@ -271,7 +271,7 @@ Hex2BinEFSMachine::processRecord() {
     case SEGMENT_ADDRESS:
       addressType = 2;
       segmentAddress = (256 * dataArray[0] + dataArray[1]) << 4;
-      fp.format(out, "extended segment address: %8h (or start address)\n\r", segmentAddress);
+      fp.format(out, "extended segment address (or start address): %8h\n\r", segmentAddress);
       sendString(out);
       break;
     case LINEAR_ADDRESS:

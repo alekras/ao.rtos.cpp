@@ -145,15 +145,11 @@ AObject::putOutgoingMessage( Message * msg ) {
     return 0;
   } else {
     if (msg->getType() == MessageType::string) {
-      BYTE * originString = msg->getString();
-      DWORD_S length = stringLength(originString) + 1;
-      BYTE * charBuffer = new BYTE[length];
-      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d len=%d charBuffer=%8h string='%s'\r\n", msg, priority, msg->getType(), length, charBuffer, originString);  // @debug
+      String * originString = msg->getString();
+      String * newString = new String(originString->getChars());
+      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), originString->getChars());  // @debug
       dump_debug_message(out);  // @debug
-      while(--length >= 0) {
-        charBuffer[length] = originString[length];
-      }
-      msg->setString(charBuffer);
+      msg->setString(newString);
     }
     outgoingRingBuffer->write( msg );
     return 1;
@@ -163,13 +159,13 @@ AObject::putOutgoingMessage( Message * msg ) {
 void AObject::log(BYTE level, char* text){
   if (level > LOGGING_LEVEL) {
     int size = 80;
-    char *logText = new char[size];
-    char *s = logText;
+    BYTE *logText = new BYTE[size];
+    BYTE *s = logText;
     while (*text != 0) {
       *s++ = *text++;
     }
     *s = 0;
-    Message msg(priority, 0, (BYTE*) logText, logging);
+    Message msg(priority, 0, new String(logText), logging);
     putOutgoingMessage(&msg);
   }
 }
