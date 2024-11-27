@@ -21,15 +21,14 @@
 #include "../../../Library/Display/Include/formatter.hpp"
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
 
-extern Gpio *gpio47;
-
 class MyAO : public AObject
 {
  private:
-  BYTE outputString[160], outputString1[160], outputString2[160];
+  String *outputString, *outputString1;
   char receivedLine[80];
-  Message *logMsg, *logMsg1, *logMsg2;
+  Message *logMsg, *logMsg1;
   int second, counter, lineIdx;
+  Gpio *gpio10, *gpio22;
   FormatParser fp;
 
  protected:

@@ -21,7 +21,7 @@ DWORD Timer::timeStamp;
 Timer::Timer( DWORD p ) : ISAObject( p, 0 ) {
   second = 0;
   period = 0;
-  Message e(priority, -1, (DWORD) 0, tick);
+  Message e(priority, -1, (DWORD) 0, MessageType::word, tick);
   tickMsg = e;
   e.setMessageID(sec);
   secMsg = e;
@@ -36,7 +36,7 @@ Timer::serviceInterrupt( AO_STACK *stk ) {
    * But if event processing can be delayed then Timer sends the message to itself and
    * its own thread will process this message by processMessage() method that is running with own priority.
    */
-  tickMsg.setBinaryData(++timeStamp);
+  tickMsg.setWord(++timeStamp);
   putOutgoingMessage( &tickMsg );
   return stk;
 }

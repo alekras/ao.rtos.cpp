@@ -98,16 +98,12 @@ void arm_timer_setup(int p_msec) {
   (*pENABLE_IRQ_B) = 0x00000001; // Enable ARM timer interrupts
 }
 
-Gpio *gpio47, *gpio10, *gpio22;
+Gpio *gpio47;
 
 extern "C"
 void led_setup() {
   gpio47->setFunction(1);
   gpio47->clearLevel();
-  gpio10->setFunction(1);
-  gpio10->setLevel();
-  gpio22->setFunction(1);
-  gpio22->setLevel();
 }
 
 // TO DO - move to assembler code arm_cpu.s ???

@@ -23,11 +23,10 @@ class UartAO : public ISAObject {
   RingBuffer<BYTE> *txRingBuffer;
   RingBuffer<BYTE> *rxRingBuffer;
 
-  Message *logMsg, *comMsg;
-  FormatParser fp;
+  Message *comMsg;
   volatile int sec;
 
-  Message *inMsg, *outMsg;
+  Message *inMsg;
 
  protected:
   virtual DWORD processMessage(Message*);

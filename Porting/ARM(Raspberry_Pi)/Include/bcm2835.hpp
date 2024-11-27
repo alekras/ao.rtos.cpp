@@ -33,11 +33,31 @@
 #ifndef BCM2835_HPP_
 #define BCM2835_HPP_
 
+/** GPIO Function select registers 0-5 (00...14) */
 volatile unsigned int* Gpio::pGPFSEL = (unsigned int*) (PERIPHERAL_BASE + 0x200000);
+/** GPIO Pin output set registers 0-1 (1c,20) */
 volatile unsigned int* Gpio::pGPSET =  (unsigned int*) (PERIPHERAL_BASE + 0x20001C);
+/** GPIO Pin output clear registers 0-1 (28,2C)*/
 volatile unsigned int* Gpio::pGPCLR =  (unsigned int*) (PERIPHERAL_BASE + 0x200028);
+/** GPIO Pin level registers 0-1 (34,38) */
 volatile unsigned int* Gpio::pGPLEV =  (unsigned int*) (PERIPHERAL_BASE + 0x200034);
+/** GPIO Pin event detect status registers 0-1 (40,44) */
+volatile unsigned int* Gpio::pGPEDS =  (unsigned int*) (PERIPHERAL_BASE + 0x200040);
+/** GPIO Pin rising edge detect Enable registers 0-1 (4C,50) */
+volatile unsigned int* Gpio::pGPREN =  (unsigned int*) (PERIPHERAL_BASE + 0x20004C);
+/** GPIO Pin falling edge detect Enable registers 0-1 (58,5C) */
+volatile unsigned int* Gpio::pGPFEN =  (unsigned int*) (PERIPHERAL_BASE + 0x200058);
+/** GPIO Pin High detect Enable registers 0-1 (64,68) */
+volatile unsigned int* Gpio::pGPHEN =  (unsigned int*) (PERIPHERAL_BASE + 0x200064);
+/** GPIO Pin Low detect Enable registers 0-1 (70,74) */
+volatile unsigned int* Gpio::pGPLEN =  (unsigned int*) (PERIPHERAL_BASE + 0x200070);
+/** GPIO Pin Async rising edge detect Enable registers 0-1 (7C,80) */
+volatile unsigned int* Gpio::pGPAREN =  (unsigned int*) (PERIPHERAL_BASE + 0x20007C);
+/** GPIO Pin Async falling edge detect Enable registers 0-1 */
+volatile unsigned int* Gpio::pGPAFEN =  (unsigned int*) (PERIPHERAL_BASE + 0x200088);
+/** GPIO Pin Pull-up/down Enable register */
 volatile unsigned int* Gpio::pGPPUD =  (unsigned int*) (PERIPHERAL_BASE + 0x200094);
+/** GPIO Pin Pull-up/down Enable clock registers 0-1 (98, 9C)*/
 volatile unsigned int* Gpio::pGPPUDCLK = (unsigned int*) (PERIPHERAL_BASE + 0x200098);
 
 /************** INTERRUPTS *****************/

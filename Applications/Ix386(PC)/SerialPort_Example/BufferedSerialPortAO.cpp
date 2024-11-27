@@ -40,7 +40,7 @@ BufferedSerialPortAO::serviceInterrupt(AO_STACK * stkp) {
         break;
       case 2:     // Data available
       { buffer.load();
-        inputBuffer->write(&buffer.byte);
+        inputBuffer->put(&buffer.byte);
         if (buffIsReady == 0 && (inputBuffer->bufferLoad() >= 32 || buffer.byte == 0)) {
           putOutgoingMessage(&msg_input_ready);
           buffIsReady = 1;
@@ -69,7 +69,7 @@ BufferedSerialPortAO::processMessage(Message *msg) {
     case sp_byte_out : // byte to output
       {
         BYTE b = (BYTE) msg->getBinaryData();
-        outputBuffer->write(&b);
+        outputBuffer->put(&b);
         interruptEnable(1);
       }
       return 1;
@@ -77,7 +77,7 @@ BufferedSerialPortAO::processMessage(Message *msg) {
       {
         BYTE *arr = msg->getString();
         while (*arr != 0) {
-          outputBuffer->write(arr++);
+          outputBuffer->put(arr++);
         }
         interruptEnable(1);
         delete [] msg->getString();

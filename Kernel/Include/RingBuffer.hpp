@@ -33,8 +33,6 @@ class RingBuffer {
 	volatile DWORD wrPo;
 /** rdPo keeps index of element of queue that ready to be read.*/
 	volatile DWORD rdPo;
-/** number of messages in queue */
-//  volatile DWORD load;
 /** Size of queue.*/
   DWORD N;
 /** Array of Messages */
@@ -54,18 +52,18 @@ class RingBuffer {
  *  @param MessageType * msg - reference to incoming message
  *  @return int - 1 if success, 0 if buffer is full.
  */
-    void write( MessageType * msg );
+    void put( MessageType * msg );
 
 /** The method reads first available element of buffer, saves it in (*msg) and moves a read pointer.
  *  @param MessageType * msg - reference to destination Message object
  *  @return int - 1 if success, 0 if buffer is empty.
  */
-    void read( MessageType * msg );
+    void get( MessageType * msg );
 
 /** The method returns pointer to first available element of buffer.
  *  @return pointer MessageType * , 0 if buffer is empty.
  */
-    MessageType * get();
+    MessageType * read();
 
 /** The method removes first available element of buffer and moves a read pointer.
  *  @return int - 1 if success, 0 if buffer is empty.
@@ -81,13 +79,19 @@ class RingBuffer {
 
 /** The method returns amount of elements that are available for reading.
  */
-    inline DWORD bufferLoad() { return (((wrPo - rdPo) >= 0) ? 0 : N) + wrPo - rdPo; };
+    DWORD bufferLoad() {
+      DWORD_S d = wrPo - rdPo;
+      return ((d >= 0) ? 0 : N) + d;
+    };
 /** The method returns buffer space available for writing.
  */
-    inline DWORD bufferVacancy() { return (N - bufferLoad() -1);};
+    DWORD bufferVacancy() {
+      DWORD_S d = wrPo - rdPo;
+      return ((d >= 0) ? N : 0) - d - 1;
+    };
 
     inline bool isEmpty() { return (bufferLoad() == 0); };
-    inline bool isFull() { return (bufferLoad() == (N-1)); };
+    inline bool isFull() { return (bufferVacancy() == 0); };
 };
 
 #endif

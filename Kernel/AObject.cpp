@@ -16,7 +16,7 @@
 extern char out[200]; // @debug
 extern FormatParser fp1; // @debug
 extern "C" void dump_debug_message(char *); //@debug
-extern DWORD stringLength(BYTE *);
+extern "C" unsigned int * get_sp(void); // @debug
 #include "AObject.hpp"
 
 typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function run()
@@ -54,7 +54,7 @@ AObject::start() {
         AO_CONTEXT_SW();    // pass CPU control to others AO by invoking of scheduler
       }
     } else {
-      msg = incomingRingBuffer->get();
+      msg = incomingRingBuffer->read();
       if( processMessage( msg ) != 0 ) {
         incomingRingBuffer->remove();
         delete msg;
@@ -89,7 +89,7 @@ void
 AObject::publishMessages(AObject **scheduledAOTable) {
     Message *msg;
     while (!outgoingRingBuffer->isEmpty()) {
-      msg = outgoingRingBuffer->get();
+      msg = outgoingRingBuffer->read();
 //      fp1.format(out, " ** Message publish : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), msg->getString());  // @debug
 //      dump_debug_message(out);  // @debug
       DWORD_S destPrio = msg->getDestination();
@@ -134,24 +134,38 @@ AObject::putIncomingMessage(Message * msg) {
     ready = 1; // this AO is ready to run. Scheduler will give it control during next schedule time
              // when this priority will be highest in the system.
 // put incoming message to the buffer for further processing
-    incomingRingBuffer->write(msg);
+    incomingRingBuffer->put(msg);
     return 1;
   }
 }
 
 DWORD
+AObject::testFun( Message * msg ) {
+  message = (*msg);
+  return message.getWord();
+}
+
+DWORD
 AObject::putOutgoingMessage( Message * msg ) {
-  if (incomingRingBuffer->isFull()) {
+  if (outgoingRingBuffer->isFull()) {
     return 0;
   } else {
-    if (msg->getType() == MessageType::string) {
-      String * originString = msg->getString();
+    message = (*msg);
+    if (message.getType() == MessageType::string) {
+      String * originString = message.getString();
       String * newString = new String(originString->getChars());
-      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), originString->getChars());  // @debug
+      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, message.getType(), originString->getChars());  // @debug
       dump_debug_message(out);  // @debug
-      msg->setString(newString);
+      message.setString(newString);
     }
-    outgoingRingBuffer->write( msg );
+    if (message.getType() == MessageType::binary) {
+      Binary * originBin = message.getBinary();
+      Binary * newBin = new Binary(originBin->getData(), originBin->length());
+      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d binary[0]='%h'\r\n", msg, priority, message.getType(), originBin->getData()[0]);  // @debug
+      dump_debug_message(out);  // @debug
+      message.setBinary(newBin);
+    }
+    outgoingRingBuffer->put(&message);
     return 1;
   }
 }

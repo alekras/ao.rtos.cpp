@@ -7,13 +7,11 @@ extern "C" void enable_irq();
 char out[200]; // @debug
 FormatParser fp1; // @debug
 extern MemoryManager* mm;
-extern Gpio *gpio47, *gpio10, *gpio22;
+extern Gpio *gpio47;
 
 int main() {
-  Gpio t(47), m(10), p(22);
+  Gpio t(47);
   gpio47 = &t;
-  gpio10 = &m;
-  gpio22 = &p;
   MemoryManager memMng;
   mm = &memMng;
 

@@ -17,21 +17,17 @@
 #ifndef _MESSAGE_HPP
 #define _MESSAGE_HPP
 
-#include "../../../Library/Display/Include/formatter.hpp"
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
-
 #include "commonDef.hpp"
 #include "String.hpp"
+#include "Binary.hpp"
 
 enum class MessageType : BYTE {
-  signal,
+  onechar,
   binary,
-  string
+  string,
+  word
 };
 
-//extern DWORD stringLength(BYTE *);
 /**
  *  class Message encapsulates fields:
  *  src -
@@ -48,20 +44,33 @@ class Message {
   BYTE messageId;
 
  public:
-  Message() : src(-1), dest(-1), payload(0), type(MessageType::signal), messageId(no) {}
+  Message() : src(-1), dest(-1), payload(0), type(MessageType::word), messageId(no) {}
 
   Message(DWORD_S src, DWORD_S dest, DWORD data, MessageType type, MessageID mid) :
     src(src), dest(dest), payload(data), type(type), messageId(mid) {}
 
   Message(DWORD_S src, DWORD_S dest, DWORD data, MessageID mid) :
-    src(src), dest(dest), payload(data), type(MessageType::binary), messageId(mid) {}
+    src(src), dest(dest), payload(data), type(MessageType::word), messageId(mid) {}
+
+  Message(DWORD_S src, DWORD_S dest, Binary *binary, MessageID mid) :
+    src(src), dest(dest), payload((DWORD)binary), type(MessageType::binary), messageId(mid) {}
 
   Message(DWORD_S src, DWORD_S dest, String *string, MessageID mid) :
     src(src), dest(dest), payload((DWORD)string), type(MessageType::string), messageId(mid) {}
 
+  Message(DWORD_S src, DWORD_S dest, char character, MessageID mid) :
+    src(src), dest(dest), payload((DWORD)character), type(MessageType::onechar), messageId(mid) {}
+
   ~Message() {
-    if (type == MessageType::string) {
-      delete (String*)payload;
+    switch (type) {
+      case MessageType::binary :
+        delete (Binary*)payload;
+        break;
+      case MessageType::string :
+        delete (String*)payload;
+        break;
+      default:
+        break;
     }
   }
 
@@ -78,26 +87,33 @@ class Message {
   inline MessageID getMessageID() {return (MessageID) messageId;}
   inline void setMessageID(MessageID mid) {messageId = (MessageID) mid;}
   inline MessageType getType() {return type;}
-  DWORD getBinaryData() {
+
+  Binary* getBinary() {
     switch (type) {
       case MessageType::binary :
-        return (DWORD) payload;
-      case MessageType::string :
-        return (DWORD) -1;
+        return (Binary*) payload;
+      default :
+        return (Binary*) -1;
     }
-    return (DWORD) -1;
   }
-  inline void setBinaryData(DWORD d) {payload = d;}
+  inline void setBinary(Binary* d) {payload = (DWORD)d; type = MessageType::binary;}
+
   String * getString() {
     switch (type) {
-      case MessageType::binary :
-        return (String*) -1;
       case MessageType::string :
         return (String*) payload;
+      default :
+        return (String*) -1;
     }
-    return (String*) -1;
   }
-  inline void setString(String *d) {payload = (DWORD)d;}
+  inline void setString(String *d) {payload = (DWORD)d; type = MessageType::string;}
+
+  inline BYTE getChar() {return (BYTE) payload;}
+  inline void setChar(BYTE ch) {payload = (DWORD) ch;}
+
+  inline DWORD getWord() {return payload;}
+  inline void setWord(DWORD wd) {payload = wd;}
+
   inline DWORD_S getSource() {return src;}
   inline DWORD_S getDestination() {return dest;}
 };

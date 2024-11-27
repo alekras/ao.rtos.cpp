@@ -24,9 +24,9 @@ UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();
   txRingBuffer = new RingBuffer<BYTE>(0xFF);
   rxRingBuffer = new RingBuffer<BYTE>(0xFF);
-  comMsg = new Message((DWORD_S)prio, (DWORD_S)2, (DWORD)0, MessageType::binary, command);
-  outMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::binary, io_out);
-  inMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::binary, io_in);
+  comMsg = new Message((DWORD_S)prio, (DWORD_S)2, (DWORD)0, MessageType::onechar, command);
+//  outMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::binary, io_out);
+  inMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::onechar, io_in);
 }
 
 void
@@ -61,7 +61,7 @@ UartAO::serviceInterrupt(AO_STACK * stkp) {
     status = *pAUX_MU_IIR_REG;
     if (status & 0x1) break;
     if (status & 0x4) { // receiver holds a valid byte
-      inMsg->setBinaryData(*pAUX_MU_IO_REG); // read from receiver
+      inMsg->setChar(*pAUX_MU_IO_REG); // read from receiver
 //      putOutgoingMessage(inMsg);
       putIncomingMessage(inMsg);
     }
@@ -70,7 +70,7 @@ UartAO::serviceInterrupt(AO_STACK * stkp) {
         flag = false;
         (*pAUX_MU_IER_REG) = 0x5;  // Disable mini UART transmit interrupts
       } else {
-        txRingBuffer->read((BYTE*)pAUX_MU_IO_REG); // send to transmitter
+        txRingBuffer->get((BYTE*)pAUX_MU_IO_REG); // send to transmitter
         if (!flag) {
           (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
           flag = true;
@@ -84,42 +84,27 @@ UartAO::serviceInterrupt(AO_STACK * stkp) {
 	return stkp;
 }
 
-extern
-DWORD stringLength(BYTE * string) { // @todo move to util class
-  DWORD i = 0;
-  while (string[i++] != 0) {}
-  return --i;
-}
-
 DWORD
 UartAO::processMessage(Message * msg) {
   switch (msg->getMessageID()) {
-//    case io_out :
-//      if (!flag && !txRingBuffer->isEmpty()) {
-//        txRingBuffer->read((BYTE*)pAUX_MU_IO_REG);
-//        (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
-//        flag = true;
-//      }
-//      break;
     case io_in :
       {
-        BYTE c = (BYTE) msg->getBinaryData();
+        BYTE c = msg->getChar();
         if(!flag) { // transmit is not active
           (*pAUX_MU_IO_REG) = c;
           (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
           flag = true;
         } else {
-          txRingBuffer->write(&c);
+          txRingBuffer->put(&c);
         }
 
-        comMsg->setBinaryData(c);
+        comMsg->setChar(c);
         putOutgoingMessage(comMsg);
       }
       break;
     case command :
     case logging :
       {
-        char c;
         String *string = msg->getString();
         DWORD l = string->length();
         DWORD available = txRingBuffer->bufferVacancy();
@@ -131,11 +116,11 @@ UartAO::processMessage(Message * msg) {
         BYTE *stringPointer = string->getChars();
 //        ENTER_CRITICAL()                     // mask interrupts
         while (*stringPointer != 0) {
-          txRingBuffer->write(stringPointer++);
+          txRingBuffer->put(stringPointer++);
         }
 //        EXIT_CRITICAL()              // ??? unmask interrupts
         if(!flag) { // transmit is not active
-          txRingBuffer->read((BYTE*)pAUX_MU_IO_REG);
+          txRingBuffer->get((BYTE*)pAUX_MU_IO_REG);
           (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
           flag = true;
         }

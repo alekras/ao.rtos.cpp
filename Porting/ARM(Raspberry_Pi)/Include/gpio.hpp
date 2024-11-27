@@ -24,6 +24,15 @@ class Gpio {
     static volatile unsigned int* pGPSET;
     static volatile unsigned int* pGPCLR;
     static volatile unsigned int* pGPLEV;
+
+    static volatile unsigned int* pGPEDS;
+    static volatile unsigned int* pGPREN;
+    static volatile unsigned int* pGPFEN;
+    static volatile unsigned int* pGPHEN;
+    static volatile unsigned int* pGPLEN;
+    static volatile unsigned int* pGPAREN;
+    static volatile unsigned int* pGPAFEN;
+
     static volatile unsigned int* pGPPUD;
     static volatile unsigned int* pGPPUDCLK;
 
@@ -68,6 +77,57 @@ class Gpio {
     inline int readLevel(void) {
       return ((*(pGPLEV + offset2) & mask) == 0)? 0 : 1;
     };
+
+    inline int readEventDetectStatus(void) {
+      return ((*(pGPEDS + offset2) & mask) == 0)? 0 : 1;
+    }
+
+    inline void enableRisingEdgeDetect() {
+      *(pGPREN + offset2) |= mask;
+    }
+
+    inline void disableRisingEdgeDetect() {
+      *(pGPREN + offset2) &= !mask;
+    }
+
+    inline void enableFallingEdgeDetect() {
+      *(pGPFEN + offset2) |= mask;
+    }
+
+    inline void disableFallingEdgeDetect() {
+      *(pGPFEN + offset2) &= !mask;
+    }
+
+    inline void enableHighDetect() {
+      *(pGPHEN + offset2) |= mask;
+    }
+
+    inline void disableHighDetect() {
+      *(pGPHEN + offset2) &= !mask;
+    }
+
+    inline void enableLowDetect() {
+      *(pGPLEN + offset2) |= mask;
+    }
+
+    inline void disableLowDetect() {
+      *(pGPLEN + offset2) &= !mask;
+    }
+
+    inline void enableAsyncRisingEdgeDetect() {
+      *(pGPAREN + offset2) |= mask;
+    }
+
+    inline void disableAsyncRisingEdgeDetect() {
+      *(pGPAREN + offset2) &= !mask;
+    }
+    inline void enableAsyncFallingEdgeDetect() {
+      *(pGPAFEN + offset2) |= mask;
+    }
+
+    inline void disableAsyncFallingEdgeDetect() {
+      *(pGPAFEN + offset2) &= !mask;
+    }
 };
 
 #endif /* GPIO_HPP_ */

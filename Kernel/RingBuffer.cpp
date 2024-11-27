@@ -35,23 +35,21 @@ RingBuffer<MessageType>::~RingBuffer() {
 
 template <class MessageType>
 void
-RingBuffer<MessageType>::write( MessageType * message ) {
+RingBuffer<MessageType>::put( MessageType * message ) {
   queue[wrPo++] = *message;
   wrPo = wrPo % N;   // set pointer to next element and revert to 0 if wrPo >= N (implements a ring)
-//  load++;
 }
 
 template <class MessageType>
 void
-RingBuffer<MessageType>::read( MessageType * message ) {
+RingBuffer<MessageType>::get( MessageType * message ) {
   *message = queue[rdPo++];
   rdPo = rdPo % N;   // go to next element and revert to 0 if rdPo >= N (implements a ring)
-//  load--;
 }
 
 template <class MessageType>
 MessageType *
-RingBuffer<MessageType>::get() {
+RingBuffer<MessageType>::read() {
   return &queue[rdPo];
 }
 
@@ -59,7 +57,6 @@ template <class MessageType>
 void
 RingBuffer<MessageType>::remove() {
   rdPo = (++rdPo) % N;   // go to next element and revert to 0 if rdPo >= N (implements a ring)
-//  load--;
 }
 
 template class RingBuffer<Message>;

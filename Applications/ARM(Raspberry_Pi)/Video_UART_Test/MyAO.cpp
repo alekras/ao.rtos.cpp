@@ -16,15 +16,21 @@
 
 #include "MyAO.hpp"
 extern MemoryManager* mm;
-extern DWORD stringLength(BYTE *);
 
 MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
+  gpio10 = new Gpio(10);
+  gpio10->setFunction(1);
+  gpio10->setLevel();
+  gpio22 = new Gpio(22);
+  gpio22->setFunction(1);
+  gpio22->setLevel();
   counter = 0;
   second = 5;
   lineIdx = 0;
+  outputString = new String(160);
+  outputString1 = new String(160);
   logMsg = new Message(0, 1, 0, MessageType::string, logging);
   logMsg1 = new Message(0, 1, 0, MessageType::string, logging);
-  logMsg2 = new Message(0, 1, 0, MessageType::string, logging);
 }
 
 DWORD
@@ -34,23 +40,31 @@ MyAO::processMessage(Message * e) {
       if (--second == 0) {     // filter ticks to seconds
         second = 50;
         counter++;
-        fp.format((char *)outputString,
+
+        fp.format((char *)outputString->getChars(),
             "<1> Active object #%d count=%d buffer=%d\r\n",
             getPriority(), counter, incomingBufferLoad());
-        String *os = new String(outputString);
-        logMsg->setString(os);
+        logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
-        delete os;
 
         MemoryManager::MemoryStatistics stat;
         mm->getStatistics(&stat);
-        fp.format((char *)outputString1,
+        fp.format((char *)outputString1->getChars(),
             "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
             stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
-        os = new String(outputString1);
-        logMsg1->setString(os);
+        logMsg1->setString(outputString1);
         putOutgoingMessage(logMsg1);
-        delete os;
+
+        Binary *bin = new Binary(3);
+        DWORD *array = bin->getData();
+        array[0] = 77;
+        array[1] = 78;
+        array[2] = 79;
+        Message *binMsg = new Message(priority, priority, bin, binmsg);
+        fp1.format(out, "> new Message binMsg=%h\n\r", binMsg); //@debug
+        dump_debug_message(out); //@debug
+        putOutgoingMessage(binMsg);
+        delete binMsg;
       }
       switch (second % 4) {
         case 0:
@@ -73,23 +87,30 @@ MyAO::processMessage(Message * e) {
           break;
       }
       return 1;
-      case command :
+    case command :
       {
-        BYTE s = e->getBinaryData();
+        BYTE s = e->getChar();
         if (s == '\n' || s == '\r') {
           receivedLine[lineIdx] = 0;
           lineIdx = 0;
-          fp.format((char *)outputString,
+          fp.format((char *)outputString->getChars(),
               "Command line %s\r\n", receivedLine);
-          String *os = new String(outputString);
-          logMsg->setString(os);
+          logMsg->setString(outputString);
           putOutgoingMessage(logMsg);
-          delete os;
         } else {
           receivedLine[lineIdx++] = s;
         }
       }
       return 1;
+    case binmsg : {
+      DWORD *arr = e->getBinary()->getData();
+      fp.format((char *)outputString->getChars(),
+          "<3> Active object #%d get binary message: %d, %d, %d\r\n",
+          getPriority(), arr[0], arr[1], arr[2]);
+      logMsg->setString(outputString);
+      putOutgoingMessage(logMsg);
+      return 1;
+    }
     default:
       return 1;
   }
