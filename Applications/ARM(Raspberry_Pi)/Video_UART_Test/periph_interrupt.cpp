@@ -116,7 +116,11 @@ AO_STACK * isr(AO_STACK *sp) {
   }
 
   if ((*pPENDING_IRQ_1) & 0x20000000) {
-    return processInterrupt(1, sp);
+    return processInterrupt(1, sp);   // mini UART Interrupt (AUX interrupt)
+  }
+
+  if ((*pPENDING_IRQ_2) & 0x001e0000) {
+    return processInterrupt(2, sp);   // GPIO Interrupt
   }
 
   return ret_sp;

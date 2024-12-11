@@ -19,6 +19,7 @@ extern "C" void dump_debug_message(char *); //@debug
 extern "C" unsigned int * get_sp(void); //@debug
 
 #include "ISAObject.hpp"
+#include "AOScheduler.hpp"
 
 ISAObject * ISAObject::interruptTable[AO_INTERRUPT_TABLE_LENGTH];
 WORD ISAObject::nestedLevel;
@@ -37,29 +38,25 @@ cdecl
 processInterrupt( DWORD iN, AO_STACK * stp ) {
   ISAObject::nestedLevel++;    // count nested entering to the interrupt processing
 //  EXIT_CRITICAL()              // unmask interrupts
-//  fp1.format(out, "> procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);
-//  dump_debug_message(out);
+  fp1.format(out, "> procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);
+  dump_debug_message(out);
 
-  ISAObject * obj;
-  if( iN != SCHEDULER_INTERRUPT_NUMBER ) { // this is not scheduler.
-    obj = ISAObject::interruptTable[iN];   // get IS Active Object corresponded iN
-    if( obj != 0 )
-    {
-      obj->serviceInterrupt( stp );      // run interrupt processing
-    }
+  ISAObject * obj = ISAObject::interruptTable[iN];   // get IS Active Object corresponded iN
+  if( obj != 0 ) {
+    stp = obj->serviceInterrupt(0, stp);      // run interrupt processing
   }
 
 //  EXIT_CRITICAL()              // ??? unmask interrupts
-  if( ISAObject::nestedLevel == 1 )      // need epilog code ?
+  if(ISAObject::nestedLevel == 1 && iN != SCHEDULER_INTERRUPT_NUMBER)      // need epilog code ?
   {
-    obj = ISAObject::interruptTable[SCHEDULER_INTERRUPT_NUMBER];  // if it is not nested interrupt
-    stp = obj->serviceInterrupt( stp );                           // then run scheduler
+    ISAObject * scheduler = ISAObject::interruptTable[SCHEDULER_INTERRUPT_NUMBER];  // if it is not nested interrupt
+    stp = scheduler->serviceInterrupt(obj, stp);                           // then run scheduler
   }
 
   ENTER_CRITICAL()                     // mask interrupts
   ISAObject::nestedLevel--;
-//  fp1.format(out, "< procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
-//  dump_debug_message(out);  // @debug
+  fp1.format(out, "< procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
+  dump_debug_message(out);  // @debug
   return stp;                          // cause context switch
 }
 

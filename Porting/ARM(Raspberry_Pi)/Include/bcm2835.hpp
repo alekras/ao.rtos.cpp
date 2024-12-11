@@ -67,12 +67,14 @@ volatile unsigned int* pPENDING_IRQ_B = (unsigned int*) (PERIPHERAL_BASE + 0xB20
 volatile unsigned int* pPENDING_IRQ_1 = (unsigned int*) (PERIPHERAL_BASE + 0xB204);
 /** IRQ 2 pending status register */
 volatile unsigned int* pPENDING_IRQ_2 = (unsigned int*) (PERIPHERAL_BASE + 0xB208);
+
 /** Enable IRQ 1 register */
 volatile unsigned int* pENABLE_IRQ_1 =  (unsigned int*) (PERIPHERAL_BASE + 0xB210);
 /** Enable IRQ 2 register */
 volatile unsigned int* pENABLE_IRQ_2 =  (unsigned int*) (PERIPHERAL_BASE + 0xB214);
 /** Enable Basic IRQs register */
 volatile unsigned int* pENABLE_IRQ_B =  (unsigned int*) (PERIPHERAL_BASE + 0xB218);
+
 /** Disable IRQ 1 register */
 volatile unsigned int* pDISABLE_IRQ_1 = (unsigned int*) (PERIPHERAL_BASE + 0xB21C);
 /** Disable IRQ 2 register */

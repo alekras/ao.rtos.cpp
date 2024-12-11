@@ -16,6 +16,9 @@
 
 #include "MyAO.hpp"
 extern MemoryManager* mm;
+extern char out[200]; // @debug
+extern FormatParser fp1; // @debug
+extern "C" void dump_debug_message(char *); //@debug
 
 MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   gpio10 = new Gpio(10);
@@ -25,7 +28,7 @@ MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   gpio22->setFunction(1);
   gpio22->setLevel();
   counter = 0;
-  second = 5;
+  second = 4;
   lineIdx = 0;
   outputString = new String(160);
   outputString1 = new String(160);
@@ -38,7 +41,7 @@ MyAO::processMessage(Message * e) {
   switch (e->getMessageID()) {
     case tick :              // Message from Timer
       if (--second == 0) {     // filter ticks to seconds
-        second = 50;
+        second = 240; // each 1 minutes
         counter++;
 
         fp.format((char *)outputString->getChars(),
@@ -47,24 +50,24 @@ MyAO::processMessage(Message * e) {
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
 
-        MemoryManager::MemoryStatistics stat;
-        mm->getStatistics(&stat);
-        fp.format((char *)outputString1->getChars(),
-            "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
-            stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
-        logMsg1->setString(outputString1);
-        putOutgoingMessage(logMsg1);
+//        MemoryManager::MemoryStatistics stat;
+//        mm->getStatistics(&stat);
+//        fp.format((char *)outputString1->getChars(),
+//            "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
+//            stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
+//        logMsg1->setString(outputString1);
+//        putOutgoingMessage(logMsg1);
 
-        Binary *bin = new Binary(3);
-        DWORD *array = bin->getData();
-        array[0] = 77;
-        array[1] = 78;
-        array[2] = 79;
-        Message *binMsg = new Message(priority, priority, bin, binmsg);
-        fp1.format(out, "> new Message binMsg=%h\n\r", binMsg); //@debug
-        dump_debug_message(out); //@debug
-        putOutgoingMessage(binMsg);
-        delete binMsg;
+//        Binary *bin = new Binary(3);
+//        DWORD *array = bin->getData();
+//        array[0] = 77;
+//        array[1] = 78;
+//        array[2] = 79;
+//        Message *binMsg = new Message(priority, priority, bin, binmsg);
+//        fp1.format(out, "> new Message binMsg=%h\n\r", binMsg); //@debug
+//        dump_debug_message(out); //@debug
+//        putOutgoingMessage(binMsg);
+//        delete binMsg;
       }
       switch (second % 4) {
         case 0:
@@ -102,18 +105,15 @@ MyAO::processMessage(Message * e) {
         }
       }
       return 1;
-    case binmsg : {
-      DWORD *arr = e->getBinary()->getData();
-      fp.format((char *)outputString->getChars(),
-          "<3> Active object #%d get binary message: %d, %d, %d\r\n",
-          getPriority(), arr[0], arr[1], arr[2]);
-      logMsg->setString(outputString);
-      putOutgoingMessage(logMsg);
-      return 1;
-    }
     default:
       return 1;
   }
+}
+
+void
+MyAO::run() {
+  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
+  dump_debug_message(out);  // @debug
 }
 
 void MyAO::log(BYTE level, char* text) {

@@ -33,6 +33,7 @@ class MyAO : public AObject
 
  protected:
   virtual DWORD processMessage( Message * );
+  virtual void run();
 
  public:
          MyAO( DWORD, DWORD );

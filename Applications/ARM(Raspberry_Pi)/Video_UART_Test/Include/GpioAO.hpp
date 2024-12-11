@@ -14,8 +14,8 @@
    limitations under the License.
 */
 
-#ifndef UARTAO_HPP_
-#define UARTAO_HPP_
+#ifndef GPIOAO_HPP_
+#define GPIOAO_HPP_
 
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
@@ -23,24 +23,22 @@
 #include "ISAObject.hpp"
 #include "application.hpp"
 
-class UartAO : public ISAObject {
+class GpioAO : public ISAObject {
  private:
-  volatile bool flag;
-  RingBuffer<BYTE> *txRingBuffer;
-  RingBuffer<BYTE> *rxRingBuffer;
-
-  Message *comMsg;
-  volatile int sec;
-
-  Message *inMsg;
+  Gpio *gpio21;
+  String *outputString;
+  Message *logMsg, *inMsg;
+  volatile int counter, period, lastStatus;
+  FormatParser fp;
 
  protected:
   virtual DWORD processMessage(Message*);
   virtual AO_STACK * serviceInterrupt(ISAObject *, AO_STACK *);
-  void initUart();
+  virtual void run();
+  void initGpio();
 
  public:
-          UartAO(DWORD);
+          GpioAO(DWORD);
 };
 
-#endif /* UARTAO_HPP_ */
+#endif /* GPIOAO_HPP_ */

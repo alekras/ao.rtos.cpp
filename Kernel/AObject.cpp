@@ -19,7 +19,7 @@ extern "C" void dump_debug_message(char *); //@debug
 extern "C" unsigned int * get_sp(void); // @debug
 #include "AObject.hpp"
 
-typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function run()
+typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function staticStart()
 
 void cdecl
 AObject::staticStart( AObject * ao ) {
@@ -45,6 +45,8 @@ AObject::start() {
   int failedProcess = 0;   // count of failed try to process incoming events from buffer.
   while ( stop == 0 ) {    // this is infinite loop while stop = 0;
     run();
+//    fp1.format(out, " inside start() : obj=%h, prio=%d ready=%d\r\n", this, priority, ready);  // @debug
+//    dump_debug_message(out);  // @debug
 
     if ( incomingRingBuffer->isEmpty() ) { // try to read event from buffer
       if (priority == (AO_SCHEDULED_LIST_LENGTH - 1)) { // is it scheduler
@@ -60,6 +62,8 @@ AObject::start() {
         delete msg;
       } else {  // processMessage() can not complete a proceessing of the event
         failedProcess++;
+        incomingRingBuffer->put(msg);
+        incomingRingBuffer->remove();
 // In this point AO can continue to process other events. But if size of incoming buffer equals
 // to failedProcess it means that buffer contains only failed events so it is time to allow
 // other AO to run.
@@ -82,7 +86,7 @@ AObject::run() {
  */
 DWORD
 AObject::processMessage(Message *) {
-  return 0;
+  return 1;
 }
 
 void
@@ -90,8 +94,8 @@ AObject::publishMessages(AObject **scheduledAOTable) {
     Message *msg;
     while (!outgoingRingBuffer->isEmpty()) {
       msg = outgoingRingBuffer->read();
-//      fp1.format(out, " ** Message publish : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), msg->getString());  // @debug
-//      dump_debug_message(out);  // @debug
+      fp1.format(out, " ** Message publish : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), msg->getString());  // @debug
+      dump_debug_message(out);  // @debug
       DWORD_S destPrio = msg->getDestination();
       if (destPrio > 0) {   // if a message has explicitly defined destination
         AObject *destObj = scheduledAOTable[destPrio];
@@ -140,12 +144,6 @@ AObject::putIncomingMessage(Message * msg) {
 }
 
 DWORD
-AObject::testFun( Message * msg ) {
-  message = (*msg);
-  return message.getWord();
-}
-
-DWORD
 AObject::putOutgoingMessage( Message * msg ) {
   if (outgoingRingBuffer->isFull()) {
     return 0;
@@ -154,15 +152,15 @@ AObject::putOutgoingMessage( Message * msg ) {
     if (message.getType() == MessageType::string) {
       String * originString = message.getString();
       String * newString = new String(originString->getChars());
-      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, message.getType(), originString->getChars());  // @debug
-      dump_debug_message(out);  // @debug
+//      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, message.getType(), originString->getChars());  // @debug
+//      dump_debug_message(out);  // @debug
       message.setString(newString);
     }
     if (message.getType() == MessageType::binary) {
       Binary * originBin = message.getBinary();
       Binary * newBin = new Binary(originBin->getData(), originBin->length());
-      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d binary[0]='%h'\r\n", msg, priority, message.getType(), originBin->getData()[0]);  // @debug
-      dump_debug_message(out);  // @debug
+//      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d binary[0]='%h'\r\n", msg, priority, message.getType(), originBin->getData()[0]);  // @debug
+//      dump_debug_message(out);  // @debug
       message.setBinary(newBin);
     }
     outgoingRingBuffer->put(&message);

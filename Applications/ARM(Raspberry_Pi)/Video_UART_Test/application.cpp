@@ -19,4 +19,6 @@
 #include "bcm2835peripherals.cpp"
 #include "MyAO.cpp"
 #include "UartAO.cpp"
+#include "GpioAO.cpp"
+#include "DebugAOScheduler.cpp"
 #include "main.cpp"

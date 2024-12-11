@@ -114,7 +114,5 @@ class AObject : public Process {
  *  @param text - logging text.
  */
    virtual void log(BYTE level, char* text);
-
-   DWORD testFun(Message*);
 };
 #endif /* _AOBJECT_HPP */

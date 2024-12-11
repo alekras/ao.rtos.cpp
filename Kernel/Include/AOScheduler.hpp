@@ -52,7 +52,7 @@ class AOScheduler : public ISAObject {
 /**
  *  This method overrides the serviceInterrupt() method from ISAObject superclass.
  */
-   virtual AO_STACK * serviceInterrupt( AO_STACK * stp );
+   virtual AO_STACK * serviceInterrupt(ISAObject * isAobj, AO_STACK * stp );
  public:
        AOScheduler();
       ~AOScheduler();
@@ -68,6 +68,10 @@ class AOScheduler : public ISAObject {
  * Start up RTOS
  */
    void startOS();
+
+   void iterateAObjects(void (AOScheduler::*)( AObject * ));
+
+   inline DWORD getCurrentPriority() { return currentPrio; }
 };
 
 #endif

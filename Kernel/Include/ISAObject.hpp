@@ -37,7 +37,7 @@ class ISAObject : public AObject {
  * of interrupt. ( see PMStarter.asm for Ix386 port )  */
    static ISAObject * interruptTable[AO_INTERRUPT_TABLE_LENGTH];
    static WORD nestedLevel;
-   virtual AO_STACK * serviceInterrupt( AO_STACK * stp ){ return stp; };
+   virtual AO_STACK * serviceInterrupt(ISAObject * isAobj, AO_STACK * stp ){ return stp; };
  protected:
 /**
  * Method run() executes infinite loop, retrieves messages from incoming buffer and processes its.

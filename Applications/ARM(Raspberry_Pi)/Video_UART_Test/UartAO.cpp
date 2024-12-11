@@ -54,7 +54,9 @@ UartAO::initUart() {
 }
 
 AO_STACK *
-UartAO::serviceInterrupt(AO_STACK * stkp) {
+UartAO::serviceInterrupt(ISAObject * o, AO_STACK * stkp) {
+  fp1.format(out, " >> UartAO::srvIntrr: ISAObj=%h stack=%h prio=%d\r\n", o, stkp, getPriority());  // @debug
+  dump_debug_message(out);  // @debug
   DWORD status;
   char c;
   do {
@@ -81,6 +83,8 @@ UartAO::serviceInterrupt(AO_STACK * stkp) {
       }
     }
   } while ((status & 0x1) == 0);
+  fp1.format(out, " << UartAO::srvIntrr: stack=%h prio=%d\r\n", stkp, getPriority());  // @debug
+  dump_debug_message(out);  // @debug
 	return stkp;
 }
 
@@ -108,8 +112,8 @@ UartAO::processMessage(Message * msg) {
         String *string = msg->getString();
         DWORD l = string->length();
         DWORD available = txRingBuffer->bufferVacancy();
-        fp1.format(out, "> UartAO::processMessage l=%d avail=%d load=%d\n\r", l, available, txRingBuffer->bufferLoad()); //@debug
-        dump_debug_message(out); //@debug
+//        fp1.format(out, "> UartAO::processMessage l=%d avail=%d load=%d\n\r", l, available, txRingBuffer->bufferLoad()); //@debug
+//        dump_debug_message(out); //@debug
         if (available < l) {
           return 0;
         }

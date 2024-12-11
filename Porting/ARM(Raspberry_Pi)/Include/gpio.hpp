@@ -82,6 +82,10 @@ class Gpio {
       return ((*(pGPEDS + offset2) & mask) == 0)? 0 : 1;
     }
 
+    inline void clearEventDetectStatus(void) {
+      *(pGPEDS + offset2) = mask;
+    }
+
     inline void enableRisingEdgeDetect() {
       *(pGPREN + offset2) |= mask;
     }

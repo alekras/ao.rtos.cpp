@@ -29,7 +29,7 @@ Timer::Timer( DWORD p ) : ISAObject( p, 0 ) {
 }
 
 AO_STACK *
-Timer::serviceInterrupt( AO_STACK *stk ) {
+Timer::serviceInterrupt(ISAObject * isAobj, AO_STACK *stk ) {
   /*
    * We are inside Interrupt Service Routine.
    * In this point Timer can do the all job that need immediate processing.

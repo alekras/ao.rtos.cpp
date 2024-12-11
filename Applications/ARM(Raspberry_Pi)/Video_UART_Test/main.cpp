@@ -1,5 +1,6 @@
 #include "memory.hpp"
 #include "MyAO.hpp"
+#include "DebugAOScheduler.hpp"
 
 extern "C" int main();
 extern "C" void enable_irq();
@@ -19,20 +20,21 @@ int main() {
   arm_timer_setup(250);
   led_setup();
   dump_debug_init();
-  fp1.format(out, "Start OS! Version= %d\r\n", 15);  // @debug
+  fp1.format(out, "Start OS! Version= %d\r\n", 17);  // @debug
   dump_debug_message(out);  // @debug
 
   ISAObject::nestedLevel = 0;
 // Objects allocation :
   Timer timer(0);
   UartAO mini_uart(1);
+  GpioAO gpioAO(3);
   MyAO ao_1(2, 25);
-  AOScheduler scheduler;
+  DebugAOScheduler scheduler;
 
 // Timer setup:
-//  timer.addListener(&timer);
   timer.addListener(&ao_1);
-//  timer.addListener(&scheduler);
+  timer.addListener(&gpioAO);
+  timer.addListener(&scheduler);
   scheduler.add(&timer);
 
 // My AO setup :
@@ -42,6 +44,9 @@ int main() {
 // Mini UART AO setup :
   mini_uart.addListener(&ao_1);
   scheduler.add(&mini_uart);
+
+// GPIO setup
+  scheduler.add(&gpioAO);
 
   scheduler.startOS();
 //  we never come here
