@@ -26,14 +26,14 @@
 class DebugAOScheduler : public AOScheduler {
  private:
 
-  String *output;
-  Message *logMsg;
+  String *output, *intOutput;
+  Message *logMsg, *intLogMsg;
   volatile int tickCounter;
-  FormatParser fp;
+  FormatParser fp, intFp;
 
  protected:
   virtual DWORD processMessage(Message*);
-  virtual AO_STACK * serviceInterrupt(ISAObject * isAobj, AO_STACK * stp );
+  virtual AO_STACK * serviceInterrupt(AO_STACK * stp);
 
  public:
           DebugAOScheduler();

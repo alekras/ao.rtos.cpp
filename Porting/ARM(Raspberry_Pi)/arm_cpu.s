@@ -176,7 +176,7 @@ undefined_instruction_handler:
   cps #0x13
   push {r0 - r12, lr}
   mov r0, sp
-  bl undefined_instruction_exeption
+  bl undefined_instruction_exception
   pop  {r0 - r12, lr}
   rfeia sp!
 
@@ -186,7 +186,7 @@ prefetch_abort_handler:
   cps #0x13
   push {r0 - r12, lr}
   mov r0, sp
-  bl prefetch_abort_exeption
+  bl prefetch_abort_exception
   pop  {r0 - r12, lr}
   rfeia sp!
 
@@ -196,11 +196,17 @@ data_abort_handler:
   cps #0x13
   push {r0 - r12, lr}
   mov r0, sp
-  bl data_abort_exeption
+  bl data_abort_exception
   pop  {r0 - r12, lr}
   rfeia sp!
 
 reset_handler:
+  bl reset_exception
+loop_1:
+  b loop_1
+
 unused_handler:
 fiq_handler:
-  b fiq_handler
+  bl unpredicted_exception
+loop_2:
+  b loop_2

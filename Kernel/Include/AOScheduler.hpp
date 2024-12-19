@@ -52,10 +52,11 @@ class AOScheduler : public ISAObject {
 /**
  *  This method overrides the serviceInterrupt() method from ISAObject superclass.
  */
-   virtual AO_STACK * serviceInterrupt(ISAObject * isAobj, AO_STACK * stp );
+   virtual AO_STACK * serviceInterrupt(AO_STACK * stp);
  public:
-       AOScheduler();
-      ~AOScheduler();
+   AO_STACK * serviceInterrupt(ISAObject * obj, AO_STACK * stp);
+           AOScheduler();
+          ~AOScheduler();
 /**
  * Add Active Object to scheduler's table
  */

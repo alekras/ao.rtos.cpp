@@ -14,6 +14,7 @@
    limitations under the License.
 */
 extern char out[200]; // @debug
+char payload[200]; // @debug
 extern FormatParser fp1; // @debug
 extern "C" void dump_debug_message(char *); //@debug
 extern "C" unsigned int * get_sp(void); // @debug
@@ -94,10 +95,35 @@ AObject::publishMessages(AObject **scheduledAOTable) {
     Message *msg;
     while (!outgoingRingBuffer->isEmpty()) {
       msg = outgoingRingBuffer->read();
-      fp1.format(out, " ** Message publish : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, msg->getType(), msg->getString());  // @debug
-      dump_debug_message(out);  // @debug
+// @debug >>
+//      char *type;
+//      switch (msg->getType()) {
+//        case MessageType::onechar:
+//          type = "onechar";
+//          fp1.format(payload, "%c", msg->getChar());
+//          break;
+//        case MessageType::binary:
+//          type = "binary";
+//          fp1.format(payload, "l=%d", msg->getBinary()->length());
+//          break;
+//        case MessageType::string:
+//          type = "string";
+//          fp1.format(payload, "%s", msg->getString()->getChars());
+//          break;
+//        case MessageType::word:
+//          type = "word";
+//          fp1.format(payload, "%8h", msg->getWord());
+//          break;
+//        default:
+//          type = "uk";
+//          fp1.format(payload, "uk");
+//      }
+//      fp1.format(out, " ** Message publish : msg=%h ao[%d] rdPo=%d type=%s payload=<<%s>>\r\n",
+//          msg, priority, outgoingRingBuffer->getRdPo(), type, payload);  // @debug
+//      dump_debug_message(out);  // @debug
+// @debug <<
       DWORD_S destPrio = msg->getDestination();
-      if (destPrio > 0) {   // if a message has explicitly defined destination
+      if (destPrio >= 0) {   // if a message has explicitly defined destination
         AObject *destObj = scheduledAOTable[destPrio];
         if (destObj != 0) {      // if a destination AO exist
           if (destObj->putIncomingMessage(msg) == 1) {  // put the message to income buffer of defined AO,

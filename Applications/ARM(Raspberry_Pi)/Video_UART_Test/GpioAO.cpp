@@ -37,22 +37,25 @@ GpioAO::initGpio() {
   gpio21->setFunction(0);
   gpio21->setPullUpDown(0);
   gpio21->enableRisingEdgeDetect();
-//  (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x001e0000; // Enable GPIO interrupts
+  (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x001e0000; // Enable GPIO interrupts
 }
 
 AO_STACK *
-GpioAO::serviceInterrupt(ISAObject * o, AO_STACK * stkp) {
-  fp1.format(out, " >> GpioAO::srvIntrr: ISAObj=%h stack=%h prio=%d\r\n", o, stkp, getPriority());  // @debug
-  dump_debug_message(out);  // @debug
+GpioAO::serviceInterrupt(AO_STACK * stkp) {
+//  fp1.format(out, " >> GpioAO::srvIntrr: ISAObj=%h stack=%h prio=%d\r\n", o, stkp, getPriority());  // @debug
+//  dump_debug_message(out);  // @debug
   DWORD status = (*pPENDING_IRQ_2);
   DWORD event = gpio21->readEventDetectStatus();
   gpio21->clearEventDetectStatus();
+  DWORD temp = (*pSYS_TIMER_COUNT_LO);
+  impulseWidth = temp - lastTimeStamp;
+  lastTimeStamp = temp;
   lastStatus = status | event;
   counter++;
 //  inMsg->setWord(status | event);
 //  putIncomingMessage(inMsg);
-  fp1.format(out, " << GpioAO::srvIntrr: stack=%h prio=%d\r\n", stkp, getPriority());  // @debug
-  dump_debug_message(out);  // @debug
+//  fp1.format(out, " << GpioAO::srvIntrr: stack=%h prio=%d\r\n", stkp, getPriority());  // @debug
+//  dump_debug_message(out);  // @debug
   return stkp;
 }
 
@@ -70,7 +73,7 @@ GpioAO::processMessage(Message * msg) {
         DWORD status = (*pPENDING_IRQ_2);
         DWORD event = gpio21->readEventDetectStatus();
         fp.format((char *)outputString->getChars(),
-            "<GPIO> gpio interrupts counter=%d, status=%8h, cur. status=%8h, buff load=%d\r\n", counter, lastStatus, status | event, incomingBufferLoad());
+            "<GPIO> impulse=%d counter=%d, status=%8h, cur. status=%8h, buff load=%d\r\n", impulseWidth, counter, lastStatus, status | event, incomingBufferLoad());
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
         period = 20;
@@ -85,11 +88,11 @@ GpioAO::processMessage(Message * msg) {
 
 void
 GpioAO::run() {
-  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
-  dump_debug_message(out);  // @debug
-  if (period == 18) {
-    gpio21->clearEventDetectStatus();
-    (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x001e0000; // Enable GPIO interrupts
-  }
+//  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
+//  dump_debug_message(out);  // @debug
+//  if (period == 18) {
+//    gpio21->clearEventDetectStatus();
+//    (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x001e0000; // Enable GPIO interrupts
+//  }
 }
 

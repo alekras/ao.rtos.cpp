@@ -127,19 +127,31 @@ AO_STACK * isr(AO_STACK *sp) {
 }
 
 extern "C"
-void undefined_instruction_exeption(unsigned int * sp) {
+void undefined_instruction_exception(unsigned int * sp) {
   dump_debug_message(" *** undefined instruction exception ***\r\n");
   dump_stack_(sp);
 }
 
 extern "C"
-void prefetch_abort_exeption(unsigned int * sp) {
+void prefetch_abort_exception(unsigned int * sp) {
   dump_debug_message(" *** prefetch abort exception ***\r\n");
   dump_stack_(sp);
 }
 
 extern "C"
-void data_abort_exeption(unsigned int * sp) {
+void data_abort_exception(unsigned int * sp) {
   dump_debug_message(" *** data abort exception ***\r\n");
+  dump_stack_(sp);
+}
+
+extern "C"
+void reset_exception(unsigned int * sp) {
+  dump_debug_message(" *** reset exception ***\r\n");
+  dump_stack_(sp);
+}
+
+extern "C"
+void unpredicted_exception(unsigned int * sp) {
+  dump_debug_message(" *** unpredicted exception ***\r\n");
   dump_stack_(sp);
 }

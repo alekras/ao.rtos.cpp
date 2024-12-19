@@ -77,49 +77,44 @@ AOScheduler::iterateAObjects(void (AOScheduler::*fp)( AObject * )){
       (this->*fp)(obj);
     }
   }
-
 }
 
 AO_STACK *
-AOScheduler::serviceInterrupt(ISAObject * isAobj, AO_STACK * stkp ) {
-  fp1.format(out, " >> AOScheduler::srvIntrr: ISAObj=%h stack=%h curPrio=%d\r\n", isAobj, stkp, currentPrio);  // @debug
-  dump_debug_message(out);  // @debug
+AOScheduler::serviceInterrupt(ISAObject * obj, AO_STACK * stkp ) {
   scheduledAOTable[currentPrio]->setSP( stkp ); // save a pointer to stack of a current Active object
 
-  if (isAobj != (ISAObject *)0) {
-    isAobj->publishMessages(scheduledAOTable);
-    currentPrio = isAobj->getPriority();        // set new current AO priority
-    stkp = isAobj->getSP();      // stack pointer of new current AO to switch on CPU context.
-  } else {
+  if (obj != (ISAObject *)0) {
+    obj->publishMessages(scheduledAOTable);
+    currentPrio = obj->getPriority();        // set new current AO priority
+    stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.
+  }
+  return stkp;
+}
 
-    AObject * obj;
+AO_STACK *
+AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
+//  fp1.format(out, " >> AOScheduler::srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
+//  dump_debug_message(out);  // @debug
+  AObject * obj;
+  scheduledAOTable[currentPrio]->setSP( stkp ); // save a pointer to stack of a current Active object
 
-    int j = N + 1;
-    for( int i = 0; i < N; i++ ) {   // navigate thru the table and transfer messages from given AO to listeners
-      obj = scheduledAOTable[i];
-      if(obj != (AObject *)0) {   // element has to be not null
-        obj->publishMessages(scheduledAOTable);
-        if ((i < j) && (obj->isReady() == 1)) {  // ready AO with highest priority
-          currentPrio = obj->getPriority();        // set new current AO priority
-          stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.
-          j = i;  // mark ready AO with max priority
-        }
-        fp1.format(out, " -- publish msg's for ao[%d] obj=%8h stack=%8h ready=%d\r\n", i, obj, obj->getSP(), obj->isReady());  // @debug
-        dump_debug_message(out);  // @debug
+  int j = N + 1;
+  for( int i = 0; i < N; i++ ) {   // navigate thru the table and transfer messages from given AO to listeners
+    obj = scheduledAOTable[i];
+    if( (obj != (AObject *)0) ) {   // element has to be not null
+      obj->publishMessages(scheduledAOTable);
+      if ((i < j) && (obj->isReady() == 1)) {  // ready AO with highest priority
+        currentPrio = obj->getPriority();        // set new current AO priority
+        stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.
+        j = i;  // mark ready AO with max priority
       }
+//      fp1.format(out, " -- publish msg's for ao[%d] obj=%8h stack=%8h ready=%d\r\n", i, obj, obj->getSP(), obj->isReady());  // @debug
+//      dump_debug_message(out);  // @debug
     }
   }
-//  if (j < N) {
-//    obj = scheduledAOTable[j];
-////    fp1.format(out, " << AOScheduler::srvIntrr(1): obj=%8h stack=%h curPrio=%d\r\n", obj, stkp, currentPrio);  // @debug
-////    dump_debug_message(out);  // @debug
-////    dump_stack(stkp, get_sp(), get_cpsr(), get_spsr());  // @debug
-//    return stkp;
-//  }
-//                                 // if scheduler does not find any ready to run AO:
-//  currentPrio = this->priority;  // go to idle state of RTOS : scheduler.run();
-  fp1.format(out, " << AOScheduler::srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
-  dump_debug_message(out);  // @debug
+
+//  fp1.format(out, " << AOScheduler::srvIntrr(2): stack=%h curPrio=%d\r\n", this->sp, currentPrio);  // @debug
+//  dump_debug_message(out);  // @debug
   return stkp;
 }
 

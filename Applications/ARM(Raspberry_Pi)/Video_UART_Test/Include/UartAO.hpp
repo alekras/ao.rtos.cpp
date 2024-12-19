@@ -36,7 +36,7 @@ class UartAO : public ISAObject {
 
  protected:
   virtual DWORD processMessage(Message*);
-  virtual AO_STACK * serviceInterrupt(ISAObject *, AO_STACK *);
+  virtual AO_STACK * serviceInterrupt(AO_STACK *stp);
   void initUart();
 
  public:

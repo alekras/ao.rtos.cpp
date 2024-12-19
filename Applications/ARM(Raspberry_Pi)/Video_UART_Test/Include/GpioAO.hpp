@@ -28,12 +28,12 @@ class GpioAO : public ISAObject {
   Gpio *gpio21;
   String *outputString;
   Message *logMsg, *inMsg;
-  volatile int counter, period, lastStatus;
+  volatile DWORD counter, period, lastStatus, lastTimeStamp, impulseWidth;
   FormatParser fp;
 
  protected:
   virtual DWORD processMessage(Message*);
-  virtual AO_STACK * serviceInterrupt(ISAObject *, AO_STACK *);
+  virtual AO_STACK * serviceInterrupt(AO_STACK *);
   virtual void run();
   void initGpio();
 

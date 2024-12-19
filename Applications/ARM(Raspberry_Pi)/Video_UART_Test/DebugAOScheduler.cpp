@@ -21,38 +21,34 @@
 DebugAOScheduler::DebugAOScheduler() : AOScheduler() {
   tickCounter = 20;
   output = new String(160);
+  intOutput = new String(160);
   logMsg = new Message(priority, 1, 0, MessageType::string, logging);
+  intLogMsg = new Message(priority, 1, 0, MessageType::string, logging);
 }
 
 void
 DebugAOScheduler::logAOInfo( AObject * obj ) {
-  fp.format((char *)output->getChars(),
+  intFp.format((char *)intOutput->getChars(),
       "    %3d     %1d   %3d     %3d     %8h\r\n",
       obj->getPriority(), obj->isReady(), obj->incomingBufferLoad(), obj->outgoingBufferLoad(), obj->getSP());
-  logMsg->setString(output);
-  putOutgoingMessage(logMsg);
+  intLogMsg->setString(intOutput);
+  putOutgoingMessage(intLogMsg);
 }
 
 AO_STACK *
-DebugAOScheduler::serviceInterrupt(ISAObject * isAobj, AO_STACK * stkp) {
-  if (tickCounter == 0) {
+DebugAOScheduler::serviceInterrupt(AO_STACK * stkp) {
+  if (tickCounter == 10) {
     tickCounter++;
-    DWORD interr;
-    if (isAobj == 0) {
-      interr = this->getPriority();
-    } else {
-      interr = isAobj->getPriority();
-    }
-    fp.format((char *)output->getChars(),
-        "<AOScheduler> curr prio=%d interrupt=%d, curr stack=%8h\r\n   -prio- -rdy- -in.ld- -out.ld- -stack-\r\n",
-        getCurrentPriority(), interr, stkp);
-    logMsg->setString(output);
-    putOutgoingMessage(logMsg);
+    intFp.format((char *)intOutput->getChars(),
+        "<AOScheduler> curr prio=%d curr stack=%8h\r\n   -prio- -rdy- -in.ld- -out.ld- -stack-\r\n",
+        getCurrentPriority(), stkp);
+    intLogMsg->setString(intOutput);
+    putOutgoingMessage(intLogMsg);
 
     iterateAObjects((void (AOScheduler::*)(AObject*))&DebugAOScheduler::logAOInfo);
   }
 
-  return AOScheduler::serviceInterrupt(isAobj, stkp);
+  return AOScheduler::serviceInterrupt(stkp);
 }
 
 DWORD
@@ -64,7 +60,7 @@ DebugAOScheduler::processMessage(Message * e) {
 
         MemoryManager::MemoryStatistics stat;
         mm->getStatistics(&stat);
-        fp1.format((char *)output->getChars(),
+        fp.format((char *)output->getChars(),
             "<AOScheduler> Memory: %8h - %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
             stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
         logMsg->setString(output);

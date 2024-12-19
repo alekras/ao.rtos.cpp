@@ -112,8 +112,8 @@ MyAO::processMessage(Message * e) {
 
 void
 MyAO::run() {
-  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
-  dump_debug_message(out);  // @debug
+//  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
+//  dump_debug_message(out);  // @debug
 }
 
 void MyAO::log(BYTE level, char* text) {

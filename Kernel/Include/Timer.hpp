@@ -44,7 +44,7 @@ class Timer : public ISAObject
 /**
  *  This method overrides the serviceInterrupt() method from ISAObject superclass.
  */
-   virtual AO_STACK * serviceInterrupt(ISAObject *, AO_STACK *);
+   virtual AO_STACK * serviceInterrupt( AO_STACK * stp );
  public:
 /** Constructor creates Timer object with priority p */
    Timer( DWORD p );

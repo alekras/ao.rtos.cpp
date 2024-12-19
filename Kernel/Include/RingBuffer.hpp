@@ -92,6 +92,8 @@ class RingBuffer {
 
     inline bool isEmpty() { return (bufferLoad() == 0); };
     inline bool isFull() { return (bufferVacancy() == 0); };
+
+    inline DWORD getRdPo() {return rdPo;}; // @debug
 };
 
 #endif
