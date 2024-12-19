@@ -1,7 +1,0 @@
- ** Message publish : msg=29260 ao[31] rdPo=84 type=string payload=<<<AOScheduler> Memory:    1DFB8 -    9AFB8 available=   2C670 blocks= 80 allocated blocks= 6Äÿÿ>C8
->>
- ** Message publish : msg=24224 ao[3] rdPo=24 type=string payload=<<<GPIO> gpio interrupts counter=10833, status=  120001, cur. status=       0, buff load=1
->>Äÿÿ>C
-
-<AOScheduler> Memory:    1DFB8 -    9AFB8 available=   2C670 blocks= 80 allocated blocks= 6Äÿÿ>C8
-<GPIO> gpio interrupts counter=10833, status=  120001, cur. status=       0, buff load=1 >>Äÿÿ>C
