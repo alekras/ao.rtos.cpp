@@ -1,8 +1,4 @@
 /*
- * iil.hpp
- *
- */
-/*
    Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,44 +14,40 @@
    limitations under the License.
  */
 
-#ifndef IIL_HPP_
-#define IIL_HPP_
+#ifndef DS18B20_HPP_
+#define DS18B20_HPP_
 
+#include "../../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
 #include "../../../../Library/FSM/Include/fsm.hpp"
 #include "../../../../Library/Display/Include/formatter.hpp"
+#include "DelayAO.hpp"
 
+#define TEN_MICROSEC 10000 // 10
 
-class InitialInteractiveLoaderSM : public Efsm<char> {
+class DS18B20SM : public Efsm<Message> {
   private:
 // State parameters:
-    int count;
-    int value;
-    int size;
-    int index;
-    int width;
+    BYTE *dsCommands;
+    BYTE byteToWrite;
+    DWORD resetSubState;
+    DWORD writeByteSubState; // associated with DS commands
+    DWORD writeBitSubState;  // associated with number of a bit in a byte.
+    DelayAO *ao; // active object accepts a sys timer interrupts
+    Gpio *pin;
 
 // processing results:
-    int startAddress;
-    int currentAddress;
-    int *arguments;
-    int bytes;
-    int cSum;
-    int substate;
+
 // States implementation:
-    int initial(Phase, char *);
-    int display(Phase, char *);
-    int outputDump(Phase, char *);
-    int format(Phase, char *);
-    int go(Phase, char *);
-    int load(Phase, char *);
-    int help(Phase, char *);
+    int initial(Phase, Message *);
+    int reset(Phase, Message *);
+    int writeByte(Phase, Message *);
+    int writeBit(Phase, Message *);
+    int wait(Phase, Message *);
+    int readByte(Phase, Message *);
+    int readBit(Phase, Message *);
 // Helper functions:
-    void runCommand(int, int);
-    void runOutputDump();
-    void runHex2Bin();
-    void debug();
   public:
-    InitialInteractiveLoaderSM();
+    DS18B20SM(DelayAO *ao);
 };
 
-#endif /* IIL_HPP_ */
+#endif /* DS18B20_HPP_ */

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ GpioAO::initGpio() {
   gpio21->setFunction(0);
   gpio21->setPullUpDown(0);
   gpio21->enableRisingEdgeDetect();
-  (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x001e0000; // Enable GPIO interrupts
+  (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x00020000; // Enable GPIO interrupts
 }
 
 AO_STACK *
@@ -73,11 +73,14 @@ GpioAO::processMessage(Message * msg) {
         DWORD status = (*pPENDING_IRQ_2);
         DWORD event = gpio21->readEventDetectStatus();
         fp.format((char *)outputString->getChars(),
-            "<GPIO> impulse=%d counter=%d, status=%8h, cur. status=%8h, buff load=%d\r\n", impulseWidth, counter, lastStatus, status | event, incomingBufferLoad());
+            "<GPIO> impulse=%d counter=%d, status=%8h, cur. status=%8h, buff load=%d\r\n",
+            impulseWidth, counter, lastStatus, status | event, incomingBufferLoad());
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
         period = 20;
         counter = 0;
+        lastStatus = 0;
+        impulseWidth = 0;
       }
       break;
     default :

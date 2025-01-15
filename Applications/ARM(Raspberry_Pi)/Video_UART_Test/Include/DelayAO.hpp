@@ -14,15 +14,35 @@
    limitations under the License.
 */
 
-/** Helper file to gather the all cpp files to one */
+#ifndef DELAYAO_HPP_
+#define DELAYAO_HPP_
 
+#include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
+#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm2835.hpp"
+#include "ISAObject.hpp"
+#include "application.hpp"
 
-#include "periph_interrupt.cpp"
-#include "MyAO.cpp"
-#include "UartAO.cpp"
-#include "GpioAO.cpp"
-#include "DelayAO.cpp"
-#include "DS18B20SM.cpp"
-#include "DebugAOScheduler.cpp"
-#include "main.cpp"
+class DelayAO : public ISAObject {
+ private:
+  DWORD period;
+  String *outputString;
+  Message *logMsg;
+  Message *eventMsg;
+  Efsm<Message> *dsSM;
+ public:
+  Gpio *gpio20;
+
+ protected:
+  virtual DWORD processMessage(Message*);
+  virtual AO_STACK * serviceInterrupt(AO_STACK *);
+  virtual void run();
+  void initLed();
+
+ public:
+          DelayAO(DWORD);
+     void initSysTimer(DWORD delay);
+     void logMessage(BYTE *msg);
+};
+
+#endif /* DELAYAO_HPP_ */

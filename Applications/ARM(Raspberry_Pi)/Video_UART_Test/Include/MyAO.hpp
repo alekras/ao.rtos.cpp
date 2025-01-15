@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class MyAO : public AObject
  private:
   String *outputString, *outputString1;
   char receivedLine[80];
-  Message *logMsg, *logMsg1;
+  Message *logMsg, *commandMsg;
   int second, counter, lineIdx;
   Gpio *gpio10, *gpio22;
   FormatParser fp;

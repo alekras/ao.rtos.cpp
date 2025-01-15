@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ class DebugAOScheduler : public AOScheduler {
 
   String *output, *intOutput;
   Message *logMsg, *intLogMsg;
-  volatile int tickCounter;
+  volatile DWORD tickCounter, showDump;
   FormatParser fp, intFp;
 
  protected:

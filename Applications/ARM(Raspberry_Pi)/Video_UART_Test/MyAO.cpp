@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   lineIdx = 0;
   outputString = new String(160);
   outputString1 = new String(160);
-  logMsg = new Message(0, 1, 0, MessageType::string, logging);
-  logMsg1 = new Message(0, 1, 0, MessageType::string, logging);
+  logMsg = new Message(prio, 1, 0, MessageType::string, logging);
+  commandMsg = new Message(prio, 31, 0, MessageType::word, command);
 }
 
 DWORD
@@ -43,20 +43,28 @@ MyAO::processMessage(Message * e) {
       if (--second == 0) {     // filter ticks to seconds
         second = 240; // each 1 minutes
         counter++;
+/* Sys timer has freq = 1MGz, so sys registers hi/lo contains amount of microseconds.
+ * To get minutes we have to divide hi/lo registers by (10^6 * 60).
+ * 10^6 * 60 = 10^7 * 2 * 3 = 2^8 * 5^7 * 3 = 2^8 * 234375.
+ * So we need to shift right both registers in 8 bits and divide by 234375
+ * Max Hours ~ 305
+ */
+        DWORD timerLo = (*pSYS_TIMER_COUNT_LO);
+        DWORD timerHi = (*pSYS_TIMER_COUNT_HI);
+        DWORD timeUSec = timerLo % 1000;
+        DWORD timeMSec = timerLo / 1000;
+        timeMSec = timeMSec % 1000;
+        DWORD timeSec = timeMSec / 1000;
+        timeSec = timeSec % 60;
+        DWORD timeMin = (((timerHi << 24) & 0xff000000) | ((timerLo >> 8) & 0x00ffffff)) / 234375;
+        DWORD timeHour = timeMin / 60;
+        timeMin = timeMin % 60;
 
         fp.format((char *)outputString->getChars(),
-            "<1> Active object #%d count=%d buffer=%d\r\n",
-            getPriority(), counter, incomingBufferLoad());
+            "<1> T: [%4d:%2d:%2d %3d.%3d] Active object[%d] count=%d buffer=%d\r\n",
+            timeHour, timeMin, timeSec, timeMSec, timeUSec, getPriority(), counter, incomingBufferLoad());
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
-
-//        MemoryManager::MemoryStatistics stat;
-//        mm->getStatistics(&stat);
-//        fp.format((char *)outputString1->getChars(),
-//            "<2> Memory statistics: from %8h to %8h available=%8h blocks=%3d allocated blocks=%3d\r\n",
-//            stat.start, stat.end, stat.available, stat.blocks, stat.allocatedBlocks);
-//        logMsg1->setString(outputString1);
-//        putOutgoingMessage(logMsg1);
 
 //        Binary *bin = new Binary(3);
 //        DWORD *array = bin->getData();
@@ -100,6 +108,9 @@ MyAO::processMessage(Message * e) {
               "Command line %s\r\n", receivedLine);
           logMsg->setString(outputString);
           putOutgoingMessage(logMsg);
+          if (receivedLine[0] == 'd') {
+            putOutgoingMessage(commandMsg);
+          }
         } else {
           receivedLine[lineIdx++] = s;
         }

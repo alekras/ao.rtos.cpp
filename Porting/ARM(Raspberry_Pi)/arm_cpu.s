@@ -36,6 +36,7 @@ _start:
   ;@msr cpsr_c, r0
 
   bl main
+  bl unpredicted_exception
 hang:
   b hang
 
@@ -44,6 +45,7 @@ GOTO:
 ;@  push {r1-r12, lr}
   blx r0
 ;@  pop {r1-r12, pc}
+   bl unpredicted_exception
  b hang
 
 .globl exception_vectors

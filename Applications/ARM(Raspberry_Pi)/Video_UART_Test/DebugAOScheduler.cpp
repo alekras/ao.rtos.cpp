@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 
 DebugAOScheduler::DebugAOScheduler() : AOScheduler() {
   tickCounter = 20;
+  showDump = 0;
   output = new String(160);
   intOutput = new String(160);
   logMsg = new Message(priority, 1, 0, MessageType::string, logging);
@@ -37,8 +38,8 @@ DebugAOScheduler::logAOInfo( AObject * obj ) {
 
 AO_STACK *
 DebugAOScheduler::serviceInterrupt(AO_STACK * stkp) {
-  if (tickCounter == 10) {
-    tickCounter++;
+  if (showDump == 1) {
+    showDump = 0;
     intFp.format((char *)intOutput->getChars(),
         "<AOScheduler> curr prio=%d curr stack=%8h\r\n   -prio- -rdy- -in.ld- -out.ld- -stack-\r\n",
         getCurrentPriority(), stkp);
@@ -55,7 +56,7 @@ DWORD
 DebugAOScheduler::processMessage(Message * e) {
   switch (e->getMessageID()) {
     case tick :              // Message from Timer
-      if (++tickCounter == 40) {     // filter ticks to 10 seconds
+      if (++tickCounter == 80) {     // filter ticks to 20 seconds
         tickCounter = 0;
 
         MemoryManager::MemoryStatistics stat;
@@ -66,6 +67,9 @@ DebugAOScheduler::processMessage(Message * e) {
         logMsg->setString(output);
         putOutgoingMessage(logMsg);
       }
+      return 1;
+    case command :              // Message from myAO
+      showDump = 1;
       return 1;
     default:
       return 1;

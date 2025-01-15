@@ -88,6 +88,14 @@ void dump_stack_(unsigned int * sp) {
 }
 
 extern "C"
+void sys_timer_setup() {
+// Counter is running on freq = 1MHz and 1,000,000 cycles = 0xF4240
+  (*pSYS_TIMER_CMP_1) = (*pSYS_TIMER_COUNT_LO) + 0xF4240;
+  (*pSYS_TIMER_CNTRL_STAT) = 2; // Clear CMP1 detected
+  (*pENABLE_IRQ_1) = 0x00000002; // Enable system timer interrupts CMP_1 channel
+}
+
+extern "C"
 void arm_timer_setup(int p_msec) {
 // ARM timer freq = 250MHz divider = 0x7C = 124, so timer freq = 250/(124 + 1) = 2MHz
 
@@ -121,6 +129,10 @@ AO_STACK * isr(AO_STACK *sp) {
 
   if ((*pPENDING_IRQ_2) & 0x001e0000) {
     return processInterrupt(2, sp);   // GPIO Interrupt
+  }
+
+  if (((*pPENDING_IRQ_1) & 0x00000002) && ((*pSYS_TIMER_CNTRL_STAT) & 0x2)) {
+    return processInterrupt(3, sp);   // SYS timer compare interrupt
   }
 
   return ret_sp;

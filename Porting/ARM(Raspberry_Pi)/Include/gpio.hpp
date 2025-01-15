@@ -56,8 +56,20 @@ class Gpio {
       *(pGPFSEL + offset1) = a | ((7 & fn) << shift1);
     };
 
-    inline void setPullUpDown(int pullUpDown) {
+    inline void setAsInput() {
+      setFunction(0);
+    }
 
+    inline void setAsOutput() {
+      setFunction(1);
+    }
+
+/* 0 - disable pull-up/down
+ * 1 - pull-down
+ * 2 - pull-up
+ * 3 - reserved
+ * */
+    inline void setPullUpDown(int pullUpDown) {
       *pGPPUD = pullUpDown;
       for (int i = 0; i < 150; i++) {};
       *(pGPPUDCLK + offset2) = mask;

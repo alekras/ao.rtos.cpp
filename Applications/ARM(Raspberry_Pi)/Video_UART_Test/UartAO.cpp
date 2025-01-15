@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2024 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();
   txRingBuffer = new RingBuffer<BYTE>(0xFF);
   rxRingBuffer = new RingBuffer<BYTE>(0xFF);
-  comMsg = new Message((DWORD_S)prio, (DWORD_S)2, (DWORD)0, MessageType::onechar, command);
+  comMsg = new Message((DWORD_S)prio, (DWORD_S)4, (DWORD)0, MessageType::onechar, command);
 //  outMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::binary, io_out);
   inMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::onechar, io_in);
 }
