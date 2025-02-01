@@ -34,9 +34,9 @@ void
 GpioAO::initGpio() {
   (*pDISABLE_IRQ_2) = (*pDISABLE_IRQ_2) | 0x001e0000; // Disable GPIO interrupts
   gpio21 = new Gpio(21);
-  gpio21->setFunction(0);
-  gpio21->setPullUpDown(0);
-  gpio21->enableRisingEdgeDetect();
+  gpio21->setAsInput();
+  gpio21->setPullUpDown(2);
+  gpio21->enableFallingEdgeDetect();
   (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x00020000; // Enable GPIO interrupts
 }
 

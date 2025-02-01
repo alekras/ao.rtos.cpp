@@ -22,7 +22,6 @@
 #include "MyAO.cpp"
 #include "UartAO.cpp"
 #include "GpioAO.cpp"
-#include "DelayAO.cpp"
-#include "DS18B20SM.cpp"
+#include "ThermometerAO.cpp"
 #include "DebugAOScheduler.cpp"
 #include "main.cpp"

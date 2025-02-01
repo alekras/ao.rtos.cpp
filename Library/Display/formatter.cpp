@@ -54,7 +54,9 @@ FormatParser::control(const char *sig) {
     case '-' :
       align = 1;
       break;
-    case '0' : case '1' : case '2' : case '3' : case '4' :
+    case '0' :
+      align = 2;
+    case '1' : case '2' : case '3' : case '4' :
     case '5' : case '6' : case '7' : case '8' : case '9' :
       width = (int) (*sig - '0');
       TRANSITION( &FormatParser::controlDig );
@@ -107,17 +109,16 @@ FormatParser::controlCmd(const char *sig ) {
 
 int
 FormatParser::processParam(const char *sig) {
-  if( align == 1 ) width = -width;
 
   if (*sig == 'c') {
     char temp[2];
     temp[0] = va_arg(valist, int);
     temp[1] = 0;
-    s = stringToString(s, temp, width);
+    s = stringToString(s, temp, width, align);
   } else if (*sig == 's') {
-    s = stringToString( s, va_arg( valist, char*), width );
-  } else if (*sig == 'd' || *sig != 'h' || *sig != 'u') {
-    s = intToString( s, va_arg( valist, int ), width, *sig );
+    s = stringToString( s, va_arg( valist, char*), width, align );
+  } else if (*sig == 'd' || *sig == 'h' || *sig == 'u') {
+    s = intToString( s, va_arg( valist, int ), width, align, *sig );
   } else {
     *s = 0;
     TRANSITION( &FormatParser::error );
@@ -154,14 +155,9 @@ FormatParser::format( char * out, const char * format, ... ) {
 }
 
 char *
-stringToString( char *s, char * arg, int width ) {
-  int i = 0, align = 0, length, j;
+stringToString( char *s, char * arg, int width, int align ) {
+  int i = 0, length, j;
   char *e = arg;
-
-  if( width < 0 ) {
-    width = -width;
-    align = 1;
-  }
 
   while( *e++ != 0 ) {
     i++;
@@ -191,16 +187,12 @@ stringToString( char *s, char * arg, int width ) {
 }
 
 char *
-intToString( char *s, int arg, int width, char type ) {
+intToString( char *s, int arg, int width, int align, char type ) {
   static char digits[] = {'0','1','2','3','4','5','6','7','8','9',
                           'A','B','C','D','E','F'};
   unsigned int a;
   char buf[80];
-  int i, j, length, align = 0, minus = 0, base = ( type == 'h')? 16 : 10;
-  if( width < 0 ) {
-    width = -width;
-    align = 1;
-  }
+  int i, j, length, minus = 0, base = ( type == 'h')? 16 : 10;
 
   if( type == 'u' || type == 'h' ) {
     a = arg;
@@ -242,6 +234,10 @@ intToString( char *s, int arg, int width, char type ) {
   if( align == 0 ) {
     for( ; i < width - length; i++ )
       *(s + i) = ' ';
+  }
+  if( align == 2 ) {
+    for( ; i < width - length; i++ )
+      *(s + i) = '0';
   }
   for( j = 0; j < length; i++, j++ )
     *(s + i) = *(buf + length - j - 1);

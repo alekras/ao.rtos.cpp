@@ -21,7 +21,7 @@ int main() {
   arm_timer_setup(250);
   led_setup();
   dump_debug_init();
-  fp1.format(out, "Start OS! Version= %d\r\n", 18);  // @debug
+  fp1.format(out, "Start OS! Version= %d\r\n", 19);  // @debug
   dump_debug_message(out);  // @debug
 
   ISAObject::nestedLevel = 0;
@@ -29,15 +29,15 @@ int main() {
   Timer timer(0);
   UartAO mini_uart(1);
   GpioAO gpioAO(2);
-  DelayAO delayAO(3);
   MyAO ao_1(4, 25);
+  ThermometerAO therm(5);
   DebugAOScheduler scheduler;
 
 // Timer setup:
   timer.addListener(&ao_1);
   timer.addListener(&gpioAO);
-  timer.addListener(&delayAO);
   timer.addListener(&scheduler);
+  timer.addListener(&therm);
   scheduler.add(&timer);
 
 // My AO setup :
@@ -51,8 +51,8 @@ int main() {
 // GPIO setup
   scheduler.add(&gpioAO);
 
-// DelayAO setup
-  scheduler.add(&delayAO);
+// ThermometerAO setup
+  scheduler.add(&therm);
 
   scheduler.startOS();
 //  we never come here

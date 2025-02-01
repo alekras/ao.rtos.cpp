@@ -203,12 +203,18 @@ data_abort_handler:
   rfeia sp!
 
 reset_handler:
+  cps #0x13
   bl reset_exception
 loop_1:
   b loop_1
 
 unused_handler:
 fiq_handler:
+  sub lr, lr, #4
+  srsdb sp!, #0x13
+  cps #0x13
+  push {r0 - r12, lr}
+  mov r0, sp
   bl unpredicted_exception
-loop_2:
-  b loop_2
+  pop  {r0 - r12, lr}
+  rfeia sp!

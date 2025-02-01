@@ -14,8 +14,8 @@
    limitations under the License.
 */
 
-#ifndef DELAYAO_HPP_
-#define DELAYAO_HPP_
+#ifndef THERMOMETERAO_HPP_
+#define THERMOMETERAO_HPP_
 
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
 #include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
@@ -23,15 +23,13 @@
 #include "ISAObject.hpp"
 #include "application.hpp"
 
-class DelayAO : public ISAObject {
+class ThermometerAO : public ISAObject {
  private:
-  DWORD period;
+  volatile DWORD period;
   String *outputString;
-  Message *logMsg;
-  Message *eventMsg;
-  Efsm<Message> *dsSM;
+  Message *logMsg, *eventMsg;
  public:
-  Gpio *gpio20;
+  Gpio *gpio16, *gpio20;
 
  protected:
   virtual DWORD processMessage(Message*);
@@ -40,9 +38,13 @@ class DelayAO : public ISAObject {
   void initLed();
 
  public:
-          DelayAO(DWORD);
+          ThermometerAO(DWORD);
      void initSysTimer(DWORD delay);
      void logMessage(BYTE *msg);
+     void wait_us(DWORD usec);
+     void reset();
+     void writeByte2DS(DWORD data);
+     DWORD read2BytesFromDS();
 };
 
-#endif /* DELAYAO_HPP_ */
+#endif /* THERMOMETERAO_HPP_ */

@@ -56,9 +56,9 @@ class FormatParser : public Fsm<const char> {
 };
 
 char *
-intToString( char *s, int arg, int width, char type );
+intToString( char *s, int arg, int width, int align, char type );
 
 char *
-stringToString( char *s, char * arg, int width );
+stringToString( char *s, char * arg, int width, int align );
 
 #endif /* _FORMATTER_HPP */

@@ -64,7 +64,7 @@ class Gpio {
       setFunction(1);
     }
 
-/* 0 - disable pull-up/down
+/** 0 - disable pull-up/down
  * 1 - pull-down
  * 2 - pull-up
  * 3 - reserved

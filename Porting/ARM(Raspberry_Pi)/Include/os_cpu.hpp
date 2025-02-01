@@ -48,9 +48,9 @@ extern "C" void enable_irq();
 extern "C" void disable_irq();
 
 /* Disable interrupts                        */
-#define  ENTER_CRITICAL() asm("cpsid i"); //disable_irq();
+#define  ENTER_CRITICAL() asm("cpsid aif"); //disable_irq();
 /* Enable  interrupts                        */
-#define  EXIT_CRITICAL() asm("cpsie i");  //enable_irq();
+#define  EXIT_CRITICAL() asm("cpsie aif");  //enable_irq();
 
 /*
 *********************************************************************************************************
