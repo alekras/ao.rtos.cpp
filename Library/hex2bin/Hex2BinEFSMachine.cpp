@@ -19,12 +19,15 @@
  */
 
 #include "Include/hex2bin.hpp"
+extern "C" void sendString(char*);
+extern "C" int convert(int, char);
 
 /*---------------------- Finite state machine hex2bin -------------------------*/
 
 /** Constructor. */
 Hex2BinEFSMachine::Hex2BinEFSMachine() : Efsm((State)&Hex2BinEFSMachine::initial) {
-  phMemoryAddress = -1;
+  phMemoryAddress = (unsigned char*) 0;
+  addressType = 0;
 }
 
 int
@@ -43,24 +46,10 @@ convert(int v, char d) {
 }
 
 void Hex2BinEFSMachine::debug(char * t, Phase phase, char *s) {
-  char event;
-  if (s) {
-    event = *s;
-  } else {
-    event = '_';
-  }
-  return;
-  std::cout << ">>> " << t << "(" << phase << ", " << event
-      << ")\t\t count: " << count
-      << ", value: " << value
-      << ", size: " << size
-      << ", index: " << index
-      << ", sum: " << sum
-      << ";   rType: " << rType
-      << ", cSum: " << cSum
-      << ", recordAddress: " << recordAddress
-      << ", linearAddress: " << linearAddress
-      << "\n";
+//  char out[80];
+//  FormatParser fp;
+//  fp.format(out, ">>> %s:%d input:%c\n\r", t, phase, ((s==0)? ' ': *s));
+//  sendString(out);
 }
 /****************************************
  * Initial state.
@@ -116,7 +105,7 @@ Hex2BinEFSMachine::dataSize(Phase phase, char *s) {
       }
       break;
     case EXIT:
-      dataArray = new int[size];
+//      dataArray = new int[size];
       break;
   }
   return 0;
@@ -247,59 +236,65 @@ Hex2BinEFSMachine::checkSum(Phase phase, char *s) {
       break;
     case EXIT:
       cSum = value;
-       processRecord();
-      break;
+      return processRecord();
   }
   return 0;
 }
 
 int
 Hex2BinEFSMachine::processRecord() {
-  char c = ' ';
-  debug("processRecord", (Phase)0, &c);
+  char out[80];
+
   int a, a1, ma;
   switch(rType) {
     case DATA:
-      ma = (segmentAddress << 4) + recordAddress;
-      if(phMemoryAddress < 0) {
-        phMemoryAddress = ma;
+      if (addressType == 1) {
+        phMemoryAddress = (unsigned char*) (linearAddress + recordAddress);
+      } else if (addressType == 2) {
+        phMemoryAddress = (unsigned char*) (segmentAddress + recordAddress);
+      } else {
+        phMemoryAddress = (unsigned char*) (recordAddress);
       }
 
-      while( ma > phMemoryAddress) {
-        printf(" %02X", 0);
-        phMemoryAddress++;
-      }
-      printf("<%04X:%04X>", segmentAddress, recordAddress);
+//      fp.format(out, "<%8h>", phMemoryAddress);
+//      sendString(out);
       for( int i = 0; i < index; i++ ) {
-        printf(" %02X", dataArray[i]);
-        phMemoryAddress++;
+//        fp.format(out, " %2h", dataArray[i]);
+//        sendString(out);
+        *(phMemoryAddress++) = dataArray[i];
       }
-      printf("\n");
+//      sendString("\n\r");
      break;
     case EOH:
-      printf("end of file.\n");
+      sendString("end of file.\n\r");
       return 1;
     case SEGMENT_ADDRESS:
-      segmentAddress = 256 * dataArray[0] + dataArray[1];
-      printf("\nextended segment address:  %04X", segmentAddress);
-      break;
-    case 3:
+      addressType = 2;
+      segmentAddress = (256 * dataArray[0] + dataArray[1]) << 4;
+      fp.format(out, "extended segment address (or start address): %8h\n\r", segmentAddress);
+      sendString(out);
       break;
     case LINEAR_ADDRESS:
+      addressType = 1;
       linearAddress = 256 * dataArray[0] + dataArray[1];
-      printf("\nextended linear address:  %08X", linearAddress);
+      linearAddress <<= 16;
+      fp.format(out, "extended linear address: %8h\n\r", linearAddress);
+      sendString(out);
       break;
-    case START_ADDRESS:
+    case START_ADDRESS: case START_ADDRESS_EX:
       a = 256 * dataArray[0] + dataArray[1];
-      a1 = 256 * dataArray[2] + dataArray[3];
-      printf("\nstarting address: %04X %04X", a, a1);
+      a <<= 16;
+      a = a + 256 * dataArray[2] + dataArray[3];
+//      fp.format(out, "starting address: %8h\n\r", a);
+//      sendString(out);
       break;
     default:
       break;
   }
-  printf(" --- calculated summ: %02X, ", (1 + (~sum) & 0xFF));
-  printf(" readed summ: %02X\n", cSum);
-  if(( 1 + (~sum) & 0xFF ) != cSum)
-    printf(" --- Wrong cs!\n");
+//  fp.format(out, "--- calculated sum: %2h\n\r    read sum: %2h\n\r", (1 + (~sum) & 0xFF), cSum);
+//  sendString(out);
+  if(( 1 + (~sum) & 0xFF ) != cSum) {
+    sendString(" --- Wrong check sum!\n\r");
+  }
   return 0;
 }

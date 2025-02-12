@@ -19,7 +19,7 @@
  */
 
 #include "Include/iil.hpp"
-#include "Include/hex2bin.hpp"
+#include "../../../Library/hex2bin/Include/hex2bin.hpp"
 
 extern "C" unsigned char read_rx_buffer();
 extern "C" unsigned int uart_send(char);

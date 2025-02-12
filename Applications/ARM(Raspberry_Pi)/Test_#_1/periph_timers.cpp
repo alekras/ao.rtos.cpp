@@ -61,38 +61,3 @@ void irq_handler_sys_timer() {
   (*pSYS_TIMER_CNTRL_STAT) = 2;
 }
 
-//extern "C"
-//void irq_handler_arm_timer() {
-//  static volatile int tic = 0;
-//  switch (tic++ % 8) {
-//    case 0:
-//      gpio47->clearLevel();
-//      gpio10->clearLevel();
-//      break;
-//    case 1:
-//      gpio47->setLevel();
-//      break;
-//    case 2:
-//      gpio47->clearLevel();
-//      break;
-//    case 3:
-//      gpio47->setLevel();
-//      break;
-//    case 4:
-//      gpio47->clearLevel();
-//      gpio10->setLevel();
-//      break;
-//    case 5:
-//      gpio47->clearLevel();
-//      break;
-//    case 6:
-//      gpio47->setLevel();
-//      break;
-//    case 7:
-//      gpio47->clearLevel();
-//      break;
-//    default:
-//      break;
-//  }
-//}
-

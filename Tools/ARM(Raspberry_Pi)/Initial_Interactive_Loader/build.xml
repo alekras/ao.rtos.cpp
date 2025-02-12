@@ -27,7 +27,7 @@
       <arg value="main.cpp"/>
       <arg value="InitialInteractiveLoaderSM.cpp"/>
       <arg value="periph.cpp"/>
-      <arg line="../../../Library/Display/formatter.cpp Hex2BinEFSMachine.cpp"/>
+      <arg line="../../../Library/Display/formatter.cpp ../../../Library/hex2bin/Hex2BinEFSMachine.cpp"/>
     </exec>
   </target>
 

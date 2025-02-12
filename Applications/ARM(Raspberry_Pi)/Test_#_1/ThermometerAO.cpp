@@ -51,10 +51,8 @@ ThermometerAO::initSysTimer(DWORD microSeconds) {
 
 void
 ThermometerAO::wait_us(DWORD usec) {
-//  ENTER_CRITICAL()                     // disable interrupts
   volatile DWORD temp = (*pSYS_TIMER_COUNT_LO);
   while(usec > (*pSYS_TIMER_COUNT_LO) - temp);
-//  EXIT_CRITICAL();                     // allow interrupts
 }
 
 void
@@ -80,30 +78,22 @@ ThermometerAO::reset() {
 
 void
 ThermometerAO::writeByte2DS(DWORD data) {
-  DWORD l0, l1;
-
   gpio16->setLevel();
   gpio16->setAsOutput();
   for (int i = 0; i < 16; i++) {
     gpio16->clearLevel();
-//    l0 = gpio16->readLevel();
     ENTER_CRITICAL()                     // disable interrupts
     if (data & 0x01 == 1) {
       wait_us(5);
       gpio16->setLevel();
-//      l1 = gpio16->readLevel();
       wait_us(100);
     } else {
       wait_us(100);
-//      l1 = gpio16->readLevel();
       gpio16->setLevel();
     }
     EXIT_CRITICAL();                     // allow interrupts
     data = data >> 1;
-//    fp1.format(out, "%d) %d, %d\n\r", i,l0,l1);
-//    dump_debug_message(out);
   }
-//  gpio16->setAsInput();
 }
 
 DWORD
@@ -118,17 +108,12 @@ ThermometerAO::read2BytesFromDS() {
     gpio16->setAsInput();
     wait_us(5);
     DWORD l0 = gpio16->readLevel();
-//    DWORD l1 = gpio16->readLevel();
-//    DWORD l2 = gpio16->readLevel();
     wait_us(50);
     EXIT_CRITICAL();                     // allow interrupts
     if (l0 == 1) {
       result = result | 0x10000;
     }
     result = result >> 1;
-//    fp1.format(out, "%d) %d, %d, %d\n\r", i,l0,l1,l2);
-//    dump_debug_message(out);
-
   }
   return result;
 }

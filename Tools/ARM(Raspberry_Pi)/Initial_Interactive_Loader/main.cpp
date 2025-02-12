@@ -44,7 +44,7 @@ int main() {
 //  sendString(out);
 
   sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
-  sendString("[build 0.1.5, 11/20/2024]\n\r");
+  sendString("[build 0.1.6, 02/06/2025]\n\r");
   sendString("Commands:\n\r");
   sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
   sendString(" D              - continue output memory content.\n\r");

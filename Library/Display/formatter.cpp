@@ -173,7 +173,7 @@ stringToString( char *s, char * arg, int width, int align ) {
       return s;
     }
   }
-  e = arg;
+
   i = 0;
   if( align == 0 ) {
     for( ; i < width - length; i++ )

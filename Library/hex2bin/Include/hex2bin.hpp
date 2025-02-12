@@ -22,43 +22,16 @@
 #define HEX2BIN_HPP_
 
 #include "../../FSM/Include/fsm.hpp"
+#include "../../Display/Include/formatter.hpp"
 
 #define  DATA 0
 #define  EOH  1
 #define  SEGMENT_ADDRESS 2
+#define  START_ADDRESS 3
 #define  LINEAR_ADDRESS 4
-#define  START_ADDRESS 5
+#define  START_ADDRESS_EX 5
 
-class Hex2BinStateMachine : public Fsm<char> {
-  private:
-// State parameters:
-    int count;
-    int value;
-    int size;
-    int index;
-
-// processing results:
-    int sum;
-    int *dataArray;
-    int recordAddress;
-    int segmentAddress;
-    int linearAddress;
-    long phMemoryAddress;
-    int rType;
-    int cSum;
-
-    int initial(char *);
-//    int record(char *);
-    int dataSize(char *);
-    int address(char *);
-    int recordType(char *);
-    int data(char *);
-    int checkSum(char *);
-    void processRecord();
-    void debug(char * t, char *s);
-  public:
-    Hex2BinStateMachine();
-};
+#define  INPUT_HEX_BUFFER 0x10000000
 
 class Hex2BinEFSMachine : public Efsm<char> {
   private:
@@ -70,13 +43,15 @@ class Hex2BinEFSMachine : public Efsm<char> {
 
 // processing results:
     int sum;
-    int *dataArray;
-    int recordAddress;
-    int segmentAddress;
-    int linearAddress;
-    long phMemoryAddress;
+    unsigned char dataArray[256];
+    unsigned int recordAddress;
+    unsigned int segmentAddress;
+    unsigned int linearAddress;
+    int addressType;
+    unsigned char* phMemoryAddress;
     int rType;
     int cSum;
+    FormatParser fp;
 // States implementation:
     int initial(Phase, char *);
 //    int record(Phase, char *);

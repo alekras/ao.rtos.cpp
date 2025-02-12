@@ -61,7 +61,7 @@ MyAO::processMessage(Message * e) {
         timeMin = timeMin % 60;
 
         fp.format((char *)outputString->getChars(),
-            "<1> T: [%4d:%2d:%2d %3d.%3d] Active object[%d] count=%d buffer=%d\r\n",
+            "<1> T: [%4d:%02d:%02d %3d.%03d] Active object[%d] count=%d buffer=%d\r\n",
             timeHour, timeMin, timeSec, timeMSec, timeUSec, getPriority(), counter, incomingBufferLoad());
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
