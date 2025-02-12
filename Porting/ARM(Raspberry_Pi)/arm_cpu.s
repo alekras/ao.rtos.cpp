@@ -75,12 +75,12 @@ fiq_entry:            .word fiq_handler
 
 .globl enable_irq
 enable_irq:
-  cpsie i
+  cpsie aif
   bx lr
 
 .globl disable_irq
 disable_irq:
-  cpsid i
+  cpsid aif
   bx lr
 
 .globl get_sp

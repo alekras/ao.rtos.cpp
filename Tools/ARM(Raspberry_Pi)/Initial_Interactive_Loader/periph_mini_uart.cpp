@@ -22,7 +22,7 @@
 
 extern "C"
 unsigned char uart_recv() {
-  unsigned int status;
+  volatile unsigned int status;
   do {
 //    status = *pAUX_MU_LSR_REG;
     status = *pAUX_MU_STAT_REG;
@@ -140,6 +140,6 @@ void irq_handler_mini_uart() {
       }
     }
   } while ((status & 0x1) == 0);
-  ENTER_CRITICAL()                     // mask interrupts
+//  ENTER_CRITICAL()                     // mask interrupts
 }
 

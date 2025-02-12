@@ -18,7 +18,7 @@ extern "C" void dump_debug_init();
 extern "C" void dump_debug_message(char*);
 
 char out[80];
-FormatParser fp;
+FormatParser fp1;
 extern Gpio *gpio47, *gpio10, *gpio22;
 
 //------------------------------------------------------------------------
@@ -44,7 +44,7 @@ int main() {
 //  sendString(out);
 
   sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
-  sendString("[build 0.1.6, 02/06/2025]\n\r");
+  sendString("[build 0.1.7, 02/12/2025]\n\r");
   sendString("Commands:\n\r");
   sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
   sendString(" D              - continue output memory content.\n\r");
@@ -60,6 +60,7 @@ int main() {
   InitialInteractiveLoaderSM fsm;
   do {
     c = read_rx_buffer();
+    sendString("#");
     uart_send(c);
     if (fsm.dispatch((char*) &c) > 0 ) {
       break;

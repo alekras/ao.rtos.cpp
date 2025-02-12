@@ -23,8 +23,6 @@
 extern "C" void sendString(char*);
 extern "C" void irq_handler_arm_timer();
 extern "C" void irq_handler_mini_uart();
-extern char out[200];
-extern FormatParser fp;
 
 extern "C"
 void irq_vectors_setup() {
@@ -34,36 +32,6 @@ void irq_vectors_setup() {
   for (i = 0; i < 16; i++) {
     *(ptrD + i) = *(ptrS + i);
   }
-}
-
-extern "C"
-void dump_memory(unsigned int * a, int w) {
-  for(int i = 0; i < w; i++) {
-    fp.format(out, "%h) %h\r\n", (a + i), *(a + i));
-    sendString(out);
-  }
-}
-
-#define DUMP_BUFFER 0x30000000
-#define DUMP_BUFFER_END 0x3000F000
-char * dump_pointer;
-unsigned int * dump_pointer_storage;
-extern "C"
-void dump_debug_init() {
-  dump_pointer_storage = (unsigned int *)DUMP_BUFFER;
-  dump_pointer = (char *)(DUMP_BUFFER + 4);
-  *dump_pointer_storage = (unsigned int)dump_pointer;
-  *dump_pointer = 0;
-}
-
-extern "C"
-void dump_debug_message(char * msg) {
-  if (dump_pointer > (char*)DUMP_BUFFER_END)
-    return;
-  do {
-    *(dump_pointer++) = *msg;
-  } while (*(msg++) != 0);
-  *dump_pointer_storage = (unsigned int)dump_pointer;
 }
 
 extern "C"
@@ -85,31 +53,6 @@ AO_STACK * isr(AO_STACK *sp) {
   }
 
   return ret_sp;
-}
-
-extern "C"
-void undefined_instruction_exception(unsigned int * sp) {
-  dump_debug_message("undefined instruction exception\r\n");
-}
-
-extern "C"
-void prefetch_abort_exception(unsigned int * sp) {
-  dump_debug_message("prefetch abort exception\r\n");
-}
-
-extern "C"
-void data_abort_exception(unsigned int * sp) {
-  dump_debug_message("data abort exception\r\n");
-}
-
-extern "C"
-void reset_exception(unsigned int * sp) {
-  dump_debug_message(" *** reset exception ***\r\n");
-}
-
-extern "C"
-void unpredicted_exception(unsigned int * sp) {
-  dump_debug_message(" *** unpredicted exception ***\r\n");
 }
 
 extern "C" void * processSysCommand( DWORD size, DWORD type) {

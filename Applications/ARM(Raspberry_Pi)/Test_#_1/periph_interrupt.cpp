@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007-2015 by krasnop@bellsouth.net (Alexei Krasnopolski)
+   Copyright (C) 2007-2025 by krasnop@bellsouth.net (Alexei Krasnopolski)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,12 +19,6 @@
 #include "formatter.hpp"
 
 extern "C" AO_STACK * processInterrupt( DWORD iN, AO_STACK * stp );
-extern "C" unsigned int * get_sp(void);
-extern "C" unsigned int get_cpsr(void);
-extern "C" unsigned int get_spsr(void);
-
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
 
 extern "C"
 void irq_vectors_setup() {
@@ -36,65 +30,6 @@ void irq_vectors_setup() {
   }
 }
 
-#define DUMP_BUFFER 0x30000000
-#define DUMP_BUFFER_END 0x3000F000
-char * dump_pointer;
-unsigned int * dump_pointer_storage;
-extern "C"
-void dump_debug_init() {
-  dump_pointer_storage = (unsigned int *)DUMP_BUFFER;
-  dump_pointer = (char *)(DUMP_BUFFER + 4);
-  *dump_pointer_storage = (unsigned int)dump_pointer;
-  *dump_pointer = 0;
-}
-
-extern "C"
-void dump_debug_message(char * msg) {
-  if (dump_pointer > (char*)DUMP_BUFFER_END)
-    return;
-  do {
-    *(dump_pointer++) = *msg;
-  } while (*(msg++) != 0);
-  *dump_pointer_storage = (unsigned int)dump_pointer;
-}
-
-extern "C"
-void dump_memory(unsigned int * a, int w) {
-  for(int i = 0; i < w; i++) {
-    fp1.format(out, "%h) %h\r\n", (a + i), *(a + i));
-    dump_debug_message(out);
-  }
-}
-
-char* reg_names[] = {"r0","r1","r2","r3","r4","r5","r6", "r7","r8","r9","r10","r11","r12","lr_svc","lr_irq","spsr", "ukn", "ukn"};
-extern "C"
-void dump_stack(unsigned int * ssp, unsigned int * csp, unsigned int cpsr, unsigned int spsr) {
-  fp1.format(out, "-- current SP=%8h CPSR=%8h SPSR=%8h --\r\n", csp, cpsr, spsr);
-  dump_debug_message(out);
-  for(int i = 0; i < 18; i++) {
-    fp1.format(out, "%8h) %8h (%s)\r\n", (ssp + i), *(ssp + i), reg_names[i]);
-    dump_debug_message(out);
-  }
-}
-
-extern "C"
-void dump_stack_(unsigned int * sp) {
-  fp1.format(out, "-- current SP=%8h CPSR=%8h SPSR=%8h --\r\n", get_sp(), get_cpsr(), get_spsr());
-  dump_debug_message(out);
-  for(int i = 0; i < 18; i++) {
-    fp1.format(out, "%8h) %8h (%s)\r\n", (sp + i), *(sp + i), reg_names[i]);
-    dump_debug_message(out);
-  }
-}
-
-extern "C"
-void sys_timer_setup() {
-// Counter is running on freq = 1MHz and 1,000,000 cycles = 0xF4240
-  (*pSYS_TIMER_CMP_1) = (*pSYS_TIMER_COUNT_LO) + 0xF4240;
-  (*pSYS_TIMER_CNTRL_STAT) = 2; // Clear CMP1 detected
-  (*pENABLE_IRQ_1) = 0x00000002; // Enable system timer interrupts CMP_1 channel
-}
-
 extern "C"
 void arm_timer_setup(int p_msec) {
 // ARM timer freq = 250MHz divider = 0x7C = 124, so timer freq = 250/(124 + 1) = 2MHz
@@ -104,14 +39,6 @@ void arm_timer_setup(int p_msec) {
   (*pARM_TIMER_CTL) = 0x000000A2;
   (*pARM_TIMER_PDIV) = 0x0000007C; //
   (*pENABLE_IRQ_B) = 0x00000001; // Enable ARM timer interrupts
-}
-
-Gpio *gpio47;
-
-extern "C"
-void led_setup() {
-  gpio47->setFunction(1);
-  gpio47->clearLevel();
 }
 
 // TO DO - move to assembler code arm_cpu.s ???
@@ -136,34 +63,4 @@ AO_STACK * isr(AO_STACK *sp) {
   }
 
   return ret_sp;
-}
-
-extern "C"
-void undefined_instruction_exception(unsigned int * sp) {
-  dump_debug_message(" *** undefined instruction exception ***\r\n");
-  dump_stack_(sp);
-}
-
-extern "C"
-void prefetch_abort_exception(unsigned int * sp) {
-  dump_debug_message(" *** prefetch abort exception ***\r\n");
-  dump_stack_(sp);
-}
-
-extern "C"
-void data_abort_exception(unsigned int * sp) {
-  dump_debug_message(" *** data abort exception ***\r\n");
-  dump_stack_(sp);
-}
-
-extern "C"
-void reset_exception(unsigned int * sp) {
-  dump_debug_message(" *** reset exception ***\r\n");
-  dump_stack_(sp);
-}
-
-extern "C"
-void unpredicted_exception(unsigned int * sp) {
-  dump_debug_message(" *** unpredicted exception ***\r\n");
-  dump_stack_(sp);
 }

@@ -28,7 +28,7 @@ class MyAO : public AObject
   char receivedLine[80];
   Message *logMsg, *commandMsg;
   int second, counter, lineIdx;
-  Gpio *gpio10, *gpio22;
+  Gpio *gpio10, *gpio22, *gpio47;
   FormatParser fp;
 
  protected:

@@ -18,4 +18,5 @@
 
 #include "periph_timers.cpp"
 #include "periph_mini_uart.cpp"
+#include "../../../Applications/ARM(Raspberry_Pi)/Test_#_1/arm_debug_tools.cpp"
 #include "periph_misc.cpp"

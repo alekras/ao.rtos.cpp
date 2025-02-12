@@ -2,26 +2,21 @@
 #include "MyAO.hpp"
 #include "DebugAOScheduler.hpp"
 
-extern "C" int main();
+//extern "C" int main();
 extern "C" void enable_irq();
 
 char out[200]; // @debug
 FormatParser fp1; // @debug
 extern MemoryManager* mm;
-extern Gpio *gpio47;
 
 int main() {
-  Gpio t(47);
-  gpio47 = &t;
   MemoryManager memMng;
   mm = &memMng;
 
   irq_vectors_setup();
-  sys_timer_setup();
   arm_timer_setup(250);
-  led_setup();
   dump_debug_init();
-  fp1.format(out, "Start OS! Version= %d\r\n", 19);  // @debug
+  fp1.format(out, "Start AORTOS! Version= %d\r\n", 19);  // @debug
   dump_debug_message(out);  // @debug
 
   ISAObject::nestedLevel = 0;

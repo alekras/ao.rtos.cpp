@@ -27,6 +27,9 @@ MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   gpio22 = new Gpio(22);
   gpio22->setFunction(1);
   gpio22->setLevel();
+  gpio47 = new Gpio(47);
+  gpio47->setFunction(1);
+  gpio47->setLevel();
   counter = 0;
   second = 4;
   lineIdx = 0;
@@ -81,6 +84,7 @@ MyAO::processMessage(Message * e) {
         case 0:
           gpio22->clearLevel();
           gpio10->clearLevel();
+          gpio47->clearLevel();
           break;
         case 1:
           gpio22->clearLevel();
@@ -89,6 +93,7 @@ MyAO::processMessage(Message * e) {
         case 2:
           gpio22->setLevel();
           gpio10->clearLevel();
+          gpio47->setLevel();
           break;
         case 3:
           gpio22->setLevel();
