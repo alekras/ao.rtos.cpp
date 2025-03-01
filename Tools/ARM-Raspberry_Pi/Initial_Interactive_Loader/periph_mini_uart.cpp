@@ -14,8 +14,9 @@
    limitations under the License.
  */
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Library/Display/Include/formatter.hpp"
 
 //GPIO14  TXD0 and TXD1
 //GPIO15  RXD0 and RXD1
@@ -24,9 +25,9 @@ extern "C"
 unsigned char uart_recv() {
   volatile unsigned int status;
   do {
-//    status = *pAUX_MU_LSR_REG;
-    status = *pAUX_MU_STAT_REG;
-    if ((status & 0x10) != 0) {
+    status = *pAUX_MU_LSR_REG;
+//    status = *pAUX_MU_STAT_REG;
+    if ((status & 0x2) != 0) {
       return '*';
     }
   } while ((status & 0x01) == 0);
@@ -37,7 +38,7 @@ unsigned char uart_recv() {
 volatile bool flag;
 volatile unsigned int txhead;
 volatile unsigned int txtail;
-#define TXBUFMASK 0xFFF
+#define TXBUFMASK 0xFF
 volatile unsigned char txbuffer[TXBUFMASK+1];
 
 //------------------------------------------------------------------------
@@ -121,7 +122,7 @@ void uart_init() {
 
 extern "C"
 void irq_handler_mini_uart() {
-  unsigned int status;
+  volatile unsigned int status;
 //  EXIT_CRITICAL()              // unmask interrupts
   do {
     status = *pAUX_MU_IIR_REG;
@@ -140,6 +141,6 @@ void irq_handler_mini_uart() {
       }
     }
   } while ((status & 0x1) == 0);
-//  ENTER_CRITICAL()                     // mask interrupts
+  ENTER_CRITICAL()                     // mask interrupts
 }
 

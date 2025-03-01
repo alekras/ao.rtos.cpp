@@ -14,18 +14,10 @@
    limitations under the License.
  */
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/gpio.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/gpio.hpp"
 
-extern "C"
-void sys_timer_setup() {
-// Counter is running on freq = 1MHz and 1,000,000 cycles = 0xF4240
-  (*pSYS_TIMER_CMP_1) = (*pSYS_TIMER_COUNT_LO) + 0xF4240;
-  (*pSYS_TIMER_CNTRL_STAT) = 2; // Clear CMP1 detected
-  (*pENABLE_IRQ_1) = 0x00000002; // Enable system timer interrupts
-}
-
-Gpio *gpio47, *gpio10, *gpio22;
+extern Gpio *gpio47, *gpio10, *gpio22;
 
 extern "C"
 void arm_timer_setup(int p_msec) {
@@ -46,20 +38,6 @@ void led_setup() {
   gpio10->setLevel();
   gpio22->setFunction(1);
   gpio22->setLevel();
-}
-
-extern "C"
-void irq_handler_sys_timer() {
-  static volatile int tic = 0;
-
-  if (tic++ % 2 == 0) {
-    gpio47->clearLevel();
-  } else {
-    gpio47->setLevel();
-  }
-
-  (*pSYS_TIMER_CMP_1) = (*pSYS_TIMER_COUNT_LO) + 0xF4240;
-  (*pSYS_TIMER_CNTRL_STAT) = 2;
 }
 
 extern "C"

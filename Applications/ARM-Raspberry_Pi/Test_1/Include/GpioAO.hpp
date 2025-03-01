@@ -14,37 +14,31 @@
    limitations under the License.
 */
 
-#ifndef THERMOMETERAO_HPP_
-#define THERMOMETERAO_HPP_
+#ifndef GPIOAO_HPP_
+#define GPIOAO_HPP_
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm2835.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
 #include "ISAObject.hpp"
 #include "application.hpp"
 
-class ThermometerAO : public ISAObject {
+class GpioAO : public ISAObject {
  private:
-  volatile DWORD period;
+  Gpio *gpio21;
   String *outputString;
-  Message *logMsg, *eventMsg;
- public:
-  Gpio *gpio16, *gpio20;
+  Message *logMsg, *inMsg;
+  volatile DWORD counter, period, lastStatus, lastTimeStamp, impulseWidth;
+  FormatParser fp;
 
  protected:
   virtual DWORD processMessage(Message*);
   virtual AO_STACK * serviceInterrupt(AO_STACK *);
   virtual void run();
-  void initLed();
+  void initGpio();
 
  public:
-          ThermometerAO(DWORD);
-     void initSysTimer(DWORD delay);
-     void logMessage(BYTE *msg);
-     void wait_us(DWORD usec);
-     void reset();
-     void writeByte2DS(DWORD data);
-     DWORD read2BytesFromDS();
+          GpioAO(DWORD);
 };
 
-#endif /* THERMOMETERAO_HPP_ */
+#endif /* GPIOAO_HPP_ */

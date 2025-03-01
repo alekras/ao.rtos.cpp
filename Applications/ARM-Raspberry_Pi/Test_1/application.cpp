@@ -16,7 +16,7 @@
 
 /** Helper file to gather the all cpp files to one */
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm2835.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
 
 #include "arm_debug_tools.cpp"
 #include "periph_interrupt.cpp"

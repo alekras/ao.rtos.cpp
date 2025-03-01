@@ -14,33 +14,37 @@
    limitations under the License.
 */
 
-#ifndef UARTAO_HPP_
-#define UARTAO_HPP_
+#ifndef THERMOMETERAO_HPP_
+#define THERMOMETERAO_HPP_
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm2835.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
 #include "ISAObject.hpp"
 #include "application.hpp"
 
-class UartAO : public ISAObject {
+class ThermometerAO : public ISAObject {
  private:
-  volatile bool flag;
-  RingBuffer<BYTE> *txRingBuffer;
-  RingBuffer<BYTE> *rxRingBuffer;
-
-  Message *comMsg;
-  volatile int sec;
-
-  Message *inMsg;
+  volatile DWORD period;
+  String *outputString;
+  Message *logMsg, *eventMsg;
+ public:
+  Gpio *gpio16, *gpio20;
 
  protected:
   virtual DWORD processMessage(Message*);
-  virtual AO_STACK * serviceInterrupt(AO_STACK *stp);
-  void initUart();
+  virtual AO_STACK * serviceInterrupt(AO_STACK *);
+  virtual void run();
+  void initLed();
 
  public:
-          UartAO(DWORD);
+          ThermometerAO(DWORD);
+     void initSysTimer(DWORD delay);
+     void logMessage(BYTE *msg);
+     void wait_us(DWORD usec);
+     void reset();
+     void writeByte2DS(DWORD data);
+     DWORD read2BytesFromDS();
 };
 
-#endif /* UARTAO_HPP_ */
+#endif /* THERMOMETERAO_HPP_ */

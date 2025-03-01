@@ -14,7 +14,13 @@
    limitations under the License.
  */
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/gpio.hpp"
+#include "../../../Library/Display/Include/formatter.hpp"
+
+extern char out[200];
+extern FormatParser fp;
+extern "C" void dump_debug_message(char*);
 
 extern "C"
 void sys_timer_setup() {
@@ -48,16 +54,44 @@ void led_setup() {
 }
 
 extern "C"
-void irq_handler_sys_timer() {
+void irq_handler_arm_timer() {
   static volatile int tic = 0;
-
-  if (tic++ % 2 == 0) {
-    gpio47->clearLevel();
-  } else {
-    gpio47->setLevel();
+  fp.format(out, "timer tick #%d\n\r", tic);
+  dump_debug_message(out);
+  switch (tic++ % 8) {
+    case 0:
+      gpio10->clearLevel();
+      gpio22->setLevel();
+      break;
+    case 1:
+      gpio10->setLevel();
+      gpio22->clearLevel();
+      break;
+    case 2:
+      gpio10->clearLevel();
+      gpio22->setLevel();
+      break;
+    case 3:
+      gpio10->setLevel();
+      gpio22->clearLevel();
+      break;
+    case 4:
+      gpio10->clearLevel();
+      gpio22->setLevel();
+      break;
+    case 5:
+      gpio10->clearLevel();
+      gpio22->setLevel();
+      break;
+    case 6:
+      gpio10->setLevel();
+      gpio22->clearLevel();
+      break;
+    case 7:
+      gpio10->clearLevel();
+      gpio22->setLevel();
+      break;
+    default:
+      break;
   }
-
-  (*pSYS_TIMER_CMP_1) = (*pSYS_TIMER_COUNT_LO) + 0xF4240;
-  (*pSYS_TIMER_CNTRL_STAT) = 2;
 }
-

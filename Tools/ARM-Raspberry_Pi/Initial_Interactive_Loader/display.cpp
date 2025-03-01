@@ -5,10 +5,10 @@
  *      Author: alexei
  */
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
 #include "../../../Library/Display/Include/formatter.hpp"
 #include "Include/MonospaceDefault.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/rpi-mailbox-interface.h"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/rpi-mailbox-interface.h"
 extern "C" void RPI_PropertyInit( void );
 extern "C" void RPI_PropertyAddTag( rpi_mailbox_tag_t tag, ... );
 extern "C" int RPI_PropertyProcess( void );

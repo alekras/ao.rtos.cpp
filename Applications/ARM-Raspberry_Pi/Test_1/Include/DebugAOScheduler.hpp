@@ -14,31 +14,31 @@
    limitations under the License.
 */
 
-#ifndef GPIOAO_HPP_
-#define GPIOAO_HPP_
+#ifndef DEBUGAOSCHEDULER_HPP_
+#define DEBUGAOSCHEDULER_HPP_
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm2835.hpp"
-#include "ISAObject.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
+#include "AOScheduler.hpp"
 #include "application.hpp"
 
-class GpioAO : public ISAObject {
+class DebugAOScheduler : public AOScheduler {
  private:
-  Gpio *gpio21;
-  String *outputString;
-  Message *logMsg, *inMsg;
-  volatile DWORD counter, period, lastStatus, lastTimeStamp, impulseWidth;
-  FormatParser fp;
+
+  String *output, *intOutput;
+  Message *logMsg, *intLogMsg;
+  volatile DWORD tickCounter, showDump;
+  FormatParser fp, intFp;
 
  protected:
   virtual DWORD processMessage(Message*);
-  virtual AO_STACK * serviceInterrupt(AO_STACK *);
-  virtual void run();
-  void initGpio();
+  virtual AO_STACK * serviceInterrupt(AO_STACK * stp);
 
  public:
-          GpioAO(DWORD);
+          DebugAOScheduler();
+  void logAOInfo( AObject * ao );
+
 };
 
-#endif /* GPIOAO_HPP_ */
+#endif /* DEBUGAOSCHEDULER_HPP_ */

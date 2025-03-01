@@ -14,31 +14,33 @@
    limitations under the License.
 */
 
-#ifndef DEBUGAOSCHEDULER_HPP_
-#define DEBUGAOSCHEDULER_HPP_
+#ifndef UARTAO_HPP_
+#define UARTAO_HPP_
 
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/os_cpu.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/bcm2835.hpp"
-#include "AOScheduler.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
+#include "ISAObject.hpp"
 #include "application.hpp"
 
-class DebugAOScheduler : public AOScheduler {
+class UartAO : public ISAObject {
  private:
+  volatile bool flag;
+  RingBuffer<BYTE> *txRingBuffer;
+  RingBuffer<BYTE> *rxRingBuffer;
 
-  String *output, *intOutput;
-  Message *logMsg, *intLogMsg;
-  volatile DWORD tickCounter, showDump;
-  FormatParser fp, intFp;
+  Message *comMsg;
+  volatile int sec;
+
+  Message *inMsg;
 
  protected:
   virtual DWORD processMessage(Message*);
-  virtual AO_STACK * serviceInterrupt(AO_STACK * stp);
+  virtual AO_STACK * serviceInterrupt(AO_STACK *stp);
+  void initUart();
 
  public:
-          DebugAOScheduler();
-  void logAOInfo( AObject * ao );
-
+          UartAO(DWORD);
 };
 
-#endif /* DEBUGAOSCHEDULER_HPP_ */
+#endif /* UARTAO_HPP_ */

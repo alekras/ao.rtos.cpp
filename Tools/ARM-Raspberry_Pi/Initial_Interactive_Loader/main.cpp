@@ -1,5 +1,5 @@
 #include "Include/iil.hpp"
-#include "../../../Porting/ARM(Raspberry_Pi)/Include/gpio.hpp"
+#include "../../../Porting/ARM-Raspberry_Pi/Include/gpio.hpp"
 
 extern "C" int main();
 
@@ -14,15 +14,17 @@ extern "C" void led_setup();
 extern "C" void arm_timer_setup(int);
 extern "C" void enable_irq();
 
-extern "C" void dump_debug_init();
-extern "C" void dump_debug_message(char*);
+//extern "C" void dump_debug_init();
+//extern "C" void dump_debug_message(char*);
 
-char out[80];
-FormatParser fp1;
-extern Gpio *gpio47, *gpio10, *gpio22;
+//char out[80];
+//FormatParser fp1;
+Gpio *gpio47, *gpio10, *gpio22;
 
 //------------------------------------------------------------------------
 int main() {
+  unsigned char c;
+  InitialInteractiveLoaderSM fsm;
   Gpio t(47), m(10), p(22);
   gpio47 = &t;
   gpio10 = &m;
@@ -44,7 +46,7 @@ int main() {
 //  sendString(out);
 
   sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
-  sendString("[build 0.1.7, 02/12/2025]\n\r");
+  sendString("[build 0.1.8, 02/12/2025]\n\r");
   sendString("Commands:\n\r");
   sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
   sendString(" D              - continue output memory content.\n\r");
@@ -56,11 +58,8 @@ int main() {
   sendString(" H              - output help message.\n\r");
   sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
 
-  unsigned char c;
-  InitialInteractiveLoaderSM fsm;
   do {
     c = read_rx_buffer();
-    sendString("#");
     uart_send(c);
     if (fsm.dispatch((char*) &c) > 0 ) {
       break;

@@ -10,22 +10,23 @@
   <property name="arm-tools-path">/opt/gcc-arm/latest</property>
   <property name="gcc-bin">${arm-tools-path}/bin</property>
   <property name="exec">${gcc-bin}/arm-none-eabi</property>
-  <!--property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/4.8.3</property-->
   <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/10.3.1</property>
   <!--property name="copts"> -Wno-write-strings -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s 
     -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property-->
   <property name="copts"> -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property>
 
-  <target name="default" depends="clean, gcc, as, ld, dump, hex, img" description="description">
-        
+  <target name="application" depends="clean, gcc, as, ld-app, dump, hex" description="create application hex file">
   </target>
 	
+  <target name="make image" depends="clean, gcc, as, ld-image, dump, img" description="create kernel.img file for flash stick">
+  </target>
+  	
   <target name="gcc">
     <echo>GCC-ARM compiles source files</echo>
     <exec dir="${basedir}" executable="${exec}-gcc">
       <arg line="${copts} -DRPI2 -c " />
       <arg line="-I ../../../Library/Display/Include " />
-      <arg line="-I ../../../Porting/ARM(Raspberry_Pi)/Include " />
+      <arg line="-I ../../../Porting/ARM-Raspberry_Pi/Include " />
       <arg value="main.cpp"/>
       <arg value="InitialInteractiveLoaderSM.cpp"/>
       <arg value="periph.cpp"/>
@@ -36,11 +37,11 @@
   <target name="as">
     <echo>GCC-ARM compiles asm files</echo>
     <exec dir="${basedir}" executable="${exec}-as">
-      <arg line=" -o arm_cpu.o ../../../Porting/ARM(Raspberry_Pi)/arm_cpu.s"/>
+      <arg line=" -o arm_cpu.o ../../../Porting/ARM-Raspberry_Pi/arm_cpu.s"/>
     </exec>
   </target>
 
-  <target name="ld">
+  <target name="ld-image">
     <echo>GCC-ARM link object files</echo>
     <exec dir="${basedir}" executable="${exec}-ld">
       <arg line=" -L${cpp-libs}"/>
@@ -48,6 +49,17 @@
       <arg line=" main.o periph.o"/>
       <arg line=" Hex2BinEFSMachine.o InitialInteractiveLoaderSM.o formatter.o"/>
       <arg line=" -lgcc -Map map.lst -T loader -o InitialInteractiveLoaderSM.elf"/>
+    </exec>
+  </target>
+
+  <target name="ld-app">
+    <echo>GCC-ARM link object files</echo>
+    <exec dir="${basedir}" executable="${exec}-ld">
+      <arg line=" -L${cpp-libs}"/>
+      <arg line=" arm_cpu.o"/>
+      <arg line=" main.o periph.o"/>
+      <arg line=" Hex2BinEFSMachine.o InitialInteractiveLoaderSM.o formatter.o"/>
+      <arg line=" -lgcc -Map map.lst -T loader-app -o InitialInteractiveLoaderSM.elf"/>
     </exec>
   </target>
 
