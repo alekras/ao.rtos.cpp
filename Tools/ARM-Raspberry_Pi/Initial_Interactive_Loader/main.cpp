@@ -57,6 +57,7 @@ int main() {
   sendString(" L              - upload hex file.\n\r");
   sendString(" H              - output help message.\n\r");
   sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
+  sendString(">");
 
   do {
     c = read_rx_buffer();

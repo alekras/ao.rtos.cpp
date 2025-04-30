@@ -27,15 +27,15 @@
       <arg value="periph.cpp"/>
       <arg line="../../../Library/Display/formatter.cpp"/>
       <!--arg value="display.cpp"/>
-      <arg value="../../../Porting/ARM(Raspberry_Pi)/rpi-mailbox.c"/>
-      <arg value="../../../Porting/ARM(Raspberry_Pi)/rpi-mailbox-interface.c"/-->
+      <arg value="../../../Porting/ARM-Raspberry_Pi/rpi-mailbox.c"/>
+      <arg value="../../../Porting/ARM-Raspberry_Pi/rpi-mailbox-interface.c"/-->
     </exec>
   </target>
 
   <target name="as" depends="gcc">
     <echo>GCC-ARM compiles asm files</echo>
     <exec dir="${basedir}" executable="${exec}-as">
-      <arg line=" -o arm_cpu.o ../../../Porting/ARM(Raspberry_Pi)/arm_cpu.s"/>
+      <arg line=" -o arm_cpu.o ../../../Porting/ARM-Raspberry_Pi/arm_cpu.s"/>
     </exec>
   </target>
 

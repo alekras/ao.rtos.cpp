@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 
-<project name="Application ARM(Raspberry_Pi) port (GCC)" default="make-binary-app">
+<project name="Application ARM-Raspberry_Pi port (GCC)" default="make-binary-app">
 
   <import file="./../common-gcc.xml"/>
 	

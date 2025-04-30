@@ -42,7 +42,7 @@
   </target>
 
   <target name="ld-image">
-    <echo>GCC-ARM link object files</echo>
+    <echo>GCC-ARM links object files</echo>
     <exec dir="${basedir}" executable="${exec}-ld">
       <arg line=" -L${cpp-libs}"/>
       <arg line=" arm_cpu.o"/>
@@ -53,10 +53,10 @@
   </target>
 
   <target name="ld-app">
-    <echo>GCC-ARM link object files</echo>
+    <echo>GCC-ARM links object files</echo>
     <exec dir="${basedir}" executable="${exec}-ld">
       <arg line=" -L${cpp-libs}"/>
-      <arg line=" arm_cpu.o"/>
+      <arg line=" arm_cpu.o"/> <!-- has to be first -->
       <arg line=" main.o periph.o"/>
       <arg line=" Hex2BinEFSMachine.o InitialInteractiveLoaderSM.o formatter.o"/>
       <arg line=" -lgcc -Map map.lst -T loader-app -o InitialInteractiveLoaderSM.elf"/>
@@ -64,21 +64,21 @@
   </target>
 
   <target name="dump">
-    <echo>GCC-ARM dump elf file</echo>
+    <echo>GCC-ARM dumps elf file</echo>
     <exec dir="${basedir}" executable="${exec}-objdump" output="InitialInteractiveLoaderSM.lst">
       <arg line="-D InitialInteractiveLoaderSM.elf"/>
     </exec>
   </target>
 
   <target name="hex">
-    <echo>GCC-ARM create HEX file from elf file</echo>
+    <echo>GCC-ARM creates HEX file from elf file</echo>
     <exec dir="${basedir}" executable="${exec}-objcopy">
       <arg line=" InitialInteractiveLoaderSM.elf -O ihex InitialInteractiveLoaderSM.hex"/>
     </exec>
   </target>
 
   <target name="img">
-    <echo>GCC-ARM create binary (image) file from elf file</echo>
+    <echo>GCC-ARM creates binary (image) file from elf file</echo>
     <exec dir="${basedir}" executable="${exec}-objcopy">
       <arg line=" InitialInteractiveLoaderSM.elf -O binary kernel.img"/>
     </exec>
