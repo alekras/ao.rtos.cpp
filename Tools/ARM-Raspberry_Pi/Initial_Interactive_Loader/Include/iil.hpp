@@ -24,6 +24,8 @@
 #include "../../../../Library/FSM/Include/fsm.hpp"
 #include "../../../../Library/Display/Include/formatter.hpp"
 
+#define DUMP_BUFFER 0x30000000
+#define DUMP_BUFFER_END 0x3000F000
 
 class InitialInteractiveLoaderSM : public Efsm<char> {
   private:
@@ -33,6 +35,7 @@ class InitialInteractiveLoaderSM : public Efsm<char> {
     int size;
     int index;
     int width;
+    int subFormat;
 
 // processing results:
     int startAddress;

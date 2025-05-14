@@ -278,7 +278,7 @@ Hex2BinEFSMachine::processRecord() {
       addressType = 1;
       linearAddress = 256 * dataArray[0] + dataArray[1];
       linearAddress <<= 16;
-      fp.format(out, "extended linear address: %8h\n\r", linearAddress);
+      fp.format(out, "extended linear address (or start address): %8h\n\r", linearAddress);
       sendString(out);
       break;
     case START_ADDRESS: case START_ADDRESS_EX:

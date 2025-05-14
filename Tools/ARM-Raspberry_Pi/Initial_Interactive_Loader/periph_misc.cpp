@@ -31,6 +31,9 @@ void irq_vectors_setup() {
   for (i = 0; i < 16; i++) {
     *(ptrD + i) = *(ptrS + i);
   }
+  (*pDISABLE_IRQ_B) = 0xffffffff;
+  (*pDISABLE_IRQ_1) = 0xffffffff;
+  (*pDISABLE_IRQ_2) = 0xffffffff;
 }
 
 extern "C"
@@ -52,6 +55,27 @@ AO_STACK * isr(AO_STACK *sp) {
   }
 
   return ret_sp;
+}
+
+#define DUMP_BUFFER 0x30000000
+#define DUMP_BUFFER_END 0x3000F000
+char * dump_pointer;
+unsigned int * dump_pointer_storage;
+
+extern "C" void dump_debug_init() {
+  dump_pointer_storage = (unsigned int *)DUMP_BUFFER;
+  dump_pointer = (char *)(DUMP_BUFFER + 4);
+  *dump_pointer_storage = (unsigned int)dump_pointer;
+  *dump_pointer = 0;
+}
+
+extern "C" void dump_debug_message(char * msg) {
+  if (dump_pointer > (char*)DUMP_BUFFER_END)
+    return;
+  do {
+    *(dump_pointer++) = *msg;
+  } while (*(msg++) != 0);
+  *dump_pointer_storage = (unsigned int)dump_pointer;
 }
 
 extern "C" void * processSysCommand( DWORD size, DWORD type) {

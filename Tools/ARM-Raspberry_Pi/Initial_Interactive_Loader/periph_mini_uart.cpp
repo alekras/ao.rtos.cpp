@@ -18,11 +18,14 @@
 #include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
 #include "../../../Library/Display/Include/formatter.hpp"
 
-//GPIO14  TXD0 and TXD1
-//GPIO15  RXD0 and RXD1
+//extern char out[120]; // @debug
+//extern FormatParser fp1; // @debug
+//extern "C" void dump_debug_init();
+//extern "C" void dump_debug_message(char*);
 
-extern "C"
-unsigned char uart_recv() {
+unsigned char read_rx_buffer();
+
+unsigned char uart_recv_not_interrupt() {
   volatile unsigned int status;
   do {
     status = *pAUX_MU_LSR_REG;
@@ -33,6 +36,13 @@ unsigned char uart_recv() {
   } while ((status & 0x01) == 0);
   return (unsigned char) ((*pAUX_MU_IO_REG) & 0xFF);
 }
+
+extern "C"
+unsigned char uart_recv() {
+  return read_rx_buffer();
+//  return uart_recv_not_interrupt();
+}
+
 //------------------------------------------------------------------------
 
 volatile bool flag;
@@ -49,7 +59,7 @@ void uart_send(char c) {
   if(!flag) { // transmit is not active
     (*pAUX_MU_IO_REG) = (unsigned int) txbuffer[txtail];
     txtail = (txtail + 1) & TXBUFMASK;
-    (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
+    (*pAUX_MU_IER_REG) = (*pAUX_MU_IER_REG) | 0x2;  // Enable mini UART transmit interrupts
     flag = true;
   }
 }
@@ -74,7 +84,7 @@ void sendString(char* buff) {
   if(!flag) { // transmit is not active
     (*pAUX_MU_IO_REG) = (unsigned int) txbuffer[txtail];
     txtail = (txtail + 1) & TXBUFMASK;
-    (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
+    (*pAUX_MU_IER_REG) = (*pAUX_MU_IER_REG) | 0x2;  // Enable mini UART transmit interrupts
     flag = true;
   }
 }
@@ -84,7 +94,6 @@ volatile unsigned int rxtail;
 #define RXBUFMASK 0xFF
 volatile unsigned char rxbuffer[RXBUFMASK+1];
 
-extern "C"
 unsigned char read_rx_buffer() {
   do {} while (rxtail == rxhead);
   unsigned char c = rxbuffer[rxtail];
@@ -95,52 +104,67 @@ unsigned char read_rx_buffer() {
 
 extern "C"
 void uart_init() {
+  (*pDISABLE_IRQ_1) = 0x20000000; // Disable AUX interrupts (29 bit)
+  (*pAUX_ENABLES) = 1; // Enable mini UART
 
-  (*pDISABLE_IRQ_1) = (*pDISABLE_IRQ_1) | 0x20000000; // Disable AUX interrupts (29 bit)
-  (*pAUX_ENABLES) = 1;
-  (*pAUX_MU_IER_REG) = 0;  // Disable mini UART receive interrupts
+/**
+  GPIO14  TXD0 and TXD1
+  GPIO15  RXD0 and RXD1
+**/
+    Gpio gpio14(14), gpio15(15);
+    gpio14.setFunction(2);
+    gpio15.setFunction(2);
+    gpio14.setPullUpDown(0);
+    gpio15.setPullUpDown(0);
+
+  (*pAUX_MU_IER_REG) = 0;  // Disable mini UART transmit/receive interrupts
   (*pAUX_MU_CNTL_REG) = 0; // Transmit & Receive disable
-  (*pAUX_MU_LCR_REG) = 3;  // 8-bits mode
-  (*pAUX_MU_MCR_REG) = 0;  // modem: RTS is high
-  (*pAUX_MU_IIR_REG) = 0x06; // Clear trans/rec FIFO
+  (*pAUX_MU_LCR_REG) = 0x03;  // DLAB = 0, 8-bits mode
+  (*pAUX_MU_MCR_REG) = 0x0;  // modem: RTS level is high
 //     ((250,000,000/115200)/8)-1 = 270
   (*pAUX_MU_BAUD_REG) = 270;  // Set baud rate
 //     ((250,000,000/9600)/8)-1 = 3254
 //  (*pAUX_MU_BAUD_REG) = 3254;
-  Gpio gpio14(14), gpio15(15);
-  gpio14.setFunction(2);
-  gpio15.setFunction(2);
-  gpio14.setPullUpDown(0);
-  gpio15.setPullUpDown(0);
+
   rxhead = rxtail = 0;
   txhead = txtail = 0;
   flag = false;
-  (*pAUX_MU_CNTL_REG) = 3; // Transmit & Receive enable
-  (*pAUX_MU_IER_REG) = 0x5;  // Enable mini UART receive interrupts
-  (*pENABLE_IRQ_1) = (*pENABLE_IRQ_1) | 0x20000000; // Enable AUX interrupts (29 bit)
+
+  (*pAUX_MU_IER_REG) = 0x1;  // Enable mini UART receive interrupts
+  (*pAUX_MU_CNTL_REG) = 0x03; // Transmit & Receive enable
+  (*pAUX_MU_IIR_REG) = 0x04; // Clear transmit FIFO
+  (*pAUX_MU_IIR_REG) = 0x02; // Clear receive FIFO
+  (*pENABLE_IRQ_1) = 0x20000000; // Enable AUX interrupts (29 bit)
 }
 
 extern "C"
 void irq_handler_mini_uart() {
-  volatile unsigned int status;
+  volatile unsigned int interrupt_status;
+//  volatile unsigned int data_status;
 //  EXIT_CRITICAL()              // unmask interrupts
   do {
-    status = *pAUX_MU_IIR_REG;
-    if (status & 0x1) break;
-    if (status & 0x4) { // receiver holds a valid byte
+    interrupt_status = *pAUX_MU_IIR_REG;
+//    data_status = *pAUX_MU_LSR_REG;
+
+//    fp1.format(out, "DS: %h. IS: %h. XS: %h. EI: %h.\n\r",
+//        data_status, interrupt_status, *pAUX_MU_STAT_REG, *pAUX_MU_IER_REG);
+//    dump_debug_message(out);
+
+    if (interrupt_status & 0x1) break;
+    if (interrupt_status & 0x4) {  // receiver holds a valid byte
       rxbuffer[rxhead] = (unsigned char) ((*pAUX_MU_IO_REG) & 0xFF);
       rxhead = (rxhead + 1) & RXBUFMASK;
     }
-    if (status & 0x2) { // transmit holding register empty
+    if (interrupt_status & 0x2) { // transmit holding register empty
       if (txhead != txtail ) {
         (*pAUX_MU_IO_REG) = txbuffer[txtail];
         txtail = (txtail + 1) & TXBUFMASK;
       } else {
         flag = false;
-        (*pAUX_MU_IER_REG) = 0x5;  // Disable mini UART transmit interrupts
+        (*pAUX_MU_IER_REG) = (*pAUX_MU_IER_REG) & (~0x2);  // Disable mini UART transmit interrupts
       }
     }
-  } while ((status & 0x1) == 0);
+  } while ((interrupt_status & 0x1) == 0);
   ENTER_CRITICAL()                     // mask interrupts
 }
 

@@ -19,9 +19,11 @@
  * http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  * https://elinux.org/BCM2835_datasheet_errata
  * https://github.com/BrianSidebotham/arm-tutorial-rpi/
+ * https://github.com/dwelch67/raspberrypi
+ * https://www.adafruit.com/product/954
  */
 
-// RPI2 is defined in build.xml
+// RPI2 is defined in build.xml or in Makefile
 #ifdef RPI2
     #define PERIPHERAL_BASE 0x3F000000
 #else

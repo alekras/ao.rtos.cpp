@@ -46,7 +46,7 @@ InitialInteractiveLoaderSM.o : InitialInteractiveLoaderSM.cpp
 	@echo GCC-ARM compiles source file $<
 	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
 
-periph.o : periph.cpp
+periph.o : periph.cpp periph_mini_uart.cpp periph_timers.cpp periph_misc.cpp
 	@echo GCC-ARM compiles source file $<
 	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
 

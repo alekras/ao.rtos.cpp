@@ -31,7 +31,7 @@ UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
 
 void
 UartAO::initUart() {
-  (*pDISABLE_IRQ_1) = (*pDISABLE_IRQ_1) | 0x20000000; // Disable AUX interrupts (29 bit)
+  (*pDISABLE_IRQ_1) = 0x20000000; // Disable AUX interrupts (29 bit)
   (*pAUX_ENABLES) = 1;
   (*pAUX_MU_IER_REG) = 0;  // Disable mini UART receive interrupts
   (*pAUX_MU_CNTL_REG) = 0; // Transmit & Receive disable
@@ -50,7 +50,7 @@ UartAO::initUart() {
   flag = false;
   (*pAUX_MU_CNTL_REG) = 3; // Transmit & Receive enable
   (*pAUX_MU_IER_REG) = 0x5;  // Enable mini UART receive interrupts
-  (*pENABLE_IRQ_1) = (*pENABLE_IRQ_1) | 0x20000000; // Enable AUX interrupts (29 bit)
+  (*pENABLE_IRQ_1) = 0x20000000; // Enable AUX interrupts (29 bit)
 }
 
 AO_STACK *

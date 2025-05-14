@@ -36,3 +36,4 @@
 *.app
 /TODO_List.txt
 /debug_delete_it.txt
+/.DS_Store
