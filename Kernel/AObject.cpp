@@ -13,11 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-extern char out[200]; // @debug
-char payload[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
-extern "C" unsigned int * get_sp(void); // @debug
+
 #include "AObject.hpp"
 
 typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function staticStart()
@@ -46,8 +42,6 @@ AObject::start() {
   int failedProcess = 0;   // count of failed try to process incoming events from buffer.
   while ( stop == 0 ) {    // this is infinite loop while stop = 0;
     run();
-//    fp1.format(out, " inside start() : obj=%h, prio=%d ready=%d\r\n", this, priority, ready);  // @debug
-//    dump_debug_message(out);  // @debug
 
     if ( incomingRingBuffer->isEmpty() ) { // try to read event from buffer
       if (priority == (AO_SCHEDULED_LIST_LENGTH - 1)) { // is it scheduler
@@ -95,33 +89,6 @@ AObject::publishMessages(AObject **scheduledAOTable) {
     Message *msg;
     while (!outgoingRingBuffer->isEmpty()) {
       msg = outgoingRingBuffer->read();
-// @debug >>
-//      char *type;
-//      switch (msg->getType()) {
-//        case MessageType::onechar:
-//          type = "onechar";
-//          fp1.format(payload, "%c", msg->getChar());
-//          break;
-//        case MessageType::binary:
-//          type = "binary";
-//          fp1.format(payload, "l=%d", msg->getBinary()->length());
-//          break;
-//        case MessageType::string:
-//          type = "string";
-//          fp1.format(payload, "%s", msg->getString()->getChars());
-//          break;
-//        case MessageType::word:
-//          type = "word";
-//          fp1.format(payload, "%8h", msg->getWord());
-//          break;
-//        default:
-//          type = "uk";
-//          fp1.format(payload, "uk");
-//      }
-//      fp1.format(out, " ** Message publish : msg=%h ao[%d] rdPo=%d type=%s payload=<<%s>>\r\n",
-//          msg, priority, outgoingRingBuffer->getRdPo(), type, payload);  // @debug
-//      dump_debug_message(out);  // @debug
-// @debug <<
       DWORD_S destPrio = msg->getDestination();
       if (destPrio >= 0) {   // if a message has explicitly defined destination
         AObject *destObj = scheduledAOTable[destPrio];
@@ -178,15 +145,11 @@ AObject::putOutgoingMessage( Message * msg ) {
     if (message.getType() == MessageType::string) {
       String * originString = message.getString();
       String * newString = new String(originString->getChars());
-//      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d string='%s'\r\n", msg, priority, message.getType(), originString->getChars());  // @debug
-//      dump_debug_message(out);  // @debug
       message.setString(newString);
     }
     if (message.getType() == MessageType::binary) {
       Binary * originBin = message.getBinary();
       Binary * newBin = new Binary(originBin->getData(), originBin->length());
-//      fp1.format(out, " ** Message out : msg=%h prio=%d type=%d binary[0]='%h'\r\n", msg, priority, message.getType(), originBin->getData()[0]);  // @debug
-//      dump_debug_message(out);  // @debug
       message.setBinary(newBin);
     }
     outgoingRingBuffer->put(&message);

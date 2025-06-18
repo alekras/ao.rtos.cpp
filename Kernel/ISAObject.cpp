@@ -13,10 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
-extern "C" unsigned int * get_sp(void); //@debug
+#include "arm_debug_tools.hpp"
 
 #include "ISAObject.hpp"
 #include "AOScheduler.hpp"
@@ -38,7 +35,7 @@ cdecl
 processInterrupt( DWORD iN, AO_STACK * stp ) {
   ISAObject::nestedLevel++;    // count nested entering to the interrupt processing
 //  EXIT_CRITICAL()              // unmask interrupts
-//  fp1.format(out, "> procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);
+//  fp1.format(out, "> processInterrupt: iN=#%d sp=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);
 //  dump_debug_message(out);
 
   ISAObject * obj = ISAObject::interruptTable[iN];   // get IS Active Object corresponded iN
@@ -54,7 +51,7 @@ processInterrupt( DWORD iN, AO_STACK * stp ) {
 
   ENTER_CRITICAL()                     // mask interrupts
   ISAObject::nestedLevel--;
-//  fp1.format(out, "< procIntr: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
+//  fp1.format(out, "< processInterrupt: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
 //  dump_debug_message(out);  // @debug
   return stp;                          // cause context switch
 }

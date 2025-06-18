@@ -16,6 +16,8 @@
 
 /** Helper file to gather the all cpp files to one and compile to one only object file*/
 
+#include "arm_debug_tools.cpp"
+#include "bcm_registers.cpp"
 #include "display-start.cpp"
 #include "rpi-mailbox.c"
 #include "rpi-mailbox-interface.c"

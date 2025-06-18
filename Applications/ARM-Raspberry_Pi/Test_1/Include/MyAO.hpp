@@ -20,6 +20,7 @@
 #include "AOScheduler.hpp"
 #include "../../../Library/Display/Include/formatter.hpp"
 #include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "gpio.hpp"
 
 class MyAO : public AObject
 {

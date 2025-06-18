@@ -25,6 +25,8 @@
     <echo>GCC-ARM compiles source files</echo>
     <exec dir="${basedir}" executable="${exec}-gcc">
       <arg line="${copts} -DRPI2 -c " />
+      <arg line="-I ./Include " />
+      <arg line="-I ../../../Library/hex2bin/Include " />
       <arg line="-I ../../../Library/Display/Include " />
       <arg line="-I ../../../Porting/ARM-Raspberry_Pi/Include " />
       <arg value="main.cpp"/>

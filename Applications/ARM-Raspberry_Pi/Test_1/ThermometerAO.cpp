@@ -16,10 +16,10 @@
 
 #include "Include/ThermometerAO.hpp"
 
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
-extern "C" unsigned int * get_sp(void); // @debug
+ extern char out[200]; // @debug
+ extern FormatParser fp1; // @debug
+// extern "C" void dump_debug_message(char *); //@debug
+// extern "C" unsigned int * get_sp(void); // @debug
 
 ThermometerAO::ThermometerAO(DWORD prio) : ISAObject(prio, 3) {
   initLed();

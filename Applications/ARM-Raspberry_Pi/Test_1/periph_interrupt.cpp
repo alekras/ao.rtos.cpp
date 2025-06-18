@@ -14,9 +14,9 @@
    limitations under the License.
  */
 
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
-#include "formatter.hpp"
+#include "bcm_registers.hpp"
+#include "os_cpu.hpp"
+#include "arm_debug_tools.hpp"
 
 extern "C" AO_STACK * processInterrupt( DWORD iN, AO_STACK * stp );
 
@@ -28,6 +28,9 @@ void irq_vectors_setup() {
   for (i = 0; i < 16; i++) {
     *(ptrD + i) = *(ptrS + i);
   }
+  (*pDISABLE_IRQ_B) = 0xffffffff;
+  (*pDISABLE_IRQ_1) = 0xffffffff;
+  (*pDISABLE_IRQ_2) = 0xffffffff;
 }
 
 extern "C"
@@ -44,6 +47,8 @@ void arm_timer_setup(int p_msec) {
 // TO DO - move to assembler code arm_cpu.s ???
 extern "C"
 AO_STACK * isr(AO_STACK *sp) {
+//  fp1.format(out, "Enter isr() sp=%h pIrq=%h \r\n", sp, (*pPENDING_IRQ_B));  // @debug
+//  dump_debug_message(out);  // @debug
   AO_STACK* ret_sp = sp;
   if ((*pPENDING_IRQ_B) & 0x00000001) { // ARM Timer Interrupt
     (*pARM_TIMER_IRQ) = 0;

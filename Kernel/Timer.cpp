@@ -13,6 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#include "arm_debug_tools.hpp"
 #include "Timer.hpp"
 
 DWORD Timer::timeStamp;
@@ -36,6 +37,8 @@ Timer::serviceInterrupt( AO_STACK *stk ) {
    * But if event processing can be delayed then Timer sends the message to itself and
    * its own thread will process this message by processMessage() method that is running with own priority.
    */
+//  fp1.format(out, "Enter Timer serviceInterrupt: sp=%h\n\r", stk);
+//  dump_debug_message(out);
   tickMsg.setWord(++timeStamp);
   putOutgoingMessage( &tickMsg );
   return stk;

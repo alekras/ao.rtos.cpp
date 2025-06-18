@@ -1,0 +1,16 @@
+
+APP_DIR = ${ROOT_DIR}/Applications
+PROJECT_DIR = ${APP_DIR}/ARM-Raspberry_Pi/Test_1
+
+ROOT_DIR = /Users/alexei/git/ao.rtos.cpp
+TARGET_DIR = ${ROOT_DIR}/_build/target
+GCC_DIR = ${ROOT_DIR}/_build/gcc
+LISTING_DIR =${ROOT_DIR}/_build/listings
+INCLUDE_PATHS = -I ${ROOT_DIR}/Kernel/Include \
+	-I ${ROOT_DIR}/Library/HSM/Include \
+	-I ${ROOT_DIR}/Library/FSM/Include \
+	-I ${ROOT_DIR}/Library/Display/Include \
+	-I ${PROJECT_DIR}/Include
+objDir =${ROOT_DIR}/obj
+
+	

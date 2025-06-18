@@ -16,7 +16,8 @@
 
 /** Helper file to gather the all cpp files to one */
 
-// #include "../../../Applications/ARM-Raspberry_Pi/Test_1/arm_debug_tools.cpp"
+#include "../../../Porting/ARM-Raspberry_Pi/arm_debug_tools.cpp"
+#include "../../../Porting/ARM-Raspberry_Pi/bcm_registers.cpp"
 #include "periph_timers.cpp"
 #include "periph_mini_uart.cpp"
 #include "periph_misc.cpp"

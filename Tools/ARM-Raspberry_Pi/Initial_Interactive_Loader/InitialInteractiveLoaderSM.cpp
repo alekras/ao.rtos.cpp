@@ -18,8 +18,9 @@
    limitations under the License.
  */
 
-#include "Include/iil.hpp"
-#include "../../../Library/hex2bin/Include/hex2bin.hpp"
+#include "iil.hpp"
+#include "hex2bin.hpp"
+#include "arm_debug_tools.hpp"
 
 extern "C" unsigned char uart_recv();
 extern "C" unsigned int uart_send(char);
@@ -30,10 +31,40 @@ extern "C" int convert(int, char);
 
 /*---------------------- Finite state machine IIL -------------------------*/
 
+void
+printMenu() {
+  sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
+  sendString("[build 0.1.11, 06/16/2025]\n\r");
+  sendString("Commands:\n\r");
+  sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
+  sendString(" D              - continue output memory content.\n\r");
+  sendString(" M              - output debug dump content in text format.\n\r");
+  sendString(" S              - represent memory content in text format.\n\r");
+  sendString(" O              - represent memory content in bit.\n\r");
+  sendString(" X              - represent memory content in hex.\n\r");
+  sendString(" B              - set memory element as byte (wide = 1 byte).\n\r");
+  sendString(" W              - set memory element as word (wide = 2 bytes).\n\r");
+  sendString(" WW             - set memory element as double word (wide = 4 bytes).\n\r");
+  sendString(" L              - upload hex file.\n\r");
+  sendString(" H              - output help message.\n\r");
+  sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
+}
+
+void prompt(int subFormat, int width) {
+  char promt[] = {'X','1','>',0};
+  char sf[] = {'X','S','O'};
+  promt[0] = sf[subFormat];
+  promt[1] = '0' + width;
+  sendString(promt);
+}
+
 /** Constructor. */
 InitialInteractiveLoaderSM::InitialInteractiveLoaderSM() : Efsm((State)&InitialInteractiveLoaderSM::initial) {
+//  dump_debug_message("Enter Constructor\n\r");
   width = 1;
   subFormat = 0;
+  printMenu();
+  prompt(subFormat, width);
 }
 
 char*
@@ -81,35 +112,10 @@ void InitialInteractiveLoaderSM::debug() {
  */
 int
 InitialInteractiveLoaderSM::initial(Phase phase, char *s) {
-//  sendString("initial\n\r");
-  char promt[4];
+//  dump_debug_f_message("Enter initial(). phase=%d s=%c subFormat= %d width=%d\n\r", phase, *s, subFormat, width);
   switch(phase) {
     case ENTER:
-      switch (subFormat) {
-        case 0:
-          promt[0] = 'X';
-          break;
-        case 1:
-          promt[0] = 'S';
-          break;
-        case 2:
-          promt[0] = 'O';
-          break;
-      }
-      switch (width) {
-        case 1:
-          promt[1] = '1';
-          break;
-        case 2:
-          promt[1] = '2';
-          break;
-        case 4:
-          promt[1] = '4';
-          break;
-      }
-      promt[2] = '>';
-      promt[3] = 0;
-      sendString(promt);
+      prompt(subFormat, width);
       count = 0;
       value = 0;
       break;
@@ -454,20 +460,7 @@ InitialInteractiveLoaderSM::help(Phase phase, char *s) {
       }
       break;
     case EXIT:
-      sendString("\n\rInitial Interactive Loader\n\r");
-      sendString("Commands:\n\r");
-      sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
-      sendString(" D              - continue output memory content.\n\r");
-      sendString(" M              - output debug dump content in text format.\n\r");
-      sendString(" S              - represent memory content in text format.\n\r");
-      sendString(" O              - represent memory content in bit.\n\r");
-      sendString(" X              - represent memory content in hex.\n\r");
-      sendString(" B              - set memory element as byte (wide = 1 byte).\n\r");
-      sendString(" W              - set memory element as word (wide = 2 bytes).\n\r");
-      sendString(" WW             - set memory element as double word (wide = 4 bytes).\n\r");
-      sendString(" L              - upload hex file.\n\r");
-      sendString(" H              - output help message.\n\r");
-      sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
+      printMenu();
       break;
   }
   return 0;

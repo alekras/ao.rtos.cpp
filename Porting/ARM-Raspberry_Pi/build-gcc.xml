@@ -23,8 +23,9 @@
 
   <target name="arm">
     <echo>GCC compiles ARM depended sources for Raspberry Pi port...</echo>
+    <echo>Raspberry Pi version ${rpi.version}...</echo>
     <exec dir="${basedir}" executable="${compiler.exec}">
-      <arg line="${compile.flags} display.cpp ${includePaths} -o ${targetDir}/display.o"/>
+      <arg line="${compile.flags} -D${rpi.version} display.cpp ${includePaths} -o ${targetDir}/display.o"/>
     </exec>
   </target>
 

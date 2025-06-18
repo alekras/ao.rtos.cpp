@@ -16,10 +16,10 @@
 
 #include "GpioAO.hpp"
 
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
-extern "C" unsigned int * get_sp(void); // @debug
+// extern char out[200]; // @debug
+// extern FormatParser fp1; // @debug
+// extern "C" void dump_debug_message(char *); //@debug
+// extern "C" unsigned int * get_sp(void); // @debug
 
 GpioAO::GpioAO(DWORD prio) : ISAObject(prio, 2) {
   initGpio();
@@ -91,11 +91,5 @@ GpioAO::processMessage(Message * msg) {
 
 void
 GpioAO::run() {
-//  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
-//  dump_debug_message(out);  // @debug
-//  if (period == 18) {
-//    gpio21->clearEventDetectStatus();
-//    (*pENABLE_IRQ_2) = (*pENABLE_IRQ_2) | 0x001e0000; // Enable GPIO interrupts
-//  }
 }
 

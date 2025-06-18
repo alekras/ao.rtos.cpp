@@ -21,19 +21,13 @@
  * https://github.com/BrianSidebotham/arm-tutorial-rpi/
  * https://github.com/dwelch67/raspberrypi
  * https://www.adafruit.com/product/954
+ * https://leiradel.github.io/2019/02/10/The-Mini-UART.html
+ * https://leiradel.github.io/2019/03/24/File-Upload.html
+ * https://williamdurand.fr/2021/01/23/bare-metal-raspberry-pi-2-programming/
  */
 
-// RPI2 is defined in build.xml or in Makefile
-#ifdef RPI2
-    #define PERIPHERAL_BASE 0x3F000000
-#else
-    #define PERIPHERAL_BASE 0x20000000
-#endif
-
 #include "gpio.hpp"
-
-#ifndef BCM2835_HPP_
-#define BCM2835_HPP_
+#include "bcm_registers.hpp"
 
 /** GPIO Function select registers 0-5 (00...14) */
 volatile unsigned int* Gpio::pGPFSEL = (unsigned int*) (PERIPHERAL_BASE + 0x200000);
@@ -150,4 +144,3 @@ volatile unsigned int* pSYS_TIMER_CMP_3 =      (unsigned int*) (PERIPHERAL_BASE 
 /** GPU addresses **/
 volatile unsigned int* mailbox = (unsigned int*) (PERIPHERAL_BASE + 0xB880);
 
-#endif /* BCM2835_HPP_ */

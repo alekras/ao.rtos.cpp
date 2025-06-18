@@ -14,8 +14,8 @@
    limitations under the License.
  */
 
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/gpio.hpp"
+#include "bcm_registers.hpp"
+#include "gpio.hpp"
 
 extern Gpio *gpio47, *gpio10, *gpio22;
 

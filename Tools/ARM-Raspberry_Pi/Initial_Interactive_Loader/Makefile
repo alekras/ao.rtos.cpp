@@ -2,12 +2,23 @@
 ARM-TOOLS-PATH = /opt/gcc-arm/latest
 EXEC = ${ARM-TOOLS-PATH}/bin/arm-none-eabi
 CPP-LIBS = ${ARM-TOOLS-PATH}/lib/gcc/arm-none-eabi/10.3.1
+HEX2BIN_DIR = ../../../Library/hex2bin
+FSM_DIR = ../../../Library/FSM
+DISPLAY_DIR = ../../../Library/Display
+PORTING_DIR = ../../../Porting/ARM-Raspberry_Pi
 COPTS = -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions
+
+INCLUDE_PATHS = -I ${PORTING_DIR}/Include \
+	-I ${FSM_DIR}/Include \
+	-I ${HEX2BIN_DIR}/Include \
+	-I ${DISPLAY_DIR}/Include \
+	-I ./Include
+
 SOURCES = main.cpp \
 	InitialInteractiveLoaderSM.cpp \
 	periph.cpp \
-	../../../Library/hex2bin/Hex2BinEFSMachine.cpp \
-	../../../Library/Display/formatter.cpp
+	${HEX2BIN_DIR}/Hex2BinEFSMachine.cpp \
+	${DISPLAY_DIR}/formatter.cpp
 # arm_cpu.o has to be first in linker list
 OBJECTS = arm_cpu.o \
 	main.o \
@@ -34,35 +45,27 @@ ld-app : ${OBJECTS}
 	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader-app -o InitialInteractiveLoaderSM.elf
 	@${EXEC}-objdump -D InitialInteractiveLoaderSM.elf > InitialInteractiveLoaderSM.lst
 
-#objects :: ${SOURCES}
-#	@echo GCC-ARM compiles source files $^
-#	${EXEC}-gcc ${COPTS} -DRPI2 -c ${SOURCES}
-
-main.o : main.cpp
+main.o : main.cpp Include/iil.hpp ${PORTING_DIR}/Include/bcm_registers.hpp ${PORTING_DIR}/Include/gpio.hpp
 	@echo GCC-ARM compiles source file $<
-	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
 
-InitialInteractiveLoaderSM.o : InitialInteractiveLoaderSM.cpp
+InitialInteractiveLoaderSM.o : InitialInteractiveLoaderSM.cpp Include/iil.hpp ${HEX2BIN_DIR}/Include/hex2bin.hpp
 	@echo GCC-ARM compiles source file $<
-	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
 
-periph.o : periph.cpp periph_mini_uart.cpp periph_timers.cpp periph_misc.cpp
+periph.o : periph.cpp periph_mini_uart.cpp periph_timers.cpp periph_misc.cpp ${PORTING_DIR}/bcm_registers.cpp ${PORTING_DIR}/Include/bcm_registers.hpp ${PORTING_DIR}/Include/gpio.hpp ${PORTING_DIR}/Include/os_cpu.hpp
 	@echo GCC-ARM compiles source file $<
-	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
 
-Hex2BinEFSMachine.o : ../../../Library/hex2bin/Hex2BinEFSMachine.cpp
+Hex2BinEFSMachine.o : ${HEX2BIN_DIR}/Hex2BinEFSMachine.cpp ${HEX2BIN_DIR}/Include/hex2bin.hpp
 	@echo GCC-ARM compiles source file $<
-	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -c $<
 
-formatter.o : ../../../Library/Display/formatter.cpp
+formatter.o : ${DISPLAY_DIR}/formatter.cpp ${DISPLAY_DIR}/Include/formatter.hpp
 	@echo GCC-ARM compiles source file $<
-	@${EXEC}-gcc ${COPTS} -DRPI2 -c $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -c $<
 
-#objects :: ../../../Porting/ARM-Raspberry_Pi/arm_cpu.s
-#	@echo GCC-ARM compiles assembler files $<
-#	${EXEC}-as $< -o arm_cpu.o
-
-arm_cpu.o : ../../../Porting/ARM-Raspberry_Pi/arm_cpu.s
+arm_cpu.o : ${PORTING_DIR}/arm_cpu.s
 	@echo GCC-ARM compiles assembler file $<
 	@${EXEC}-as $< -o arm_cpu.o
 

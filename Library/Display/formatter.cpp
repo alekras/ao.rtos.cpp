@@ -175,6 +175,7 @@ stringToString( char *s, char * arg, int width, int align ) {
   }
 
   i = 0;
+  e = arg;
   if( align == 0 ) {
     for( ; i < width - length; i++ )
       *(s + i) = ' ';

@@ -19,7 +19,8 @@
 
 #include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
 #include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
+#include "gpio.hpp"
+//#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
 #include "ISAObject.hpp"
 #include "application.hpp"
 

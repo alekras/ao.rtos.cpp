@@ -16,9 +16,9 @@
 
 #include "UartAO.hpp"
 
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
+// extern char out[200]; // @debug
+// extern FormatParser fp1; // @debug
+// extern "C" void dump_debug_message(char *); //@debug
 
 UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();

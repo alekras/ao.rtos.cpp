@@ -14,14 +14,8 @@
    limitations under the License.
 */
 
-//extern char out[200]; // @debug
-//extern FormatParser fp1; // @debug
-extern "C" void dump_stack(unsigned int *, unsigned int *, unsigned int, unsigned int);
-extern "C" unsigned int * get_sp(void);
-extern "C" unsigned int get_cpsr(void);
-extern "C" unsigned int get_spsr(void);
-
 #include "AOScheduler.hpp"
+#include "arm_debug_tools.hpp"
 
 /**
  *  Layout of the scheduledAOTable array:
@@ -81,6 +75,8 @@ AOScheduler::iterateAObjects(void (AOScheduler::*fp)( AObject * )){
 
 AO_STACK *
 AOScheduler::serviceInterrupt(ISAObject * obj, AO_STACK * stkp ) {
+//  fp1.format(out, "Enter AOScheduler::serviceInterrupt/2 obj=%h sp=%h\r\n", obj, stkp);  // @debug
+//  dump_debug_message(out);  // @debug
   scheduledAOTable[currentPrio]->setSP( stkp ); // save a pointer to stack of a current Active object
 
   if (obj != (ISAObject *)0) {
@@ -88,13 +84,13 @@ AOScheduler::serviceInterrupt(ISAObject * obj, AO_STACK * stkp ) {
     currentPrio = obj->getPriority();        // set new current AO priority
     stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.
   }
+//  fp1.format(out, "Exit AOScheduler::serviceInterrupt/2 sp=%h\r\n", stkp);  // @debug
+//  dump_debug_message(out);  // @debug
   return stkp;
 }
 
 AO_STACK *
 AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
-//  fp1.format(out, " >> AOScheduler::srvIntrr: stack=%h curPrio=%d\r\n", stkp, currentPrio);  // @debug
-//  dump_debug_message(out);  // @debug
   AObject * obj;
   scheduledAOTable[currentPrio]->setSP( stkp ); // save a pointer to stack of a current Active object
 
@@ -108,13 +104,9 @@ AOScheduler::serviceInterrupt( AO_STACK * stkp ) {
         stkp = obj->getSP();      // stack pointer of new current AO to switch on CPU context.
         j = i;  // mark ready AO with max priority
       }
-//      fp1.format(out, " -- publish msg's for ao[%d] obj=%8h stack=%8h ready=%d\r\n", i, obj, obj->getSP(), obj->isReady());  // @debug
-//      dump_debug_message(out);  // @debug
     }
   }
 
-//  fp1.format(out, " << AOScheduler::srvIntrr(2): stack=%h curPrio=%d\r\n", this->sp, currentPrio);  // @debug
-//  dump_debug_message(out);  // @debug
   return stkp;
 }
 
@@ -133,8 +125,6 @@ AOScheduler::startOS() {
 void *
 cdecl
 processSysCommand( DWORD size, DWORD type) {
-//  fp1.format(out, "> processSysCommand: size=%d type=%d\r\n", size, type);  // @debug
-//  dump_debug_message(out);  // @debug
   switch (type) {
     case 1:
       return mm->malloc(size);
@@ -148,11 +138,6 @@ processSysCommand( DWORD size, DWORD type) {
 
 void
 AOScheduler::run() {
-//  dump_debug_message("> run: scheduler\r\n");  // @debug
-//  int * p = new int[5];
-//  fp1.format(out, "> run: p=%d\r\n", p);  // @debug
-//  dump_debug_message(out);  // @debug
-//  delete[] p;
 }
 
 DWORD

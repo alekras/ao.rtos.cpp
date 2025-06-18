@@ -21,11 +21,7 @@
 #ifndef IIL_HPP_
 #define IIL_HPP_
 
-#include "../../../../Library/FSM/Include/fsm.hpp"
-#include "../../../../Library/Display/Include/formatter.hpp"
-
-#define DUMP_BUFFER 0x30000000
-#define DUMP_BUFFER_END 0x3000F000
+#include "fsm.hpp"
 
 class InitialInteractiveLoaderSM : public Efsm<char> {
   private:

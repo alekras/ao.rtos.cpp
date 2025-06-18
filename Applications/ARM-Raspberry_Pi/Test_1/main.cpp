@@ -1,12 +1,16 @@
 #include "memory.hpp"
+#include "arm_debug_tools.hpp"
 #include "MyAO.hpp"
+#include "GpioAO.hpp"
+#include "ThermometerAO.hpp"
+#include "UartAO.hpp"
 #include "DebugAOScheduler.hpp"
 
 //extern "C" int main();
 extern "C" void enable_irq();
+extern "C" void irq_vectors_setup();
+extern "C" void arm_timer_setup(int);
 
-char out[200]; // @debug
-FormatParser fp1; // @debug
 extern MemoryManager* mm;
 
 int main() {
@@ -16,8 +20,7 @@ int main() {
   irq_vectors_setup();
   arm_timer_setup(250);
   dump_debug_init();
-  fp1.format(out, "Start AORTOS! Version= %d\r\n", 19);  // @debug
-  dump_debug_message(out);  // @debug
+  dump_debug_f_message("Start AORTOS! Version= %d\r\n", 21);
 
   ISAObject::nestedLevel = 0;
 // Objects allocation :

@@ -14,14 +14,8 @@
    limitations under the License.
  */
 
-#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
-#include "../../../Library/Display/Include/formatter.hpp"
-
-//extern char out[120]; // @debug
-//extern FormatParser fp1; // @debug
-//extern "C" void dump_debug_init();
-//extern "C" void dump_debug_message(char*);
+#include "os_cpu.hpp"
+#include "bcm_registers.hpp"
 
 unsigned char read_rx_buffer();
 
@@ -48,7 +42,7 @@ unsigned char uart_recv() {
 volatile bool flag;
 volatile unsigned int txhead;
 volatile unsigned int txtail;
-#define TXBUFMASK 0xFF
+#define TXBUFMASK 0xFFF
 volatile unsigned char txbuffer[TXBUFMASK+1];
 
 //------------------------------------------------------------------------

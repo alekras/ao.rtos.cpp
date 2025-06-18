@@ -14,11 +14,9 @@
    limitations under the License.
 */
 
+#include "arm_debug_tools.hpp"
 #include "MyAO.hpp"
 extern MemoryManager* mm;
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
-extern "C" void dump_debug_message(char *); //@debug
 
 MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   gpio10 = new Gpio(10);

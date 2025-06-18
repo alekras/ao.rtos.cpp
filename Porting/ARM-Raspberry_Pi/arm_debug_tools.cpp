@@ -14,7 +14,13 @@
    limitations under the License.
  */
 
-#include "./Include/arm_debug_tools.hpp"
+#include "arm_debug_tools.hpp"
+
+char * dump_pointer;
+unsigned int * dump_pointer_storage;
+char out[200]; // @debug
+FormatParser fp1; // @debug
+
 
 void dump_debug_init() {
   dump_pointer_storage = (unsigned int *)DUMP_BUFFER;
@@ -32,12 +38,20 @@ void dump_debug_message(char * msg) {
   *dump_pointer_storage = (unsigned int)dump_pointer;
 }
 
+//template <class ... Args>
+//void dump_debug_f_message(char * format, Args ... args) {
+//  fp1.format(out, format, args...);
+//  dump_debug_message(out);
+//}
+
 void dump_memory(unsigned int * a, int w) {
   for(int i = 0; i < w; i++) {
     fp1.format(out, "%h) %h\r\n", (a + i), *(a + i));
     dump_debug_message(out);
   }
 }
+
+char* reg_names[] = {"r0","r1","r2","r3","r4","r5","r6", "r7","r8","r9","r10","r11","r12","lr_svc","lr_irq","spsr", "ukn", "ukn"};
 
 void dump_stack(unsigned int * ssp, unsigned int * csp, unsigned int cpsr, unsigned int spsr) {
   fp1.format(out, "-- current SP=%8h CPSR=%8h SPSR=%8h --\r\n", csp, cpsr, spsr);

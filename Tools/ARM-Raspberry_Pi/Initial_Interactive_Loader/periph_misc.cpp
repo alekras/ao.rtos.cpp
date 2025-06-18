@@ -16,9 +16,7 @@
 
 /** Helper file to gather the all cpp files to one */
 
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
-#include "../../../Library/Display/Include/formatter.hpp"
+#include "bcm_registers.hpp"
 
 extern "C" void irq_handler_arm_timer();
 extern "C" void irq_handler_mini_uart();
@@ -57,47 +55,26 @@ AO_STACK * isr(AO_STACK *sp) {
   return ret_sp;
 }
 
-#define DUMP_BUFFER 0x30000000
-#define DUMP_BUFFER_END 0x3000F000
-char * dump_pointer;
-unsigned int * dump_pointer_storage;
-
-extern "C" void dump_debug_init() {
-  dump_pointer_storage = (unsigned int *)DUMP_BUFFER;
-  dump_pointer = (char *)(DUMP_BUFFER + 4);
-  *dump_pointer_storage = (unsigned int)dump_pointer;
-  *dump_pointer = 0;
-}
-
-extern "C" void dump_debug_message(char * msg) {
-  if (dump_pointer > (char*)DUMP_BUFFER_END)
-    return;
-  do {
-    *(dump_pointer++) = *msg;
-  } while (*(msg++) != 0);
-  *dump_pointer_storage = (unsigned int)dump_pointer;
-}
-
 extern "C" void * processSysCommand( DWORD size, DWORD type) {
   return 0;
 }
 
-extern "C" void undefined_instruction_exception(unsigned int * sp) {
-  return;
-}
-
-extern "C" void prefetch_abort_exception(unsigned int * sp) {
-  return;
-}
-
-extern "C" void data_abort_exception(unsigned int * sp) {
-  return;
-}
-
-extern "C" void reset_exception(unsigned int * sp) {
-  return;
-}
-
-extern "C" void unpredicted_exception(unsigned int * sp) {
-  return;
-}
+//extern "C" void undefined_instruction_exception(unsigned int * sp) {
+//  return;
+//}
+//
+//extern "C" void prefetch_abort_exception(unsigned int * sp) {
+//  return;
+//}
+//
+//extern "C" void data_abort_exception(unsigned int * sp) {
+//  return;
+//}
+//
+//extern "C" void reset_exception(unsigned int * sp) {
+//  return;
+//}
+//
+//extern "C" void unpredicted_exception(unsigned int * sp) {
+//  return;
+//}

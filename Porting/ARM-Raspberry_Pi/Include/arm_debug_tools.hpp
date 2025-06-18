@@ -30,13 +30,18 @@ extern FormatParser fp1; // @debug
 
 #define DUMP_BUFFER 0x30000000
 #define DUMP_BUFFER_END 0x3000F000
-char * dump_pointer;
-unsigned int * dump_pointer_storage;
+
 extern "C" void dump_debug_init();
 extern "C" void dump_debug_message(char * msg);
+
+template <class ... Args>
+void dump_debug_f_message(char * format, Args ... args) {
+  fp1.format(out, format, args...);
+  dump_debug_message(out);
+}
+
 extern "C" void dump_memory(unsigned int * a, int w);
 
-char* reg_names[] = {"r0","r1","r2","r3","r4","r5","r6", "r7","r8","r9","r10","r11","r12","lr_svc","lr_irq","spsr", "ukn", "ukn"};
 extern "C" void dump_stack(DWORD * ssp, DWORD * csp, DWORD cpsr, DWORD spsr);
 extern "C" void dump_stack_(DWORD * sp);
 

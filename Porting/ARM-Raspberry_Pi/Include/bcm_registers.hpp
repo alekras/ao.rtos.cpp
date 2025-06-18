@@ -23,6 +23,13 @@
  * https://github.com/BrianSidebotham/arm-tutorial-rpi/
  */
 
+// RPI2 is defined in build.xml or in Makefile
+#ifdef RPI2
+    #define PERIPHERAL_BASE 0x3F000000
+#else
+    #define PERIPHERAL_BASE 0x20000000
+#endif
+
 #ifndef BCM_REGISTERS_HPP_
 #define BCM_REGISTERS_HPP_
 
