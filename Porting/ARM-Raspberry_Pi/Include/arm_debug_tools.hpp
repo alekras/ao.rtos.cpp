@@ -25,10 +25,11 @@ extern "C" unsigned int * get_sp(void);
 extern "C" unsigned int get_cpsr(void);
 extern "C" unsigned int get_spsr(void);
 
-extern char out[200]; // @debug
-extern FormatParser fp1; // @debug
+extern char out[200];
+extern FormatParser fp1;
 
 #define DUMP_BUFFER 0x30000000
+#define DUMP_INDEX_MASK 0x7FFF
 #define DUMP_BUFFER_END 0x3000F000
 
 extern "C" void dump_debug_init();
@@ -39,6 +40,9 @@ void dump_debug_f_message(char * format, Args ... args) {
   fp1.format(out, format, args...);
   dump_debug_message(out);
 }
+
+extern "C" unsigned int get_dump_index();
+extern "C" unsigned int get_dump_max_index();
 
 extern "C" void dump_memory(unsigned int * a, int w);
 

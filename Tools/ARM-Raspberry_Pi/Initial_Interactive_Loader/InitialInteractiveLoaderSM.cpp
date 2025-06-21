@@ -34,7 +34,7 @@ extern "C" int convert(int, char);
 void
 printMenu() {
   sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
-  sendString("[build 0.1.11, 06/16/2025]\n\r");
+  sendString("[build 0.1.13, 06/21/2025]\n\r");
   sendString("Commands:\n\r");
   sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
   sendString(" D              - continue output memory content.\n\r");
@@ -265,18 +265,28 @@ InitialInteractiveLoaderSM::outputDump(Phase phase, char *s) {
 
 void
 InitialInteractiveLoaderSM::runOutputDump() {
-  char buff[160], *dump_pointer;
-  unsigned int * dump_pointer_storage;
-  int i;
+  char *dump_pointer = (char *)(DUMP_BUFFER + 8);
+  unsigned int dump_curr_index = *((unsigned int *)DUMP_BUFFER);
+  unsigned int dump_max_index = *((unsigned int *)(DUMP_BUFFER + 4));
+  unsigned int idx = 0;
+  int i, idx_flg = 0;
+  char t;
 
-  dump_pointer_storage = (unsigned int *)DUMP_BUFFER;
-  dump_pointer = (char *)(DUMP_BUFFER + 4);
-  while ((dump_pointer < (char*)DUMP_BUFFER_END) && (dump_pointer < (char*)(*dump_pointer_storage))) {
+  while (idx < dump_max_index && idx < DUMP_INDEX_MASK) {
     i = 0;
     do {
-      buff[i++] = *dump_pointer;
-    } while (*(dump_pointer++) != 0 && i < 160);
-    sendString(buff);
+      t = *(dump_pointer + idx++);
+      out[i++] = t;
+    } while ((t != 0) && i < 200);
+    sendString(out);
+    if (idx >= dump_curr_index && idx_flg == 0) {
+      sendString("--- Current dump index ---\n\r");
+      idx_flg++;
+    }
+    if ((t == 0) && (*(dump_pointer + idx) == 0)) {
+      sendString("Probably this is garbage area...\n\r");
+      break;
+    }
   }
   sendString("End of debug dump...\n\r");
 }

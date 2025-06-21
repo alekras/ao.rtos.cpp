@@ -14,8 +14,7 @@ ${TARGET_DIR}/application.hex : ${GCC_DIR}/application.elf
 	@echo GCC-ARM creates HEX file from elf file
 	@${EXEC}-objcopy $< -O ihex $@
 
-
-${GCC_DIR}/application.elf : prepare ${GCC_DIR}/Application/main.o ${GCC_DIR}/libapp.a ${GCC_DIR}/libkern.a ${GCC_DIR}/libaortos.a ${GCC_DIR}/libport.a
+${GCC_DIR}/application.elf : prepare ${GCC_DIR}/Application/main.o ${GCC_DIR}/libapp.a libkern libaortos libport
 	@echo linker makes application.elf 
 	@${EXEC}-ld ${PORTING_OBJ_DIR}/arm_cpu.o ${GCC_DIR}/Application/main.o \
 	-L${CPP_LIBS} -L${GCC_DIR} \

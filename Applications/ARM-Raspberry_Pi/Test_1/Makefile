@@ -14,7 +14,7 @@ OBJECTS = ${APP_OBJ_DIR}/periph_interrupt.o \
 	${APP_OBJ_DIR}/DebugAOScheduler.o
 #	${APP_OBJ_DIR}/main.o
 
-all : prepare ${GCC_DIR}/libapp.a ${GCC_DIR}/libkern.a ${GCC_DIR}/libaortos.a ${GCC_DIR}/libport.a
+all : prepare ${GCC_DIR}/libapp.a libkern libaortos libport
 	@echo "   application.a :"
 	@${EXEC}-ar t ${GCC_DIR}/libapp.a
 	@echo "   kernel.a :"
@@ -56,15 +56,19 @@ ${APP_OBJ_DIR}/main.o : main.cpp
 	@echo compiles source file $<
 	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
-${GCC_DIR}/libkern.a :
+.PHONY: libkern
+libkern :
 	cd ../../../Kernel && ${MAKE}
 
-${GCC_DIR}/libaortos.a :
+.PHONY: libaortos
+libaortos :
 	cd ../../../Library && ${MAKE}
 
-${GCC_DIR}/libport.a :
+.PHONY: libport
+libport :
 	cd ../../../Porting/ARM-Raspberry_Pi && ${MAKE}
 
+.PHONY: clean
 clean :
 	cd ../../../Kernel && ${MAKE} clean
 

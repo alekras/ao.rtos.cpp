@@ -14,7 +14,7 @@
    limitations under the License.
  */
 
-#include "os_cpu.hpp"
+#include "gpio.hpp"
 #include "bcm_registers.hpp"
 
 unsigned char read_rx_buffer();
@@ -116,9 +116,8 @@ void uart_init() {
   (*pAUX_MU_LCR_REG) = 0x03;  // DLAB = 0, 8-bits mode
   (*pAUX_MU_MCR_REG) = 0x0;  // modem: RTS level is high
 //     ((250,000,000/115200)/8)-1 = 270
-  (*pAUX_MU_BAUD_REG) = 270;  // Set baud rate
 //     ((250,000,000/9600)/8)-1 = 3254
-//  (*pAUX_MU_BAUD_REG) = 3254;
+  (*pAUX_MU_BAUD_REG) = 270;  // Set baud rate
 
   rxhead = rxtail = 0;
   txhead = txtail = 0;
@@ -134,16 +133,9 @@ void uart_init() {
 extern "C"
 void irq_handler_mini_uart() {
   volatile unsigned int interrupt_status;
-//  volatile unsigned int data_status;
 //  EXIT_CRITICAL()              // unmask interrupts
   do {
     interrupt_status = *pAUX_MU_IIR_REG;
-//    data_status = *pAUX_MU_LSR_REG;
-
-//    fp1.format(out, "DS: %h. IS: %h. XS: %h. EI: %h.\n\r",
-//        data_status, interrupt_status, *pAUX_MU_STAT_REG, *pAUX_MU_IER_REG);
-//    dump_debug_message(out);
-
     if (interrupt_status & 0x1) break;
     if (interrupt_status & 0x4) {  // receiver holds a valid byte
       rxbuffer[rxhead] = (unsigned char) ((*pAUX_MU_IO_REG) & 0xFF);
@@ -159,6 +151,6 @@ void irq_handler_mini_uart() {
       }
     }
   } while ((interrupt_status & 0x1) == 0);
-  ENTER_CRITICAL()                     // mask interrupts
+//  ENTER_CRITICAL()                     // mask interrupts
 }
 

@@ -22,28 +22,32 @@ SOURCES = main.cpp \
 # arm_cpu.o has to be first in linker list
 OBJECTS = arm_cpu.o \
 	main.o \
-	periph.o \
+	periph_mini_uart.o \
+	periph_timers.o \
+	periph_misc.o \
+	bcm_registers.o \
+	arm_debug_tools.o \
 	Hex2BinEFSMachine.o \
 	InitialInteractiveLoaderSM.o \
 	formatter.o
 
 img : ld-image
 	@echo GCC-ARM creates binary image file from elf file
-	@${EXEC}-objcopy InitialInteractiveLoaderSM.elf -O binary kernel.img
+	@${EXEC}-objcopy InitialInteractiveLoader.elf -O binary kernel.img
 
 hex : ld-app
 	@echo GCC-ARM creates HEX file from elf file
-	@${EXEC}-objcopy InitialInteractiveLoaderSM.elf -O ihex InitialInteractiveLoaderSM.hex
+	@${EXEC}-objcopy IIL.elf -O ihex IIL.hex
 
 ld-image : ${OBJECTS}
 	@echo  GCC-ARM links $^ files
-	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader -o InitialInteractiveLoaderSM.elf
-	@${EXEC}-objdump -D InitialInteractiveLoaderSM.elf > InitialInteractiveLoaderSM.lst
+	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader -o InitialInteractiveLoader.elf
+	@${EXEC}-objdump -D InitialInteractiveLoader.elf > InitialInteractiveLoader.lst
 
 ld-app : ${OBJECTS}
 	@echo GCC-ARM links $^ files
-	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader-app -o InitialInteractiveLoaderSM.elf
-	@${EXEC}-objdump -D InitialInteractiveLoaderSM.elf > InitialInteractiveLoaderSM.lst
+	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader-app -o IIL.elf
+	@${EXEC}-objdump -D IIL.elf > InitialInteractiveLoader.lst
 
 main.o : main.cpp Include/iil.hpp ${PORTING_DIR}/Include/bcm_registers.hpp ${PORTING_DIR}/Include/gpio.hpp
 	@echo GCC-ARM compiles source file $<
@@ -53,7 +57,23 @@ InitialInteractiveLoaderSM.o : InitialInteractiveLoaderSM.cpp Include/iil.hpp ${
 	@echo GCC-ARM compiles source file $<
 	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
 
-periph.o : periph.cpp periph_mini_uart.cpp periph_timers.cpp periph_misc.cpp ${PORTING_DIR}/bcm_registers.cpp ${PORTING_DIR}/Include/bcm_registers.hpp ${PORTING_DIR}/Include/gpio.hpp ${PORTING_DIR}/Include/os_cpu.hpp
+periph_mini_uart.o : periph_mini_uart.cpp ${PORTING_DIR}/Include/bcm_registers.hpp
+	@echo GCC-ARM compiles source file $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
+
+periph_timers.o : periph_timers.cpp ${PORTING_DIR}/Include/bcm_registers.hpp ${PORTING_DIR}/Include/gpio.hpp
+	@echo GCC-ARM compiles source file $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
+
+periph_misc.o : periph_misc.cpp ${PORTING_DIR}/Include/bcm_registers.hpp
+	@echo GCC-ARM compiles source file $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
+	
+bcm_registers.o : ${PORTING_DIR}/bcm_registers.cpp ${PORTING_DIR}/Include/bcm_registers.hpp ${PORTING_DIR}/Include/gpio.hpp
+	@echo GCC-ARM compiles source file $<
+	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
+
+arm_debug_tools.o : ${PORTING_DIR}/arm_debug_tools.cpp
 	@echo GCC-ARM compiles source file $<
 	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -DRPI2 -c $<
 

@@ -1,13 +1,13 @@
-## Initial Interactive Loader
+# Initial Interactive Loader
 
-# Intents
+## Intents
  0. Convenient way to restart system
  1. Check memory content
  2. Upload an application in hex format to RPi memory
  3. Start application from given address
  4. Support debug an application
 
-# Prearrangement
+## Prearrangement
  1. Connect RPi to serial port of computer. There are a lot of tutorials how establish serial connection to RPi online.
   Check, please, 
       - [David Welch github account](https://github.com/dwelch67/raspberrypi)
@@ -16,7 +16,7 @@
  2. Make reset button
  3. Prepare microSD
  
-# Build and prepare to run
+## Build and prepare to run
  1. Build image
      - cd ao.rtos.cpp/Tools/ARM-Raspberry_Pi/Initial_Interactive_Loader
      - make
@@ -24,4 +24,4 @@
      - copy file kernel.img to MicroSD
      - insert microCD to holder in RPi and reset target device.
 
-# Functionality Explanation 
+## Functionality Explanation 

@@ -17,6 +17,7 @@
 /** Helper file to gather the all cpp files to one */
 
 #include "bcm_registers.hpp"
+#include "os_cpu.hpp"
 
 extern "C" void irq_handler_arm_timer();
 extern "C" void irq_handler_mini_uart();
@@ -58,23 +59,3 @@ AO_STACK * isr(AO_STACK *sp) {
 extern "C" void * processSysCommand( DWORD size, DWORD type) {
   return 0;
 }
-
-//extern "C" void undefined_instruction_exception(unsigned int * sp) {
-//  return;
-//}
-//
-//extern "C" void prefetch_abort_exception(unsigned int * sp) {
-//  return;
-//}
-//
-//extern "C" void data_abort_exception(unsigned int * sp) {
-//  return;
-//}
-//
-//extern "C" void reset_exception(unsigned int * sp) {
-//  return;
-//}
-//
-//extern "C" void unpredicted_exception(unsigned int * sp) {
-//  return;
-//}
