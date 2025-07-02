@@ -187,10 +187,11 @@ stringToString( char *s, char * arg, int width, int align ) {
   return (s + width);
 }
 
+static char digits[] = {'0','1','2','3','4','5','6','7','8','9',
+                        'A','B','C','D','E','F'};
+
 char *
 intToString( char *s, int arg, int width, int align, char type ) {
-  static char digits[] = {'0','1','2','3','4','5','6','7','8','9',
-                          'A','B','C','D','E','F'};
   unsigned int a;
   char buf[80];
   int i, j, length, minus = 0, base = ( type == 'h')? 16 : 10;
@@ -246,4 +247,25 @@ intToString( char *s, int arg, int width, int align, char type ) {
     *(s + i) = ' ';
   return (s + width);
 };
+
+void
+intToHex(char * out, unsigned int v) {
+  for (int j = 7; j >= 0; j--) {
+    *(out + j) = digits[(int)(v & 0xF)];
+    v = v >> 4;
+  }
+  *(out + 8) = ' ';
+}
+
+void
+intsToHex( char *out, unsigned int* v[] ) {
+  int i = 0;
+  while (v[i] != 0) {
+    intToHex(out, *(v[i++]));
+    out = out + 9;
+  }
+  *(out - 1) = '\r';
+  *(out) = '\n';
+  *(out + 1) = 0;
+}
 

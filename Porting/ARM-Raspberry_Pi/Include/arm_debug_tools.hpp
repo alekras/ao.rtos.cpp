@@ -30,7 +30,7 @@ extern FormatParser fp1;
 
 #define DUMP_BUFFER 0x30000000
 #define DUMP_INDEX_MASK 0x7FFF
-#define DUMP_BUFFER_END 0x3000F000
+//#define DUMP_BUFFER_END 0x3000F000
 
 extern "C" void dump_debug_init();
 extern "C" void dump_debug_message(char * msg);
@@ -40,9 +40,6 @@ void dump_debug_f_message(char * format, Args ... args) {
   fp1.format(out, format, args...);
   dump_debug_message(out);
 }
-
-extern "C" unsigned int get_dump_index();
-extern "C" unsigned int get_dump_max_index();
 
 extern "C" void dump_memory(unsigned int * a, int w);
 

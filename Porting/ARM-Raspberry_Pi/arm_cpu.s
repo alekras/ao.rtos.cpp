@@ -204,6 +204,7 @@ data_abort_handler:
 
 reset_handler:
   cps #0x13
+  mov r0, sp
   bl reset_exception
 loop_1:
   b loop_1

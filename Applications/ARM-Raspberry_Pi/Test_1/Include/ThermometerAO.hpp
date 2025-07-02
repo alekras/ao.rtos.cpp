@@ -17,11 +17,10 @@
 #ifndef THERMOMETERAO_HPP_
 #define THERMOMETERAO_HPP_
 
-#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "os_cpu.hpp"
+#include "bcm_registers.hpp"
 #include "gpio.hpp"
-//#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
-#include "../../../Library/Display/Include/formatter.hpp"
+#include "formatter.hpp"
 #include "ISAObject.hpp"
 #include "application.hpp"
 
@@ -30,6 +29,7 @@ class ThermometerAO : public ISAObject {
   volatile DWORD period;
   String *outputString;
   Message *logMsg, *eventMsg;
+  FormatParser fp;
  public:
   Gpio *gpio16, *gpio20;
 
@@ -38,15 +38,14 @@ class ThermometerAO : public ISAObject {
   virtual AO_STACK * serviceInterrupt(AO_STACK *);
   virtual void run();
   void initLed();
+  void initSysTimer(DWORD delay);
+  void wait_us(DWORD usec);
+  void reset();
+  void writeByte2DS(DWORD data);
+  DWORD read2BytesFromDS();
 
  public:
           ThermometerAO(DWORD);
-     void initSysTimer(DWORD delay);
-     void logMessage(BYTE *msg);
-     void wait_us(DWORD usec);
-     void reset();
-     void writeByte2DS(DWORD data);
-     DWORD read2BytesFromDS();
 };
 
 #endif /* THERMOMETERAO_HPP_ */

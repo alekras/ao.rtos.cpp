@@ -30,6 +30,7 @@
 									<listOptionValue builtIn="false" value="/home/alexei/Application/watcom/h"/>
 									<listOptionValue builtIn="false" value="/opt/gcc-arm/latest/arm-none-eabi/include"/>
 									<listOptionValue builtIn="false" value="/opt/gcc-arm/latest/lib/gcc/arm-none-eabi/10.3.1/include"/>
+									<listOptionValue builtIn="false" value="../Include"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="org.eclipse.cdt.build.core.settings.holder.symbols.1009150759" name="Symbols" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_WATCOM_"/>

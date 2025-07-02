@@ -17,17 +17,17 @@
 #include "arm_debug_tools.hpp"
 
 char *dump_pointer;
-unsigned int dump_index;
-unsigned int *dump_index_storage, *dump_max_index_storage;
+int dump_index;
+int *dump_index_storage, *dump_max_index_storage;
 char out[200]; // @debug
 FormatParser fp1; // @debug
 
 
 void dump_debug_init() {
-  dump_index_storage = (unsigned int *)DUMP_BUFFER;
-  dump_max_index_storage = (unsigned int *)(DUMP_BUFFER + 4);
-  dump_pointer = (char *)(DUMP_BUFFER + 8);
-  dump_index = 0;
+  dump_index_storage = (int *)DUMP_BUFFER;
+  dump_max_index_storage = (int *)(DUMP_BUFFER + 4);
+  dump_pointer = (char *)(DUMP_BUFFER + 0x1000);
+  dump_index = -0xFF8;
   *dump_index_storage = dump_index;
   *dump_max_index_storage = dump_index;
   *(dump_pointer + dump_index) = 0;
@@ -36,20 +36,15 @@ void dump_debug_init() {
 void dump_debug_message(char * msg) {
   do {
     *(dump_pointer + dump_index) = *msg;
-    dump_index = (dump_index + 1) & DUMP_INDEX_MASK;
+    dump_index++;
+    if (dump_index > 0) {
+      dump_index = (dump_index) & DUMP_INDEX_MASK;
+    }
   } while (*(msg++) != 0);
   *dump_index_storage = dump_index;
   if (dump_index > *dump_max_index_storage) {
     *dump_max_index_storage = dump_index;
   }
-}
-
-unsigned int get_dump_index() {
-  return dump_index;
-}
-
-unsigned int get_dump_max_index() {
-  return *((unsigned int *)DUMP_BUFFER);
 }
 
 void dump_memory(unsigned int * a, int w) {

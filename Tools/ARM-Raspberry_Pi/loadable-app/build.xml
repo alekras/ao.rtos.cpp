@@ -10,7 +10,7 @@
   <property name="arm-tools-path">/opt/gcc-arm/latest</property>
   <property name="gcc-bin">${arm-tools-path}/bin</property>
   <property name="exec">${gcc-bin}/arm-none-eabi</property>
-  <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/4.8.3</property>
+  <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/10.3.1</property>
   <!--property name="copts"> -Wno-write-strings -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s 
     -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property-->
   <property name="copts"> -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property>

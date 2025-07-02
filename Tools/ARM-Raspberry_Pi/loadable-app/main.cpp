@@ -1,5 +1,6 @@
-#include "../../../Library/Display/Include/formatter.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/gpio.hpp"
+#include "formatter.hpp"
+#include "gpio.hpp"
+#include "arm_debug_tools.hpp"
 
 extern "C" int main();
 
@@ -14,17 +15,13 @@ extern "C" void led_setup();
 extern "C" void sys_timer_setup();
 extern "C" void arm_timer_setup(int);
 extern "C" void enable_irq();
-extern "C" int * get_sp(void);
-extern "C" void dump_debug_init();
-extern "C" void dump_debug_message(char*);
 
-char out[200];
 FormatParser fp;
 extern Gpio *gpio47, *gpio10, *gpio22;
 
 //------------------------------------------------------------------------
 int main() {
-  int *stack0;
+  unsigned int *stack0;
   Gpio t(47), m(10), p(22);
   gpio47 = &t;
   gpio10 = &m;

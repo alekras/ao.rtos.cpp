@@ -16,16 +16,11 @@
 
 #include "UartAO.hpp"
 
-// extern char out[200]; // @debug
-// extern FormatParser fp1; // @debug
-// extern "C" void dump_debug_message(char *); //@debug
-
 UartAO::UartAO(DWORD prio) : ISAObject( prio, 1 ) {
   initUart();
   txRingBuffer = new RingBuffer<BYTE>(0xFF);
   rxRingBuffer = new RingBuffer<BYTE>(0xFF);
   comMsg = new Message((DWORD_S)prio, (DWORD_S)4, (DWORD)0, MessageType::onechar, command);
-//  outMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::binary, io_out);
   inMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::onechar, io_in);
 }
 
@@ -55,8 +50,6 @@ UartAO::initUart() {
 
 AO_STACK *
 UartAO::serviceInterrupt(AO_STACK * stkp) {
-//  fp1.format(out, " >> UartAO::srvIntrr: stack=%h prio=%d\r\n", stkp, getPriority());  // @debug
-//  dump_debug_message(out);  // @debug
   DWORD status;
   char c;
   do {
@@ -77,14 +70,9 @@ UartAO::serviceInterrupt(AO_STACK * stkp) {
           (*pAUX_MU_IER_REG) = 0x7;  // Enable mini UART receive & transmit interrupts
           flag = true;
         }
-//        putIncomingMessage(outMsg);
-//        putOutgoingMessage(outMsg);
-//        ready = 1;
       }
     }
   } while ((status & 0x1) == 0);
-//  fp1.format(out, " << UartAO::srvIntrr: stack=%h prio=%d\r\n", stkp, getPriority());  // @debug
-//  dump_debug_message(out);  // @debug
 	return stkp;
 }
 
@@ -112,8 +100,6 @@ UartAO::processMessage(Message * msg) {
         String *string = msg->getString();
         DWORD l = string->length();
         DWORD available = txRingBuffer->bufferVacancy();
-//        fp1.format(out, "> UartAO::processMessage l=%d avail=%d load=%d\n\r", l, available, txRingBuffer->bufferLoad()); //@debug
-//        dump_debug_message(out); //@debug
         if (available < l) {
           return 0;
         }

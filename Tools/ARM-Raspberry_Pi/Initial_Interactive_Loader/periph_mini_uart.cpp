@@ -16,6 +16,7 @@
 
 #include "gpio.hpp"
 #include "bcm_registers.hpp"
+#include "arm_debug_tools.hpp"
 
 unsigned char read_rx_buffer();
 
@@ -40,8 +41,8 @@ unsigned char uart_recv() {
 //------------------------------------------------------------------------
 
 volatile bool flag;
-volatile unsigned int txhead;
-volatile unsigned int txtail;
+volatile int txhead;
+volatile int txtail;
 #define TXBUFMASK 0xFFF
 volatile unsigned char txbuffer[TXBUFMASK+1];
 
@@ -81,6 +82,7 @@ void sendString(char* buff) {
     (*pAUX_MU_IER_REG) = (*pAUX_MU_IER_REG) | 0x2;  // Enable mini UART transmit interrupts
     flag = true;
   }
+//  dump_debug_f_message("Exit sendString(). txtail=%d txhead=%d i=%d r=%d\n\r", txtail, txhead, i, r);
 }
 //------------------------------------------------------------------------
 volatile unsigned int rxhead;

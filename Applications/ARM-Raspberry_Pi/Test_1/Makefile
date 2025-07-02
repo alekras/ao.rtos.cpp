@@ -30,47 +30,50 @@ ${GCC_DIR}/libapp.a : ${OBJECTS}
 
 ${APP_OBJ_DIR}/periph_interrupt.o : periph_interrupt.cpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 ${APP_OBJ_DIR}/MyAO.o : MyAO.cpp Include/MyAO.hpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 ${APP_OBJ_DIR}/UartAO.o : UartAO.cpp Include/UartAO.hpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 ${APP_OBJ_DIR}/GpioAO.o : GpioAO.cpp Include/GpioAO.hpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 ${APP_OBJ_DIR}/ThermometerAO.o : ThermometerAO.cpp Include/ThermometerAO.hpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 ${APP_OBJ_DIR}/DebugAOScheduler.o : DebugAOScheduler.cpp Include/DebugAOScheduler.hpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 ${APP_OBJ_DIR}/main.o : main.cpp
 	@echo compiles source file $<
-	@${EXEC}-gcc ${COPTS} ${INCLUDE_PATHS} -o $@ -c $<
+	@${EXEC}-gcc ${CPPOPTS} ${INCLUDE_PATHS} -o $@ -c $<
 
 .PHONY: libkern
 libkern :
-	cd ../../../Kernel && ${MAKE}
+	@echo Enter to Kernel subproject
+	@cd ../../../Kernel && ${MAKE}
 
 .PHONY: libaortos
 libaortos :
-	cd ../../../Library && ${MAKE}
+	@echo Enter to Library subproject
+	@cd ../../../Library && ${MAKE}
 
 .PHONY: libport
 libport :
-	cd ../../../Porting/ARM-Raspberry_Pi && ${MAKE}
+	@echo Enter to Porting subproject
+	@cd ../../../Porting/ARM-Raspberry_Pi && ${MAKE}
 
 .PHONY: clean
 clean :
-	cd ../../../Kernel && ${MAKE} clean
+	rm -fr ${GCC_DIR}
 
 prepare :
 	@mkdir -p ${TARGET_DIR}

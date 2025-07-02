@@ -15,11 +15,7 @@
 */
 
 #include "GpioAO.hpp"
-
-// extern char out[200]; // @debug
-// extern FormatParser fp1; // @debug
-// extern "C" void dump_debug_message(char *); //@debug
-// extern "C" unsigned int * get_sp(void); // @debug
+#include "arm_debug_tools.hpp"
 
 GpioAO::GpioAO(DWORD prio) : ISAObject(prio, 2) {
   initGpio();
@@ -27,7 +23,6 @@ GpioAO::GpioAO(DWORD prio) : ISAObject(prio, 2) {
   period = 20;
   outputString = new String(120);
   logMsg = new Message((DWORD_S)prio, (DWORD_S)1, (DWORD)0, MessageType::string, logging);
-  inMsg = new Message((DWORD_S)prio, (DWORD_S)prio, (DWORD)0, MessageType::word, io_in);
 }
 
 void
@@ -42,45 +37,38 @@ GpioAO::initGpio() {
 
 AO_STACK *
 GpioAO::serviceInterrupt(AO_STACK * stkp) {
-//  fp1.format(out, " >> GpioAO::srvIntrr: ISAObj=%h stack=%h prio=%d\r\n", o, stkp, getPriority());  // @debug
-//  dump_debug_message(out);  // @debug
-  DWORD status = (*pPENDING_IRQ_2);
-  DWORD event = gpio21->readEventDetectStatus();
-  gpio21->clearEventDetectStatus();
-  DWORD temp = (*pSYS_TIMER_COUNT_LO);
-  impulseWidth = temp - lastTimeStamp;
-  lastTimeStamp = temp;
-  lastStatus = status | event;
+  lastStatus = (*pPENDING_IRQ_2);
+//  fp1.format(out, "-- PendStatus=%8h CPU SP=%8h OS SP=%8h CPSR=%8h SPSR=%8h\r\n",
+//    lastStatus, get_sp(), stkp, get_cpsr(), get_spsr());  // @debug
+//  dump_stack_(stkp);
+//  event = gpio21->readEventDetectStatus();
+  tempTime = (*pSYS_TIMER_COUNT_LO);
+  impulseWidth = tempTime - lastTimeStamp;
+  lastTimeStamp = tempTime;
+//  lastStatus = lastStatus | event;
   counter++;
-//  inMsg->setWord(status | event);
-//  putIncomingMessage(inMsg);
-//  fp1.format(out, " << GpioAO::srvIntrr: stack=%h prio=%d\r\n", stkp, getPriority());  // @debug
-//  dump_debug_message(out);  // @debug
+  if (status++ > 500) {
+    unsigned int* debug_var[] = {(unsigned int*)&lastStatus, (unsigned int*)&counter, (unsigned int*)&stkp, 0};
+    intsToHex(out, debug_var);
+    dump_debug_message(out);  // @debug
+    status = 0;
+  }
+  gpio21->clearEventDetectStatus();
   return stkp;
 }
 
 DWORD
 GpioAO::processMessage(Message * msg) {
   switch (msg->getMessageID()) {
-    case io_in :
-      {
-        lastStatus = msg->getWord();
-        counter++;
-      }
-      break;
-    case tick :              // Message from Timer
-      if (--period == 0) {
-        DWORD status = (*pPENDING_IRQ_2);
-        DWORD event = gpio21->readEventDetectStatus();
+    case tick :              // Message from Timer each 250 msec
+      if (--period == 0) { // each 5 sec
         fp.format((char *)outputString->getChars(),
-            "<GPIO> impulse=%d counter=%d, status=%8h, cur. status=%8h, buff load=%d\r\n",
-            impulseWidth, counter, lastStatus, status | event, incomingBufferLoad());
+            "<GPIO> impulse=%d counter=%d (/5sec), status=%8h.\r\n",
+            impulseWidth, counter, lastStatus);
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
         period = 20;
         counter = 0;
-        lastStatus = 0;
-        impulseWidth = 0;
       }
       break;
     default :

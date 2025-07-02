@@ -49,7 +49,7 @@ processInterrupt( DWORD iN, AO_STACK * stp ) {
     stp = scheduler->serviceInterrupt(obj, stp);                           // then run scheduler
   }
 
-  ENTER_CRITICAL()                     // mask interrupts
+//  ENTER_CRITICAL()                     // mask interrupts
   ISAObject::nestedLevel--;
 //  fp1.format(out, "< processInterrupt: iN=#%d stack=%h nestedLvl=%d\n\r", iN, stp, ISAObject::nestedLevel);  // @debug
 //  dump_debug_message(out);  // @debug

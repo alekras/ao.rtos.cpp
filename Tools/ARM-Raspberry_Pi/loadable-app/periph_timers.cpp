@@ -55,7 +55,7 @@ void led_setup() {
 
 extern "C"
 void irq_handler_arm_timer() {
-  static volatile int tic = 0;
+  static volatile unsigned int tic = 0;
   fp.format(out, "timer tick #%d\n\r", tic);
   dump_debug_message(out);
   switch (tic++ % 8) {

@@ -17,11 +17,10 @@
 #ifndef GPIOAO_HPP_
 #define GPIOAO_HPP_
 
-#include "../../../Porting/ARM-Raspberry_Pi/Include/os_cpu.hpp"
-#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm_registers.hpp"
+#include "os_cpu.hpp"
+#include "bcm_registers.hpp"
 #include "gpio.hpp"
-#include "../../../Library/Display/Include/formatter.hpp"
-//#include "../../../Porting/ARM-Raspberry_Pi/Include/bcm2835.hpp"
+#include "formatter.hpp"
 #include "ISAObject.hpp"
 #include "application.hpp"
 
@@ -29,8 +28,9 @@ class GpioAO : public ISAObject {
  private:
   Gpio *gpio21;
   String *outputString;
-  Message *logMsg, *inMsg;
-  volatile DWORD counter, period, lastStatus, lastTimeStamp, impulseWidth;
+  Message *logMsg;
+  volatile DWORD counter, period, lastStatus, lastTimeStamp, tempTime,
+    impulseWidth, status, event;
   FormatParser fp;
 
  protected:

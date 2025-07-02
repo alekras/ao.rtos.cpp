@@ -62,21 +62,10 @@ MyAO::processMessage(Message * e) {
         timeMin = timeMin % 60;
 
         fp.format((char *)outputString->getChars(),
-            "<1> T: [%4d:%02d:%02d %3d.%03d] Active object[%d] count=%d buffer=%d\r\n",
+            "<MyAO> T: [%4d:%02d:%02d %3d.%03d] Active object[%d] count=%d buffer=%d\r\n",
             timeHour, timeMin, timeSec, timeMSec, timeUSec, getPriority(), counter, incomingBufferLoad());
         logMsg->setString(outputString);
         putOutgoingMessage(logMsg);
-
-//        Binary *bin = new Binary(3);
-//        DWORD *array = bin->getData();
-//        array[0] = 77;
-//        array[1] = 78;
-//        array[2] = 79;
-//        Message *binMsg = new Message(priority, priority, bin, binmsg);
-//        fp1.format(out, "> new Message binMsg=%h\n\r", binMsg); //@debug
-//        dump_debug_message(out); //@debug
-//        putOutgoingMessage(binMsg);
-//        delete binMsg;
       }
       switch (second % 4) {
         case 0:
@@ -126,8 +115,6 @@ MyAO::processMessage(Message * e) {
 
 void
 MyAO::run() {
-//  fp1.format(out, " inside run() : obj=%h, stack=%h[real=%h] prio=%d ready=%d\r\n", this, getSP(), get_sp(), getPriority(), isReady());  // @debug
-//  dump_debug_message(out);  // @debug
 }
 
 void MyAO::log(BYTE level, char* text) {

@@ -40,11 +40,6 @@ class AObject : public Process {
    Message message;
 
 /***************** Methods ***************/
- protected:
-/**
- * Method run executes custom code that implements given AO behavior.
- */
-   virtual void run();
 
  private:
 
@@ -60,6 +55,12 @@ class AObject : public Process {
    static void cdecl staticStart( AObject * ao );
 
  protected:
+
+/**
+ * Method run executes custom code that implements given AO behavior.
+ */
+   virtual void run();
+
 /**
  *  Method processes the coming event. As the method is virtual
  *  the subclasses can override it. The method for this subclass implements AO

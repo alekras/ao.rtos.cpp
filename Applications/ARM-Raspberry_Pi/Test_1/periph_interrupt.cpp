@@ -47,8 +47,6 @@ void arm_timer_setup(int p_msec) {
 // TO DO - move to assembler code arm_cpu.s ???
 extern "C"
 AO_STACK * isr(AO_STACK *sp) {
-//  fp1.format(out, "Enter isr() sp=%h pIrq=%h \r\n", sp, (*pPENDING_IRQ_B));  // @debug
-//  dump_debug_message(out);  // @debug
   AO_STACK* ret_sp = sp;
   if ((*pPENDING_IRQ_B) & 0x00000001) { // ARM Timer Interrupt
     (*pARM_TIMER_IRQ) = 0;
@@ -59,7 +57,7 @@ AO_STACK * isr(AO_STACK *sp) {
     return processInterrupt(1, sp);   // mini UART Interrupt (AUX interrupt)
   }
 
-  if ((*pPENDING_IRQ_2) & 0x001e0000) {
+  if ((*pPENDING_IRQ_2) & 0x00020000) {
     return processInterrupt(2, sp);   // GPIO Interrupt
   }
 

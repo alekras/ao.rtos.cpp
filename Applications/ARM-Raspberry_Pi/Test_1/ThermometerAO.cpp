@@ -14,12 +14,7 @@
    limitations under the License.
 */
 
-#include "Include/ThermometerAO.hpp"
-
- extern char out[200]; // @debug
- extern FormatParser fp1; // @debug
-// extern "C" void dump_debug_message(char *); //@debug
-// extern "C" unsigned int * get_sp(void); // @debug
+#include "ThermometerAO.hpp"
 
 ThermometerAO::ThermometerAO(DWORD prio) : ISAObject(prio, 3) {
   initLed();
@@ -68,11 +63,13 @@ ThermometerAO::reset() {
   wait_us(600);
   EXIT_CRITICAL();                     // allow interrupts
   if (p0 == 0) {
-//    fp1.format(out, "<DS18B20> is present. %d\n\r",p0);
-//    logMessage((BYTE*)out);
+//    fp.format((char *)outputString->getChars(), "<DS18B20> is present. %d\n\r",p0);
+//    logMsg->setString(outputString);
+//    putOutgoingMessage(logMsg);
   } else {
-    fp1.format(out, "<DS18B20> does not present. %d\n\r",p0);
-    logMessage((BYTE*)out);
+    fp.format((char *)outputString->getChars(), "<DS18B20> does not present. %d\n\r", p0);
+    logMsg->setString(outputString);
+    putOutgoingMessage(logMsg);
   }
 }
 
@@ -118,13 +115,6 @@ ThermometerAO::read2BytesFromDS() {
   return result;
 }
 
-void
-ThermometerAO::logMessage(BYTE *msg) {
-  outputString->setChars(msg);
-  logMsg->setString(outputString);
-  putOutgoingMessage(logMsg);
-}
-
 AO_STACK *
 ThermometerAO::serviceInterrupt(AO_STACK * stkp) {
   (*pDISABLE_IRQ_1) = 0x00000002; // Disable system timer interrupts
@@ -155,9 +145,10 @@ ThermometerAO::processMessage(Message * msg) {
       writeByte2DS(0xBECC);
       temperature = read2BytesFromDS();
 
-      fp1.format(out, "<DS18B20> temperature= %h, t=%d.%04d\n\r",
+      fp.format((char *)outputString->getChars(), "<DS18B20> temperature= %h, t=%d.%04d\n\r",
           temperature, (temperature >> 4), (temperature & 0xF) * 625);
-      logMessage((BYTE*)out);
+      logMsg->setString(outputString);
+      putOutgoingMessage(logMsg);
       break;
     default :
       return 1;

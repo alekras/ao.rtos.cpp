@@ -34,7 +34,7 @@ extern "C" int convert(int, char);
 void
 printMenu() {
   sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
-  sendString("[build 0.1.13, 06/21/2025]\n\r");
+  sendString("[build 0.1.15, 06/29/2025]\n\r");
   sendString("Commands:\n\r");
   sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
   sendString(" D              - continue output memory content.\n\r");
@@ -48,6 +48,7 @@ printMenu() {
   sendString(" L              - upload hex file.\n\r");
   sendString(" H              - output help message.\n\r");
   sendString(" G<aaaa>        - run code at <aaaa> address.\n\r");
+  sendString("                *** addresses in hex format.\n\r");
 }
 
 void prompt(int subFormat, int width) {
@@ -64,7 +65,7 @@ InitialInteractiveLoaderSM::InitialInteractiveLoaderSM() : Efsm((State)&InitialI
   width = 1;
   subFormat = 0;
   printMenu();
-  prompt(subFormat, width);
+  prompt(subFormat, 0);
 }
 
 char*
@@ -265,11 +266,11 @@ InitialInteractiveLoaderSM::outputDump(Phase phase, char *s) {
 
 void
 InitialInteractiveLoaderSM::runOutputDump() {
-  char *dump_pointer = (char *)(DUMP_BUFFER + 8);
-  unsigned int dump_curr_index = *((unsigned int *)DUMP_BUFFER);
-  unsigned int dump_max_index = *((unsigned int *)(DUMP_BUFFER + 4));
-  unsigned int idx = 0;
-  int i, idx_flg = 0;
+  char *dump_pointer = (char *)(DUMP_BUFFER +  + 0x1000);
+  int dump_curr_index = *((int *)DUMP_BUFFER);
+  int dump_max_index = *((int *)(DUMP_BUFFER + 4));
+  int idx = -0xFF8;
+  int i, idx_flg = 0, ring_flg = 0;
   char t;
 
   while (idx < dump_max_index && idx < DUMP_INDEX_MASK) {
@@ -277,13 +278,23 @@ InitialInteractiveLoaderSM::runOutputDump() {
     do {
       t = *(dump_pointer + idx++);
       out[i++] = t;
+      if (idx >= DUMP_INDEX_MASK) {
+        out[i++] = '\n';
+        out[i++] = '\r';
+        out[i] = 0;
+        break;
+      }
     } while ((t != 0) && i < 200);
     sendString(out);
+    if (idx >= 0 && ring_flg == 0) {
+      sendString("--- Ring buffer top ---\n\r");
+      ring_flg++;
+    }
     if (idx >= dump_curr_index && idx_flg == 0) {
       sendString("--- Current dump index ---\n\r");
       idx_flg++;
     }
-    if ((t == 0) && (*(dump_pointer + idx) == 0)) {
+    if ((t == 0) && (*(dump_pointer + idx) < 32)) {
       sendString("Probably this is garbage area...\n\r");
       break;
     }

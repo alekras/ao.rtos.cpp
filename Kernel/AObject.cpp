@@ -15,6 +15,7 @@
 */
 
 #include "AObject.hpp"
+#include "arm_debug_tools.hpp"
 
 typedef void cdecl (*fp)( AObject * );           // helper typedef for casting function staticStart()
 
@@ -28,6 +29,8 @@ AObject::AObject( DWORD prio ) : Process( prio ) {
   incomingRingBuffer = new RingBuffer<Message>(AO_RINGBUFFER_LENGTH);
   outgoingRingBuffer = new RingBuffer<Message>(AO_RINGBUFFER_LENGTH);
   Process::init( this, &staticStart );
+  fp1.format(out, "AObject constructor: AObject[%d] stack = %8h sp = %8h\r\n", prio, stack, sp);
+  dump_debug_message(out);  // @debug
 }
 
 AObject::~AObject() {

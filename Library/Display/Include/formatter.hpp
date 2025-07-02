@@ -18,7 +18,6 @@
 #define _FORMATTER_HPP
 #include "../../FSM/Include/fsm.hpp"
 #include <stdarg.h>
-// #include "os_cpu.hpp"
 
 class FormatParser : public Fsm<const char> {
   private:
@@ -60,5 +59,8 @@ intToString( char *s, int arg, int width, int align, char type );
 
 char *
 stringToString( char *s, char * arg, int width, int align );
+
+void
+intsToHex( char *out, unsigned int* v[] );
 
 #endif /* _FORMATTER_HPP */

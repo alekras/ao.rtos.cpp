@@ -11,10 +11,13 @@
  1. Connect RPi to serial port of computer. There are a lot of tutorials how establish serial connection to RPi online.
   Check, please, 
       - [David Welch github account](https://github.com/dwelch67/raspberrypi)
+      - [Learning operating system development using Linux kernel and Raspberry Pi](https://github.com/s-matyukevich/raspberry-pi-os/tree/master)
       - [How to Connect to the Serial Port on a Raspberry Pi using a USB Adapter or TTL Converter](https://practicingelectronics.wordpress.com/2018/04/22/serial-port-for-a-raspberry-pi-using-a-usb-to-serial-adapter/)
   [USB to TTL Serial Cable - Debug / Console Cable for Raspberry Pi](https://www.adafruit.com/product/954)
  2. Make reset button
  3. Prepare microSD
+ 4. Install gcc toolkit
+ 5. Install a serial port terminal. For Mac users I recomend CoolTerm is a simple serial port terminal application.
  
 ## Build and prepare to run
  1. Build image

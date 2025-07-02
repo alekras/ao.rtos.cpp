@@ -15,8 +15,6 @@
 */
 
 #include "DebugAOScheduler.hpp"
-//extern char out[200]; // @debug
-//extern FormatParser fp1; // @debug
 
 DebugAOScheduler::DebugAOScheduler() : AOScheduler() {
   tickCounter = 20;
