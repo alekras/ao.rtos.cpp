@@ -1,12 +1,15 @@
 
-ARM-TOOLS-PATH = /opt/gcc-arm/latest
-EXEC = ${ARM-TOOLS-PATH}/bin/arm-none-eabi
-CPP-LIBS = ${ARM-TOOLS-PATH}/lib/gcc/arm-none-eabi/10.3.1
+TOOLCHAIN.VERSION = 14.3.1
+ARM_TOOLS_PATH = /opt/gcc-arm/arm-gnu-toolchain-${TOOLCHAIN.VERSION}
+EXEC = ${ARM_TOOLS_PATH}/bin/arm-none-eabi
+CPP-LIBS = ${ARM_TOOLS_PATH}/lib/gcc/arm-none-eabi/${TOOLCHAIN.VERSION}
 HEX2BIN_DIR = ../../../Library/hex2bin
 FSM_DIR = ../../../Library/FSM
 DISPLAY_DIR = ../../../Library/Display
 PORTING_DIR = ../../../Porting/ARM-Raspberry_Pi
-COPTS = -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions
+COPTS = -Wno-write-strings -O2 \
+	-march=armv7-a+nofp -mtune=cortex-a7 \
+	-nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions
 
 INCLUDE_PATHS = -I ${PORTING_DIR}/Include \
 	-I ${FSM_DIR}/Include \

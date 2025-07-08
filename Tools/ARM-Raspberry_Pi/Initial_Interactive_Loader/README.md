@@ -15,15 +15,15 @@
       - [How to Connect to the Serial Port on a Raspberry Pi using a USB Adapter or TTL Converter](https://practicingelectronics.wordpress.com/2018/04/22/serial-port-for-a-raspberry-pi-using-a-usb-to-serial-adapter/)
   [USB to TTL Serial Cable - Debug / Console Cable for Raspberry Pi](https://www.adafruit.com/product/954)
  2. Make reset button
- 3. Prepare microSD
- 4. Install [arm gnu toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). I am using 10.3.1 version recently because some issues arise with version >= 11.
+ 3. Prepare microSD. Put files from microSD-image.zip to your SD.
+ 4. Install [arm gnu toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). Change a Makefile (or build.xml for Ant builder) to reflect your installation folders.
  5. Install a serial port terminal. For Mac users I recomend CoolTerm is a simple serial port terminal application.
  
 ## Build and prepare to run
  1. Build image
      - cd ao.rtos.cpp/Tools/ARM-Raspberry_Pi/Initial_Interactive_Loader
-     - make
-  2. Build microSD
+     - make img
+ 2. Build microSD
      - copy file kernel.img to MicroSD
      - insert microCD to holder in RPi and reset target device.
 

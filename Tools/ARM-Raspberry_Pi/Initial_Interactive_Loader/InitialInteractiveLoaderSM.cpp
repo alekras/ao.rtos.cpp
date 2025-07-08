@@ -55,7 +55,7 @@ void prompt(int subFormat, int width) {
   char promt[] = {'X','1','>',0};
   char sf[] = {'X','S','O',' '};
   promt[0] = sf[(subFormat & 0x3)];
-  promt[1] = '0' + width;
+  promt[1] = '0' + (width & 0x7);
   sendString(promt);
 }
 
