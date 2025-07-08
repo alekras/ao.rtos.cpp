@@ -63,6 +63,9 @@ extern "C"
 void sendString(char* buff) {
   char * i = buff;
   int r;
+  if (*i == 0) {
+    return;
+  }
   while (*i != 0) {
     r = txtail - txhead;
     if (r > 0 && r < 3) {

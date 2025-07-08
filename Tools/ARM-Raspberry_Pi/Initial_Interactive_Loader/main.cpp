@@ -32,7 +32,7 @@ int main() {
   enable_irq();
 
 //  dump_debug_init(); // only for testing debug tools!!!
-//  dump_debug_message("$$ Debug IIL\r\n");
+//  dump_debug_message("** Debug IIL\r\n");
 
 //  fp1.format(out, "LINE STATUS := %h.\n\rINTERR STATUS := %h.\n\rCONTR REG := %h.\n\rSTATUS REG := %h.\n\r",
 //    *pAUX_MU_LSR_REG, *pAUX_MU_IIR_REG, *pAUX_MU_CNTL_REG, *pAUX_MU_STAT_REG);

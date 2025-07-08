@@ -1,8 +1,9 @@
 
-ARM_TOOLS_PATH = /opt/gcc-arm/latest
+TOOLCHAIN.VERSION = 14.3.1
+ARM_TOOLS_PATH = /opt/gcc-arm/arm-gnu-toolchain-${TOOLCHAIN.VERSION}
 EXEC = ${ARM_TOOLS_PATH}/bin/arm-none-eabi
-CPP_LIBS = ${ARM_TOOLS_PATH}/lib/gcc/arm-none-eabi/10.3.1
-COPTS = -c -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions
+CPP_LIBS = ${ARM_TOOLS_PATH}/lib/gcc/arm-none-eabi/${TOOLCHAIN.VERSION}
+COPTS = -c -Wno-write-strings -O2 -march=armv7-a+nofp -mtune=cortex-a7 -marm -nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions
 CPPOPTS = ${COPTS} -std=c++11 -fno-rtti
 
 PORT_DIR = ${ROOT_DIR}/Porting/ARM-Raspberry_Pi

@@ -7,13 +7,13 @@
     Initial Interactive Loader for Raspberry Pi.
   </description>
   
-  <property name="arm-tools-path">/opt/gcc-arm/latest</property>
+  <property name="toolchain.version">14.3.1</property>
+  <property name="arm-tools-path">/opt/gcc-arm/arm-gnu-toolchain-${toolchain.version}</property>
   <property name="gcc-bin">${arm-tools-path}/bin</property>
   <property name="exec">${gcc-bin}/arm-none-eabi</property>
-  <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/10.3.1</property>
-  <!--property name="copts"> -Wno-write-strings -O2 -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s 
-    -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property-->
-  <property name="copts"> -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property>
+  <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/${toolchain.version}</property>
+  <!--property name="copts"> -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property-->
+  <property name="copts"> -Wno-write-strings -O2 -mabi=aapcs -march=armv7-a+nofp -mtune=cortex-a7 -marm -nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions</property>
 
   <target name="application" depends="clean, gcc, as, ld-app, dump, hex" description="create application hex file">
   </target>
@@ -28,6 +28,7 @@
       <arg line="-I ./Include " />
       <arg line="-I ../../../Library/hex2bin/Include " />
       <arg line="-I ../../../Library/Display/Include " />
+      <arg line="-I ../../../Library/FSM/Include " />
       <arg line="-I ../../../Porting/ARM-Raspberry_Pi/Include " />
       <arg value="main.cpp"/>
       <arg value="InitialInteractiveLoaderSM.cpp"/>

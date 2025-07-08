@@ -16,7 +16,7 @@
   [USB to TTL Serial Cable - Debug / Console Cable for Raspberry Pi](https://www.adafruit.com/product/954)
  2. Make reset button
  3. Prepare microSD
- 4. Install gcc toolkit
+ 4. Install [arm gnu toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). I am using 10.3.1 version recently because some issues arise with version >= 11.
  5. Install a serial port terminal. For Mac users I recomend CoolTerm is a simple serial port terminal application.
  
 ## Build and prepare to run

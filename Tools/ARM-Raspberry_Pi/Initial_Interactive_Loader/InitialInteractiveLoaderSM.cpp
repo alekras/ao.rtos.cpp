@@ -34,7 +34,7 @@ extern "C" int convert(int, char);
 void
 printMenu() {
   sendString("\n\rInitial Interactive Loader (c) krasnop@bellsouth.net\n\r");
-  sendString("[build 0.1.15, 06/29/2025]\n\r");
+  sendString("[build 0.1.16, 07/08/2025]\n\r");
   sendString("Commands:\n\r");
   sendString(" D<aaaa>,<cccc> - output memory content from <aaaa> to <aaaa> + <cccc>.\n\r");
   sendString(" D              - continue output memory content.\n\r");
@@ -53,8 +53,8 @@ printMenu() {
 
 void prompt(int subFormat, int width) {
   char promt[] = {'X','1','>',0};
-  char sf[] = {'X','S','O'};
-  promt[0] = sf[subFormat];
+  char sf[] = {'X','S','O',' '};
+  promt[0] = sf[(subFormat & 0x3)];
   promt[1] = '0' + width;
   sendString(promt);
 }
