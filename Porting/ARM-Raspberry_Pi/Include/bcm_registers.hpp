@@ -24,8 +24,12 @@
  */
 
 // RPI2 is defined in build.xml or in Makefile
-#ifdef RPI2
+#if defined( RPI2 )
     #define PERIPHERAL_BASE 0x3F000000
+#elif defined( RPI3 )
+    #define PERIPHERAL_BASE 0x3F000000
+#elif defined( RPI4 )
+    #define PERIPHERAL_BASE 0xFE000000
 #else
     #define PERIPHERAL_BASE 0x20000000
 #endif
