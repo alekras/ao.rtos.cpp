@@ -7,10 +7,37 @@
     Initial Interactive Loader for Raspberry Pi.
   </description>
   
-  <property name="rpi.version" value="RPI2" />
+  <property name="rpi.version" value="RPI3" />
   <property name="toolchain.version">14.3.1</property>
   
   <property file="build_${rpi.version}.properties"/>
+
+  <property name="arm-tools-path">/opt/gcc-arm/arm-gnu-toolchain-${toolchain.version}</property>
+  <property name="gcc-bin">${arm-tools-path}/bin</property>
+  <property name="exec">${gcc-bin}/arm-none-eabi</property>
+  <property name="cpp-libs">${arm-tools-path}/lib/gcc/arm-none-eabi/${toolchain.version}</property>
+  <!--property name="copts"> -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions</property-->
+  <!--property name="copts"> -Wno-write-strings -O2 -mabi=aapcs -march=armv7-a+nofp -mtune=cortex-a7 -marm -nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions</property-->
+  <condition property="copts" 
+    value=" -Wno-write-strings -O2 -mabi=aapcs -march=armv8-a+crc+nofp -mcpu=cortex-a53 -marm -nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions">
+      <equals arg1="${rpi.version}" arg2="RPI3" />
+  </condition>
+  <condition property="copts" 
+    value=" -Wno-write-strings -O2 -mabi=aapcs -march=armv7-a+nofp -mtune=cortex-a7 -marm -nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions">
+      <equals arg1="${rpi.version}" arg2="RPI2" />
+  </condition>
+  <condition property="kernel.image.name" value="kernel8.img">
+      <equals arg1="${rpi.version}" arg2="RPI3" />
+  </condition>
+  <condition property="kernel.image.name" value="kernel.img">
+      <equals arg1="${rpi.version}" arg2="RPI2" />
+  </condition>
+  <condition property="linker.script" value="loader_pi3">
+      <equals arg1="${rpi.version}" arg2="RPI3" />
+  </condition>
+  <condition property="linker.script" value="loader_pi2">
+      <equals arg1="${rpi.version}" arg2="RPI2" />
+  </condition>
 
   <target name="application" depends="clean, gcc, as, ld-app, dump, hex" description="create application hex file">
   </target>
@@ -21,7 +48,6 @@
   <target name="gcc">
     <echo>GCC-ARM compiles source files</echo>
     <echo>RPI.version = ${rpi.version}</echo>
-    <echo>COPTS = ${copts}</echo>
     <exec dir="${basedir}" executable="${exec}-gcc">
       <arg line="${copts} -D${rpi.version} -c " />
       <arg line="-I ./Include " />
@@ -50,7 +76,7 @@
       <arg line=" arm_cpu.o"/>
       <arg line=" main.o periph.o"/>
       <arg line=" Hex2BinEFSMachine.o InitialInteractiveLoaderSM.o formatter.o"/>
-      <arg line=" -lgcc -Map map.lst -T ${linker.script} -o IIL.elf"/>
+      <arg line=" -lgcc -Map map.lst -T ${linker.script} -o InitialInteractiveLoaderSM.elf"/>
     </exec>
   </target>
 
@@ -61,28 +87,28 @@
       <arg line=" arm_cpu.o"/> <!-- has to be first -->
       <arg line=" main.o periph.o"/>
       <arg line=" Hex2BinEFSMachine.o InitialInteractiveLoaderSM.o formatter.o"/>
-      <arg line=" -lgcc -Map map.lst -T loader-app -o IIL.elf"/>
+      <arg line=" -lgcc -Map map.lst -T loader-app -o InitialInteractiveLoaderSM.elf"/>
     </exec>
   </target>
 
   <target name="dump">
     <echo>GCC-ARM dumps elf file</echo>
-    <exec dir="${basedir}" executable="${exec}-objdump" output="IIL.lst">
-      <arg line="-D IIL.elf"/>
+    <exec dir="${basedir}" executable="${exec}-objdump" output="InitialInteractiveLoaderSM.lst">
+      <arg line="-D InitialInteractiveLoaderSM.elf"/>
     </exec>
   </target>
 
   <target name="hex">
     <echo>GCC-ARM creates HEX file from elf file</echo>
     <exec dir="${basedir}" executable="${exec}-objcopy">
-      <arg line=" IIL.elf -O ihex IIL.hex"/>
+      <arg line=" InitialInteractiveLoaderSM.elf -O ihex InitialInteractiveLoaderSM.hex"/>
     </exec>
   </target>
 
   <target name="img">
     <echo>GCC-ARM creates binary (image) file from elf file</echo>
     <exec dir="${basedir}" executable="${exec}-objcopy">
-      <arg line=" IIL.elf -O binary ${kernel.image.name}"/>
+      <arg line=" InitialInteractiveLoaderSM.elf -O binary ${kernel.image.name}"/>
     </exec>
   </target>
 

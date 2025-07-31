@@ -32,8 +32,8 @@ void arm_timer_setup(int p_msec) {
 
 extern "C"
 void led_setup() {
-  gpio47->setFunction(1);
-  gpio47->clearLevel();
+//  gpio47->setFunction(1);
+//  gpio47->clearLevel();
   gpio10->setFunction(1);
   gpio10->setLevel();
   gpio22->setFunction(1);
@@ -45,10 +45,12 @@ void irq_handler_arm_timer() {
   static volatile int tic = 0;
   switch (tic++ % 2) {
     case 0:
-      gpio47->clearLevel();
+//      gpio47->clearLevel();
+      gpio10->clearLevel();
       break;
     case 1:
-      gpio47->setLevel();
+//      gpio47->setLevel();
+      gpio10->setLevel();
       break;
     default:
       break;

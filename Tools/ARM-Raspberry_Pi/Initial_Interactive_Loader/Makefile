@@ -44,7 +44,7 @@ hex : ld-app
 
 ld-image : ${OBJECTS}
 	@echo  GCC-ARM links $^ files
-	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader -o InitialInteractiveLoader.elf
+	@${EXEC}-ld -L${CPP-LIBS} $^ -lgcc -Map map.lst -T loader -o IIL.elf
 	@${EXEC}-objdump -D InitialInteractiveLoader.elf > InitialInteractiveLoader.lst
 
 ld-app : ${OBJECTS}
