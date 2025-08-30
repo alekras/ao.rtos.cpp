@@ -16,7 +16,6 @@
 
 #include "arm_debug_tools.hpp"
 #include "MyAO.hpp"
-extern MemoryManager* mm;
 
 MyAO::MyAO(DWORD prio, DWORD c ) : AObject(prio) {
   gpio10 = new Gpio(10);

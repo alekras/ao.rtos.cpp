@@ -20,7 +20,7 @@ int main() {
   irq_vectors_setup();
   arm_timer_setup(250);
   dump_debug_init();
-  dump_debug_f_message("Start AORTOS! Version= %d\r\n", 21);
+  dump_debug_f_message("Start AORTOS! Version= %d\r\n", 22);
 
   ISAObject::nestedLevel = 0;
 // Objects allocation :

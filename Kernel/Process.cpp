@@ -47,6 +47,7 @@ void
 Process::init( AObject * subClassThis, void cdecl (*fp)( AObject * ) ) {
   sp = &stack[AO_STACK_LENGTH];    // Load stack pointer
   *(--sp) = 0x153;                 // spsr to restore after exception -
+//  *(--sp) = 0x150;                 // spsr to restore after exception -
   *(--sp) = (DWORD)fp;             // lr address to return after exception
   *(--sp) = (DWORD)fp;             // lr current return address for svc mode
   *(--sp) = 0xF00C;                // r12

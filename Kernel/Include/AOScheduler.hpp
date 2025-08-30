@@ -25,7 +25,7 @@ extern MemoryManager* mm;
 /**
  * static external functions invoked directly after interrupt.
  */
-extern "C" void * cdecl processSysCommand( DWORD, DWORD );
+extern "C" void * cdecl processSysCommand( DWORD, DWORD, AO_STACK * );
 
 /**
  * Class AOScheduler is responsible for looking for Active Object in RTOS

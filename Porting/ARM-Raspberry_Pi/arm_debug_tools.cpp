@@ -74,6 +74,13 @@ void dump_stack_(unsigned int * sp) {
   }
 }
 
+void dump_lr(DWORD * sp) {
+  for(int i = 13; i < 15; i++) {
+    fp1.format(out, "%8h) %8h (%s)\r\n", (sp + i), *(sp + i), reg_names[i]);
+    dump_debug_message(out);
+  }
+}
+
 void undefined_instruction_exception(unsigned int * sp) {
   dump_debug_message(" *** undefined instruction exception ***\r\n");
   dump_stack_(sp);

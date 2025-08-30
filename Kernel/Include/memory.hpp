@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 #include "commonDef.hpp"
-//#include "display.hpp"
 #include "os_cpu.hpp"
 
 class MemoryManager {

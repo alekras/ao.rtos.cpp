@@ -124,12 +124,19 @@ AOScheduler::startOS() {
 
 void *
 cdecl
-processSysCommand( DWORD size, DWORD type) {
+processSysCommand( DWORD arg, DWORD type, AO_STACK * stkp ) {
+  void * t;
+  dump_lr(stkp);
   switch (type) {
     case 1:
-      return mm->malloc(size);
+      t = mm->malloc(arg);
+      fp1.format(out, "new : size=%d pointer=%8h\r\n", arg, (DWORD *)t);
+      dump_debug_message(out);
+      return t; //mm->malloc(size);
     case 2:
-      mm->free((void *)size);
+      fp1.format(out, "free : pointer=%h\r\n", arg);
+      dump_debug_message(out);
+      mm->free((void *)arg);
       return 0;
     default:
       return 0;

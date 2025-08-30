@@ -1,9 +1,9 @@
 # Project for testing compilation process and hardware.
 
 The project is a set of few Active objects that are running independently and communicate to each others.
-
-MD5 = A74BF6CB6F3DAC976BA6E9488840A8C7
-SHA256 = 035B3220F5A6A6E8539DBFB20628BF6E332C8FA4D1F0A20E13328BED94E4B189
-uniqueValue = 686dd004cb0f3 
-
-Also, please note that the file should be accessible via this link: http://lucky3p.com/.well-known/pki-validation/A74BF6CB6F3DAC976BA6E9488840A8C7.txt 
+The application consists of:
+1. MyAO active object displays system time and controls LED connected to PIO terminals.
+2. UartAO ISA active object controls UART connection to developer computer and processes interrupts that came from UART controller
+3. ThermometerAO ISA active object reads and displays temperature from DS18B20 temperature sensor, also processes interrupts from timer.
+4. GpioAO ISA active object processes interrupt from GPIO terminal
+5. DebugAOScheduler extends AOScheduler displays status of AORTOS scheduler

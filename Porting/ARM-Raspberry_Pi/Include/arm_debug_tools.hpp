@@ -45,6 +45,7 @@ extern "C" void dump_memory(unsigned int * a, int w);
 
 extern "C" void dump_stack(DWORD * ssp, DWORD * csp, DWORD cpsr, DWORD spsr);
 extern "C" void dump_stack_(DWORD * sp);
+extern "C" void dump_lr(DWORD * sp);
 
 extern "C" void undefined_instruction_exception(DWORD * sp);
 extern "C" void prefetch_abort_exception(DWORD * sp);

@@ -4,17 +4,23 @@
 
 .globl _start
 _start:
+ ;@ Return CPU ID (0..3) Of The CPU Executed On
+//  mrc p15, 0, r0, c0, c0, 5 ;@ R0 = Multiprocessor Affinity Register (MPIDR)
+  mrc p15, 0, r0, c0, c2, 5 ;@ R0 = Multiprocessor Affinity Register (MPIDR)
+  ands r0, #3 ;@ R0 = CPU ID (Bits 0..1)
+  bne hang  ;@ IF (CPU ID != 0) Branch To Infinite Loop (Core ID 1..3)
+
   ;@ (PSR_ABORT_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
   movw r0,#0x1D7 ;@ ABORT mode 0b1 1101 0111
-  msr cpsr_c,r0
+  msr cpsr_c, r0
   movw sp, #0
   movt sp, #0x3FE0
 //  mov sp,#0x3FE00000
 
   ;@ (PSR_UNDEF_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
   movw r0,#0x1D8 ;@ UNDEF mode 0b1 1101 1000
-  msr cpsr_c,r0
-  mov sp,#0x3FC00000
+  msr cpsr_c, r0
+  mov sp, #0x3FC00000
 
   ;@ (PSR_IRQ_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
   movw r0,#0x1D2 ;@ IRQ mode 0b1 1101 0010
@@ -27,12 +33,12 @@ _start:
   mov sp,#0x3F800000
 
   ;@ (PSR_SVC_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
-  movw r0,#0x1D3 ;@ Suvervisor mode 0b111010011
+  movw r0,#0x1D3 ;@ Supervisor mode 0b111010011
   msr cpsr_c,r0
   mov sp,#0x3F000000
 
   ;@ SVC MODE, IRQ ENABLED, FIQ DIS
-  ;@movw r0,#0x153 ;@ Suvervisor mode 0b101010011
+  ;@movw r0,#0x153 ;@ Supervisor mode 0b101010011
   ;@msr cpsr_c, r0
 
   bl main
@@ -118,9 +124,11 @@ free_req:
   bx lr
 
 irq_handler:
-  sub lr, lr, #4
-  srsdb sp!, #0x13
-  cps #0x13
+  sub lr, lr, #4       ;@
+  srsdb sp!, #0x13     ;@ save lr and spsr in stack sp[svc_mode]
+                       ;@ [--sp] = spsr
+                       ;@ [--sp] = lr (after interrupt)
+  cps #0x13            ;@ switch to svs_mode
   push {r0 - r12, lr}
 
   mov r0, sp
@@ -131,12 +139,16 @@ irq_handler:
   rfeia sp!
 
 swi_handler:
-  srsdb sp!, #0x13
+  srsdb sp!, #0x13     ;@ save lr and spsr in stack sp[svc_mode]
+                       ;@ [--sp] = spsr
+                       ;@ [--sp] = lr (after interrupt)
+  cps #0x13            ;@ switch to svs_mode
   push {r0 - r12, lr}
 
   ldr r1, [sp, #0x38] ;@ read lr_irq (address to return) from stack
   ldr r1, [r1, #-4]   ;@ read instruction 'svc'
   and r1, r1, #0xff   ;@ mask the instruction code
+  mov r2, sp
   cmp r1, #1          ;@ compare with 1
   beq _new_req
   cmp r1, #2          ;@ compare with 2
@@ -150,14 +162,9 @@ swi_handler:
   rfeia sp!
 
 _new_req:
-;@ r0 - parameter from routine with exception swi
-;@ r1 - parameter of swi
+;@ r0 - parameter from routine with exception swi (size for new)
+;@ r1 - parameter of swi (1 | 2)
 ;@  mov r2, sp
-
-;@  push {r0}        ;@ debug
-;@  add r0, sp, #4   ;@ debug
-;@  bl dump_stack_   ;@ debug
-;@  pop {r0}         ;@ debug
 
   bl processSysCommand
   add sp, sp, #4      ;@ do not restore r0 with pop - keep updated value that processSysCommand() returns
@@ -165,9 +172,9 @@ _new_req:
   rfeia sp!
 
 _free_req:
-;@ r0 - parameter from routine with exception swi
+;@ r0 - parameter from routine with exception swi (pointer for free)
 ;@ r1 - parameter of swi
-;@  mov r2, sp
+
   bl processSysCommand
   pop  {r0 - r12, lr}
   rfeia sp!
