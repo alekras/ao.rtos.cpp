@@ -13,7 +13,7 @@ There are two ways to build and run test application.
 
 1. **First way:**
 
-In terminal make current direction {project root}//Applications/ARM_Raspberry_Pi/Test1
+In terminal make current direction {project root}/Applications/ARM_Raspberry_Pi/Test1
 
  ```bash
  $cd {project root}//Applications/ARM_Raspberry_Pi/Test1
@@ -25,8 +25,8 @@ In terminal make current direction {project root}//Applications/ARM_Raspberry_Pi
  ```
  File kernel.img is created in folder {project root}/_build/target/. Copy this file to microSD, insert to RPi board and reset the board. Serial port terminal connected to the board shows log like this:
  
- ![fig_001](../../../docs/figures/fig_001.jpg)
- ![fig_001](fig_001.jpg)
+ ![fig_001](../../../docs/figures/fig_001.png)  
+ <img src="../../../docs/figures/fig_001.png" width="800px" title="fig_001" />
 
 2. **Second way:**
 
