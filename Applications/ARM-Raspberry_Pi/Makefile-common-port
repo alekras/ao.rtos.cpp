@@ -12,6 +12,12 @@ RPI_VERSION = RPI2
 
 INCLUDE_PATHS := -I ${PORT_DIR}/Include ${INCLUDE_PATHS}
 
+hex : ${TARGET_DIR}/application.hex
+
+image : ${TARGET_DIR}/kernel.img
+
+all : hex image
+
 ${TARGET_DIR}/application.hex : ${GCC_DIR}/application.elf
 	@echo GCC-ARM creates HEX file from elf file
 	@${EXEC}-objcopy $< -O ihex $@
@@ -26,3 +32,19 @@ ${GCC_DIR}/application.elf : prepare ${GCC_DIR}/Application/main.o ${GCC_DIR}/li
 	-lport \
 	-lgcc -Map ${LISTING_DIR}/map.lst -T ${objDir}/loader -o $@
 	@${EXEC}-objdump -D $@ > ${LISTING_DIR}/application.lst
+
+${TARGET_DIR}/kernel.img : ${GCC_DIR}/application_img.elf
+	@echo GCC-ARM creates binary image file from elf file
+	@${EXEC}-objcopy $< -O binary $@
+
+${GCC_DIR}/application_img.elf : prepare ${GCC_DIR}/Application/main.o ${GCC_DIR}/libapp.a libkern libaortos libport
+	@echo linker makes application_img.elf 
+	@${EXEC}-ld ${PORTING_OBJ_DIR}/arm_cpu.o ${GCC_DIR}/Application/main.o \
+	-L${CPP_LIBS} -L${GCC_DIR} \
+	-lapp \
+	-lkern \
+	-laortos \
+	-lport \
+	-lgcc -Map ${LISTING_DIR}/map_img.lst -T ${objDir}/loader_rpi2 -o $@
+	@${EXEC}-objdump -D $@ > ${LISTING_DIR}/application_img.lst
+	

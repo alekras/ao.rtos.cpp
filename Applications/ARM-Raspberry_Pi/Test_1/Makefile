@@ -14,7 +14,7 @@ OBJECTS = ${APP_OBJ_DIR}/periph_interrupt.o \
 	${APP_OBJ_DIR}/DebugAOScheduler.o
 #	${APP_OBJ_DIR}/main.o
 
-all : prepare ${GCC_DIR}/libapp.a libkern libaortos libport
+libraries : prepare ${GCC_DIR}/libapp.a libkern libaortos libport
 	@echo "   application.a :"
 	@${EXEC}-ar t ${GCC_DIR}/libapp.a
 	@echo "   kernel.a :"

@@ -25,6 +25,6 @@
      - make img
  2. Build microSD
      - copy file kernel.img to MicroSD
-     - insert microCD to holder in RPi and reset target device.
+     - insert microCD to holder in RPi board and reset the target board.
 
 ## Functionality Explanation 
