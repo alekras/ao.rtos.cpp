@@ -26,8 +26,7 @@ In terminal make current direction {project root}/Applications/ARM_Raspberry_Pi/
  File kernel.img is created in folder {project root}/_build/target/. Copy this file to microSD, insert to RPi board and reset the board. Serial port terminal connected to the board shows log like this:
  
  ![fig_001](../../../docs/figures/fig_001.png)  
- <img src="../../../docs/figures/fig_001.png" width="800px" title="fig_001" />
-
+ 
 2. **Second way:**
 
 ### MyAO
