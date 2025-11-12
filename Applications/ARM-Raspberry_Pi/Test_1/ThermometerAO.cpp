@@ -145,7 +145,7 @@ ThermometerAO::processMessage(Message * msg) {
       writeByte2DS(0xBECC);
       temperature = read2BytesFromDS();
 
-      fp.format((char *)outputString->getChars(), "<DS18B20> temperature= %h, t=%d.%04dC%c\n\r",
+      fp.format((char *)outputString->getChars(), "<DS18B20> temperature= %h, t=%d.%04d%cC\n\r",
           temperature, (temperature >> 4), (temperature & 0xF) * 625, (char)186);
       logMsg->setString(outputString);
       putOutgoingMessage(logMsg);
