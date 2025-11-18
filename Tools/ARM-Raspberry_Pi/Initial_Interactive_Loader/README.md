@@ -44,8 +44,14 @@
  
  ![fig_005](../../../docs/figures/fig_005.png)
  
+ And most impotant IIL functionality is upload executable hex file to target RPi. Type 'L' to get message 'Send hex file to target.'. After that go to 'CoolTerminal' menu (or other terminal application you are using) and choose 'Connection->Send File(s)'. Find and click on file from you project folder (.../ao.rtos.cpp/_build/target/). Popup windows is appear 'Sending file ...' and then uploading will complete and window displays like this:
  
- 
+ ![fig_006](../../../docs/figures/fig_006.png)
 
+Now issue command 'G10000' and we can see view of running application:
+
+ ![fig_007](../../../docs/figures/fig_007.png)
+
+## Debugging application with IIL
 
 ## Functionality Explanation 
