@@ -44,7 +44,7 @@
  
  ![fig_005](../../../docs/figures/fig_005.png)
  
- And most impotant IIL functionality is upload executable hex file to target RPi. Type 'L' to get message 'Send hex file to target.'. After that go to 'CoolTerminal' menu (or other terminal application you are using) and choose 'Connection->Send File(s)'. Find and click on file from you project folder (.../ao.rtos.cpp/_build/target/). Popup windows is appear 'Sending file ...' and then uploading will complete and window displays like this:
+ And most impotant IIL functionality is upload executable hex file to target RPi. Type 'L' to get message 'Send hex file to target.'. After that go to 'CoolTerminal' menu (or other serial terminal application you are using) and choose 'Connection->Send File(s)'. Find and click on file from you project folder (.../ao.rtos.cpp/_build/target/). Popup windows is appear 'Sending file ...' and then uploading will complete and window displays like this:
  
  ![fig_006](../../../docs/figures/fig_006.png)
 
@@ -53,5 +53,47 @@ Now issue command 'G10000' and we can see view of running application:
  ![fig_007](../../../docs/figures/fig_007.png)
 
 ## Debugging application with IIL
+
+Idea how to log or save debugging messages from running application is simple. The main steps are:
+ - Reserve memory area for writing debug messages;
+ - Put in application source code statement to save debug messages;
+ - Build and run application;
+ - If application has stalled reset target RPi (do not interrupt power of target because it will destroy data in memory);
+ - When IIL starting page is appear then type command 'M' and you can see all debug messages before application falls.
+ 
+Let's illustrate it on sample application `ao.rtos.cpp/Tools/ARM-Raspberry_Pi/loadable-app`. To activate debugging availability include header file to main.cpp:
+
+``` C
+#include "arm_debug_tools.hpp"
+```
+
+and add to compile/link process source file `${PORTING_DIR}/arm_debug_tools.cpp`. Start debugging tools and log first message in main.cpp
+
+``` c
+main.cpp
+  dump_debug_init();
+  dump_debug_message("Test 1\n\r");
+```
+
+In `periph_timers.cpp` add more debug messages:
+
+``` c
+  fp.format(out, "timer tick #%d\n\r", tic);
+  dump_debug_message(out);
+```
+Now build our sample application:
+
+``` bash
+cd ao.rtos.cpp/Tools/ARM-Raspberry_Pi/loadable-app
+make hex
+```
+Go to serial terminal window and upload LoadableApp.hex file to target. Run application:
+
+ ![fig_006](../../../docs/figures/fig_008.png)
+
+Now interrupt execution of application on target by pushing reset button (NOT power socket).
+After IIL restart issue command 'm'. You can see debugging messages:
+ ![fig_006](../../../docs/figures/fig_009.png)
+ ![fig_006](../../../docs/figures/fig_010.png)
 
 ## Functionality Explanation 

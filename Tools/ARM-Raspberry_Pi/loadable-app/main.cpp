@@ -31,14 +31,13 @@ int main() {
   arm_timer_setup(500);
   led_setup();
   uart_init();
-  dump_debug_init();
   enable_irq();
 
   sendString("\n\rLoadable application\n\r");
   sendString("--- Start ---\n\r");
 
-//  dump_debug_message("Test 1\n\r");
-//  dump_debug_message("Test 2\n\r");
+  dump_debug_init();
+  dump_debug_message("Test 1\n\r");
 
   unsigned int i = 0x00ffffff, j = 0;
 

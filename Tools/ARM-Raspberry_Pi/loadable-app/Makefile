@@ -1,11 +1,14 @@
 
-ARM-TOOLS-PATH = /opt/gcc-arm/latest
+TOOLCHAIN.VERSION = 14.3.1
+ARM-TOOLS-PATH = /opt/gcc-arm/arm-gnu-toolchain-${TOOLCHAIN.VERSION}
 EXEC = ${ARM-TOOLS-PATH}/bin/arm-none-eabi
-CPP-LIBS = ${ARM-TOOLS-PATH}/lib/gcc/arm-none-eabi/10.3.1
+CPP-LIBS = ${ARM-TOOLS-PATH}/lib/gcc/arm-none-eabi/${TOOLCHAIN.VERSION}
 IIL_DIR = ../Initial_Interactive_Loader
 DISPLAY_DIR = ../../../Library/Display
 PORTING_DIR = ../../../Porting/ARM-Raspberry_Pi
-COPTS = -Wno-write-strings -O2 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7-a -mtune=cortex-a7 -nostdlib -nostartfiles -ffreestanding -fno-exceptions
+COPTS = -Wno-write-strings -O2 \
+	-march=armv7-a+nofp -mtune=cortex-a7 \
+	-nostdlib -nostartfiles -mno-unaligned-access -ffreestanding -fno-exceptions
 
 INCLUDE_PATHS = -I ${PORTING_DIR}/Include \
 	-I ${DISPLAY_DIR}/Include \
