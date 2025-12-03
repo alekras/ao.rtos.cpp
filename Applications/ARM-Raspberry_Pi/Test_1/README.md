@@ -18,16 +18,25 @@ In terminal make current direction {project root}/Applications/ARM_Raspberry_Pi/
  ```bash
  $cd {project root}//Applications/ARM_Raspberry_Pi/Test1
  ```
- Run Make builder
+Run Make builder
 
  ```bash
  $make image
  ```
- File kernel.img is created in folder {project root}/_build/target/. Copy this file to microSD, insert to RPi board and reset the board. Serial port terminal connected to the board shows log like this:
+File kernel.img is created in folder {project root}/_build/target/. Copy this file to microSD, insert to RPi board and reset the board. Serial port terminal connected to the board shows log like this:
  
  ![fig_001](../../../docs/figures/fig_001.png)  
  
 2. **Second way:**
+
+Run Make builder
+
+ ```bash
+ $make hex
+ ```
+File application.hex is created in folder {project root}/_build/target/. Now run IIL on the target as discribed [here](Tools/ARM-Raspberry_Pi/Initial_Interactive_Loader/README.md).
+Type command 'L' and upload created hex file to target. Then type command 'G10000' and you will see in serial terminal window:
+ ![fig_011](../../../docs/figures/fig_011.png)  
 
 ### MyAO
 
